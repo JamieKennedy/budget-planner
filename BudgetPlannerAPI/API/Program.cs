@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Middleware;
+
 using LoggerService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,8 @@ var logger = app.Services.GetRequiredService<ILoggerManager>();
 app.ConfigureExceptionHandler(logger);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }

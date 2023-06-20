@@ -1,35 +1,44 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+
 using Repository.Contracts;
+
+using System.Linq.Expressions;
 
 namespace Repository;
 
-public class RepositoryBase<T> : IRepositoryBase<T> where T : class {
+public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+{
     private readonly RepositoryContext _repositoryContext;
 
-    public RepositoryBase(RepositoryContext repositoryContext) {
+    public RepositoryBase(RepositoryContext repositoryContext)
+    {
         _repositoryContext = repositoryContext;
     }
 
-    public IQueryable<T> FindAll(bool trackChanges) {
+    public IQueryable<T> FindAll(bool trackChanges)
+    {
         return trackChanges ? _repositoryContext.Set<T>() : _repositoryContext.Set<T>().AsNoTracking();
     }
 
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges) {
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
+    {
         return trackChanges
             ? _repositoryContext.Set<T>().Where(expression)
             : _repositoryContext.Set<T>().Where(expression).AsNoTracking();
     }
 
-    public void Create(T entity) {
+    public void Create(T entity)
+    {
         _repositoryContext.Set<T>().Add(entity);
     }
 
-    public void Update(T entity) {
+    public void Update(T entity)
+    {
         _repositoryContext.Set<T>().Update(entity);
     }
 
-    public void Delete(T entity) {
+    public void Delete(T entity)
+    {
         _repositoryContext.Set<T>().Remove(entity);
     }
 }

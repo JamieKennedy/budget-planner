@@ -2,16 +2,19 @@
 
 namespace Repository;
 
-public class RepositoryManager : IRepositoryManager {
+public class RepositoryManager : IRepositoryManager
+{
     private readonly RepositoryContext _repositoryContext;
 
 
-    public RepositoryManager(RepositoryContext repositoryContext) {
+    public RepositoryManager(RepositoryContext repositoryContext)
+    {
         _repositoryContext = repositoryContext;
     }
 
 
-    public void Save() {
+    public void Save()
+    {
         _repositoryContext.SaveChanges();
     }
 }

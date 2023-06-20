@@ -1,5 +1,6 @@
 ﻿namespace Common.Exceptions.Base;
 
-public interface IRepositoryManager {
+public interface IRepositoryManager
+{
     void Save();
 }
