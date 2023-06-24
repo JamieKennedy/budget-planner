@@ -4,6 +4,7 @@ using Common.Models.Error;
 using LoggerService.Interfaces;
 
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
 
@@ -32,7 +33,7 @@ public static class ExceptionHandler
                     var errorDto = new ErrorDto(statusCode, message);
 
                     // log the exception
-                    logger.LogError(errorDto.ToString());
+                    logger.LogError(exception);
 
                     context.Response.StatusCode = statusCode;
 
@@ -47,6 +48,7 @@ public static class ExceptionHandler
         return exception switch
         {
             IException ie => ie.StatusCode,
+            DbUpdateException => StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
         };
     }

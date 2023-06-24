@@ -30,6 +30,11 @@ public class LoggerManager : ILoggerManager
         _logger.Warning("{Message}", message);
     }
 
+    public void LogError(Exception exception)
+    {
+        _logger.Error(exception, exception.Message);
+    }
+
     public void LogError(string message)
     {
         _logger.Error("{Message}", message);

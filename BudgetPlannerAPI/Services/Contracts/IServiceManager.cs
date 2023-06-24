@@ -1,3 +1,7 @@
 ﻿namespace Services.Contracts;
 
-public interface IServiceManager { }
+public interface IServiceManager
+{
+    IUserService UserService { get; }
+    ISavingsService SavingsService { get; }
+}

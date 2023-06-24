@@ -27,9 +27,12 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : class
             : _repositoryContext.Set<T>().Where(expression).AsNoTracking();
     }
 
-    public void Create(T entity)
+    public T Create(T entity)
     {
         _repositoryContext.Set<T>().Add(entity);
+
+        return entity;
+
     }
 
     public void Update(T entity)
