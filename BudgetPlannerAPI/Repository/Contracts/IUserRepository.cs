@@ -1,9 +1,9 @@
-﻿using Common.Models.User;
+﻿using Common.Models;
 
 namespace Repository.Contracts;
 
 public interface IUserRepository
 {
-    UserModel CreateUser(UserModel user);
-    UserModel? SelectById(long userId, bool trackChanges = false);
+    User CreateUser(User user);
+    User? SelectById(long userId, bool trackChanges = false);
 }

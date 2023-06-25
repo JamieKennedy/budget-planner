@@ -1,11 +1,11 @@
-﻿using Common.Models.Saving;
-using Common.Models.Saving.Dto;
+﻿using Common.DataTransferObjects.Saving;
+using Common.Models;
 
 namespace Services.Contracts
 {
     public interface ISavingService
     {
-        SavingModel CreateSaving(CreateSavingDto createSavingDto);
-        SavingModel SelectById(long savingId);
+        Saving CreateSaving(CreateSavingDto createSavingDto);
+        Saving SelectById(long savingId);
     }
 }

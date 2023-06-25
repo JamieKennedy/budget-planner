@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-
+using Common.DataTransferObjects.User;
 using Common.Exceptions.User;
-using Common.Models.User;
-using Common.Models.User.Dto;
+using Common.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -25,9 +24,9 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public UserModel CreateUser(CreateUserDto createUserDto)
+        public User CreateUser(CreateUserDto createUserDto)
         {
-            var userModel = _mapper.Map<UserModel>(createUserDto);
+            var userModel = _mapper.Map<User>(createUserDto);
 
             var user = _repositoryManager.User.CreateUser(userModel);
             _repositoryManager.Save();
@@ -35,7 +34,7 @@ namespace Services
             return user;
         }
 
-        public UserModel SelectById(long userId)
+        public User SelectById(long userId)
         {
             var user = _repositoryManager.User.SelectById(userId);
 

@@ -25,7 +25,7 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
                 {
                     b.Property<long>("SavingId")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace API.Migrations
                     b.ToTable("Savings");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
                 {
                     b.Property<long>("SavingBalanceId")
                         .ValueGeneratedOnAdd()
@@ -103,7 +103,7 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
                 {
                     b.HasOne("Common.Models.User.UserModel", "User")
                         .WithMany()
@@ -114,9 +114,9 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
                 {
-                    b.HasOne("Common.Models.Saving.SavingModel", "Saving")
+                    b.HasOne("Common.Models.Saving.Saving", "Saving")
                         .WithMany()
                         .HasForeignKey("SavingId")
                         .OnDelete(DeleteBehavior.Cascade)

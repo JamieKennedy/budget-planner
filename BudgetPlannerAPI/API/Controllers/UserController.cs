@@ -1,5 +1,4 @@
-﻿using Common.Models.User.Dto;
-
+﻿using Common.DataTransferObjects.User;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;

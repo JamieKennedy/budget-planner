@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Common.Models.User.Dto
+namespace Common.DataTransferObjects.User
 {
     public class CreateUserDto
     {

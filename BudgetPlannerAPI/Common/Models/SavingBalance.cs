@@ -1,19 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-using Common.Models.Saving;
-
-namespace Common.Models.SavingBalance
+namespace Common.Models
 {
-    public class SavingBalanceModel
+    public class SavingBalance
     {
         [Key]
         public long SavingBalanceId { get; set; }
-        [ForeignKey(nameof(Saving))]
+        [ForeignKey(nameof(Models.Saving))]
         public long SavingId { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
         public DateTime Created { get; set; }
-        public SavingModel? Saving { get; set; }
+        public Saving? Saving { get; set; }
     }
 }

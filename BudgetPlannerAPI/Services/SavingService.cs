@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-
+using Common.DataTransferObjects.Saving;
 using Common.Exceptions.Saving;
 using Common.Exceptions.User;
-using Common.Models.Saving;
-using Common.Models.Saving.Dto;
+using Common.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -26,13 +25,13 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public SavingModel CreateSaving(CreateSavingDto createSavingDto)
+        public Saving CreateSaving(CreateSavingDto createSavingDto)
         {
             var user = _repositoryManager.User.SelectById(createSavingDto.UserId);
 
             if (user is null) throw new UserNotFoundException(createSavingDto.UserId);
 
-            var savingModel = _mapper.Map<SavingModel>(createSavingDto);
+            var savingModel = _mapper.Map<Saving>(createSavingDto);
 
             var saving = _repositoryManager.Saving.CreateSaving(savingModel);
             _repositoryManager.Save();
@@ -40,7 +39,7 @@ namespace Services
             return saving;
         }
 
-        public SavingModel SelectById(long savingId)
+        public Saving SelectById(long savingId)
         {
             var saving = _repositoryManager.Saving.SelectById(savingId);
 

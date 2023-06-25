@@ -22,7 +22,7 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
                 {
                     b.Property<long>("SavingId")
                         .ValueGeneratedOnAdd()
@@ -53,10 +53,10 @@ namespace API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Savings");
+                    b.ToTable("Savings", (string)null);
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
                 {
                     b.Property<long>("SavingBalanceId")
                         .ValueGeneratedOnAdd()
@@ -77,7 +77,7 @@ namespace API.Migrations
 
                     b.HasIndex("SavingId");
 
-                    b.ToTable("SavingsBalance");
+                    b.ToTable("SavingsBalance", (string)null);
                 });
 
             modelBuilder.Entity("Common.Models.User.UserModel", b =>
@@ -97,10 +97,10 @@ namespace API.Migrations
                         .IsUnique()
                         .HasFilter("[ClerkId] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
                 {
                     b.HasOne("Common.Models.User.UserModel", "User")
                         .WithMany()
@@ -111,9 +111,9 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
                 {
-                    b.HasOne("Common.Models.Saving.SavingModel", "Saving")
+                    b.HasOne("Common.Models.Saving.Saving", "Saving")
                         .WithMany()
                         .HasForeignKey("SavingId")
                         .OnDelete(DeleteBehavior.Cascade)

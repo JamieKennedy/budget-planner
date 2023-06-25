@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-
+using Common.DataTransferObjects.SavingBalance;
 using Common.Exceptions.Saving;
 using Common.Exceptions.SavingBalance;
-using Common.Models.SavingBalance;
-using Common.Models.SavingBalance.Dto;
+using Common.Models;
 
 using Microsoft.Extensions.Configuration;
 
@@ -26,13 +25,13 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public SavingBalanceModel CreateSavingBalance(CreateSavingBalanceDto createSavingBalanceDto)
+        public SavingBalance CreateSavingBalance(CreateSavingBalanceDto createSavingBalanceDto)
         {
             var saving = _repositoryManager.Saving.SelectById(createSavingBalanceDto.SavingId);
 
             if (saving is null) throw new SavingNotFoundException(createSavingBalanceDto.SavingId);
 
-            var savingBalanceModel = _mapper.Map<SavingBalanceModel>(createSavingBalanceDto);
+            var savingBalanceModel = _mapper.Map<SavingBalance>(createSavingBalanceDto);
 
             var savingBalance = _repositoryManager.SavingBalance.CreateSavingBalance(savingBalanceModel);
             _repositoryManager.Save();
@@ -50,7 +49,7 @@ namespace Services
             _repositoryManager.Save();
         }
 
-        public SavingBalanceModel SelectById(long savingBalanceId, bool trackChanges = false)
+        public SavingBalance SelectById(long savingBalanceId, bool trackChanges = false)
         {
             var savingBalance = _repositoryManager.SavingBalance.SelectById(savingBalanceId, trackChanges);
 
@@ -59,9 +58,9 @@ namespace Services
             return savingBalance;
         }
 
-        public IEnumerable<SavingBalanceModel> SelectBySavingId(long savingId, bool trackChanges = false)
+        public IEnumerable<SavingBalance> SelectBySavingId(long savingId, bool trackChanges = false)
         {
-            var savingBalances = new List<SavingBalanceModel>();
+            var savingBalances = new List<SavingBalance>();
 
             savingBalances.AddRange(_repositoryManager.SavingBalance.SelectBySavingId(savingId, trackChanges));
 

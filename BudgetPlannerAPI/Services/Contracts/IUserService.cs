@@ -1,11 +1,11 @@
-﻿using Common.Models.User;
-using Common.Models.User.Dto;
+﻿using Common.DataTransferObjects.User;
+using Common.Models;
 
 namespace Services.Contracts
 {
     public interface IUserService
     {
-        UserModel CreateUser(CreateUserDto createUserDto);
-        UserModel SelectById(long userId);
+        User CreateUser(CreateUserDto createUserDto);
+        User SelectById(long userId);
     }
 }

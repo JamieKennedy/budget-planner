@@ -1,10 +1,10 @@
-﻿using Common.Models.Saving;
+﻿using Common.Models;
 
 namespace Repository.Contracts
 {
     public interface ISavingRepository
     {
-        SavingModel CreateSaving(SavingModel createSavingDto);
-        SavingModel? SelectById(long savingId, bool trackChanges = false);
+        Saving CreateSaving(Saving createSavingDto);
+        Saving? SelectById(long savingId, bool trackChanges = false);
     }
 }

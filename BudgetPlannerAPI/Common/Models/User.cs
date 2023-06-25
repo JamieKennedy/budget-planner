@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.Models.User
+namespace Common.Models
 {
-    public class UserModel
+    public class User
     {
         [Key]
         public long UserId { get; set; }

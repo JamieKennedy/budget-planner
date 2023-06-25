@@ -1,6 +1,4 @@
-﻿using Common.Models.Saving;
-using Common.Models.SavingBalance;
-using Common.Models.User;
+﻿using Common.Models;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -15,12 +13,12 @@ public class RepositoryContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Define unique index for user based on ClerkId
-        modelBuilder.Entity<UserModel>()
+        modelBuilder.Entity<User>()
             .HasIndex(user => user.ClerkId)
             .IsUnique();
     }
 
-    public DbSet<UserModel>? Users { get; set; }
-    public DbSet<SavingModel>? Savings { get; set; }
-    public DbSet<SavingBalanceModel>? SavingsBalance { get; set; }
+    public DbSet<User>? Users { get; set; }
+    public DbSet<Saving>? Savings { get; set; }
+    public DbSet<SavingBalance>? SavingsBalance { get; set; }
 }

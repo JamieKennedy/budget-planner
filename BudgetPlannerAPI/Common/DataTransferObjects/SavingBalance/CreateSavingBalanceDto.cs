@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.Models.SavingBalance.Dto
+namespace Common.DataTransferObjects.SavingBalance
 {
     public class CreateSavingBalanceDto
     {

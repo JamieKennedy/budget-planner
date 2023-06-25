@@ -1,5 +1,4 @@
-﻿using Common.Models.Saving.Dto;
-
+﻿using Common.DataTransferObjects.Saving;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;

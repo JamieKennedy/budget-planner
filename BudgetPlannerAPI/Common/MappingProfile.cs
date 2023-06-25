@@ -1,26 +1,23 @@
 ﻿using AutoMapper;
+using Common.DataTransferObjects.Saving;
+using Common.DataTransferObjects.SavingBalance;
+using Common.DataTransferObjects.User;
+using Common.Models;
 
-using Common.Models.Saving;
-using Common.Models.Saving.Dto;
-using Common.Models.SavingBalance;
-using Common.Models.SavingBalance.Dto;
-using Common.Models.User;
-using Common.Models.User.Dto;
-
-namespace Common.Models
+namespace Common
 {
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
             // User
-            CreateMap<CreateUserDto, UserModel>();
+            CreateMap<CreateUserDto, User>();
 
             // Saving
-            CreateMap<CreateSavingDto, SavingModel>();
+            CreateMap<CreateSavingDto, Saving>();
 
             // Saving Balance
-            CreateMap<CreateSavingBalanceDto, SavingBalanceModel>();
+            CreateMap<CreateSavingBalanceDto, SavingBalance>();
         }
 
         public static IMapper CreateMapper()

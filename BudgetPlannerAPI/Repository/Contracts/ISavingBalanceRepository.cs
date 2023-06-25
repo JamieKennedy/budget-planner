@@ -1,12 +1,12 @@
-﻿using Common.Models.SavingBalance;
+﻿using Common.Models;
 
 namespace Repository.Contracts
 {
     public interface ISavingBalanceRepository
     {
-        SavingBalanceModel CreateSavingBalance(SavingBalanceModel savingBalanceModel);
-        SavingBalanceModel? SelectById(long savingBalanceId, bool trackChanges = false);
-        IEnumerable<SavingBalanceModel> SelectBySavingId(long savingId, bool trackChanges = false);
-        void DeleteSavingBalance(SavingBalanceModel savingBalanceModel);
+        SavingBalance CreateSavingBalance(SavingBalance savingBalanceModel);
+        SavingBalance? SelectById(long savingBalanceId, bool trackChanges = false);
+        IEnumerable<SavingBalance> SelectBySavingId(long savingId, bool trackChanges = false);
+        void DeleteSavingBalance(SavingBalance savingBalanceModel);
     }
 }

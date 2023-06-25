@@ -1,5 +1,5 @@
-﻿using Common.Exceptions;
-using Common.Models.Error;
+﻿using Common.DataTransferObjects.Error;
+using Common.Exceptions;
 
 using LoggerService.Interfaces;
 
