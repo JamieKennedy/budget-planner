@@ -1,6 +1,7 @@
 using API.Extensions;
 using API.Middleware;
 
+using Common.Constants;
 using Common.Models;
 
 using LoggerService.Interfaces;
@@ -36,6 +37,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Cors
+var corsPolicy = app.Configuration.GetSection(ConfigurationConst.Cors.POLICY_SECTION)[ConfigurationConst.Cors.POLICY_NAME];
+if (corsPolicy is not null)
+{
+    app.UseCors(corsPolicy);
+}
+
 
 app.UseHttpsRedirection();
 
