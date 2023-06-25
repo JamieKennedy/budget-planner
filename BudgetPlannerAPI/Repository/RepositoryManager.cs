@@ -8,18 +8,22 @@ public class RepositoryManager : IRepositoryManager
 
     // Repositories
     private readonly Lazy<IUserRepository> _userRepository;
-    private readonly Lazy<ISavingsRepository> _savingsRepository;
+    private readonly Lazy<ISavingRepository> _savingRepository;
+    private readonly Lazy<ISavingBalanceRepository> _savingBalanceRepository;
 
     public RepositoryManager(RepositoryContext repositoryContext)
     {
         _repositoryContext = repositoryContext;
         _userRepository = new Lazy<IUserRepository>(() => new UserRepository(repositoryContext));
-        _savingsRepository = new Lazy<ISavingsRepository>(() => new SavingsRepository(repositoryContext));
+        _savingRepository = new Lazy<ISavingRepository>(() => new SavingRepository(repositoryContext));
+        _savingBalanceRepository = new Lazy<ISavingBalanceRepository>(() => new SavingBalanceRepository(repositoryContext));
     }
 
     public IUserRepository User => _userRepository.Value;
 
-    public ISavingsRepository Savings => _savingsRepository.Value;
+    public ISavingRepository Saving => _savingRepository.Value;
+
+    public ISavingBalanceRepository SavingBalance => _savingBalanceRepository.Value;
 
     public void Save()
     {

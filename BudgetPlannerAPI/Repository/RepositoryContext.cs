@@ -1,4 +1,5 @@
-﻿using Common.Models.Savings;
+﻿using Common.Models.Saving;
+using Common.Models.SavingBalance;
 using Common.Models.User;
 
 using Microsoft.EntityFrameworkCore;
@@ -20,5 +21,6 @@ public class RepositoryContext : DbContext
     }
 
     public DbSet<UserModel>? Users { get; set; }
-    public DbSet<SavingsModel>? Savings { get; set; }
+    public DbSet<SavingModel>? Savings { get; set; }
+    public DbSet<SavingBalanceModel>? SavingsBalance { get; set; }
 }

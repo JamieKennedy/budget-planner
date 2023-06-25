@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 
-using Common.Models.Savings;
-using Common.Models.Savings.Dto;
-using Common.Models.SavingsBalance;
-using Common.Models.SavingsBalance.Dto;
+using Common.Models.Saving;
+using Common.Models.Saving.Dto;
+using Common.Models.SavingBalance;
+using Common.Models.SavingBalance.Dto;
 using Common.Models.User;
 using Common.Models.User.Dto;
 
@@ -16,11 +16,11 @@ namespace Common.Models
             // User
             CreateMap<CreateUserDto, UserModel>();
 
-            // Savings
-            CreateMap<CreateSavingsDto, SavingsModel>();
+            // Saving
+            CreateMap<CreateSavingDto, SavingModel>();
 
-            // Savings Balance
-            CreateMap<CreateSavingsBalanceDto, SavingsBalanceModel>();
+            // Saving Balance
+            CreateMap<CreateSavingBalanceDto, SavingBalanceModel>();
         }
 
         public static IMapper CreateMapper()

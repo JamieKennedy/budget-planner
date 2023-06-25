@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.Models.Savings.Dto
+namespace Common.Models.Saving.Dto
 {
-    public class CreateSavingsDto
+    public class CreateSavingDto
     {
         [Required]
         public long UserId { get; set; }

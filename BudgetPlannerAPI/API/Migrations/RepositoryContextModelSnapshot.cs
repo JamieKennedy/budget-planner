@@ -22,13 +22,13 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Savings.SavingsModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
                 {
-                    b.Property<long>("SavingsId")
+                    b.Property<long>("SavingId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -49,20 +49,20 @@ namespace API.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("SavingsId");
+                    b.HasKey("SavingId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Savings");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingsBalance.SavingsBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
                 {
-                    b.Property<long>("SavingsBalanceId")
+                    b.Property<long>("SavingBalanceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsBalanceId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingBalanceId"));
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
@@ -70,17 +70,14 @@ namespace API.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("SavingsId")
+                    b.Property<long>("SavingId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("SavingsModelSavingsId")
-                        .HasColumnType("bigint");
+                    b.HasKey("SavingBalanceId");
 
-                    b.HasKey("SavingsBalanceId");
+                    b.HasIndex("SavingId");
 
-                    b.HasIndex("SavingsModelSavingsId");
-
-                    b.ToTable("SavingsBalanceModel");
+                    b.ToTable("SavingsBalance");
                 });
 
             modelBuilder.Entity("Common.Models.User.UserModel", b =>
@@ -103,7 +100,7 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Common.Models.Savings.SavingsModel", b =>
+            modelBuilder.Entity("Common.Models.Saving.SavingModel", b =>
                 {
                     b.HasOne("Common.Models.User.UserModel", "User")
                         .WithMany()
@@ -114,16 +111,15 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingsBalance.SavingsBalanceModel", b =>
+            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalanceModel", b =>
                 {
-                    b.HasOne("Common.Models.Savings.SavingsModel", null)
-                        .WithMany("Balances")
-                        .HasForeignKey("SavingsModelSavingsId");
-                });
+                    b.HasOne("Common.Models.Saving.SavingModel", "Saving")
+                        .WithMany()
+                        .HasForeignKey("SavingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Common.Models.Savings.SavingsModel", b =>
-                {
-                    b.Navigation("Balances");
+                    b.Navigation("Saving");
                 });
 #pragma warning restore 612, 618
         }

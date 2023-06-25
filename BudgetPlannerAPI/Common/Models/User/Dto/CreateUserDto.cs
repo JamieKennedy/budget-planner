@@ -1,9 +1,12 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Common.Models.User.Dto
 {
     public class CreateUserDto
     {
-        public string ClerkId { get; set; }
+        [Required]
+        public string ClerkId { get; set; } = string.Empty;
     }
 }
