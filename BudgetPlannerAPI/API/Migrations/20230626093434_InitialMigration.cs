@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class UsersSavingsSavingsBalance : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,7 +28,7 @@ namespace API.Migrations
                 name: "Savings",
                 columns: table => new
                 {
-                    SavingId = table.Column<long>(type: "bigint", nullable: false)
+                    SavingsId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -39,7 +39,7 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Savings", x => x.SavingId);
+                    table.PrimaryKey("PK_Savings", x => x.SavingsId);
                     table.ForeignKey(
                         name: "FK_Savings_Users_UserId",
                         column: x => x.UserId,
@@ -52,20 +52,20 @@ namespace API.Migrations
                 name: "SavingsBalance",
                 columns: table => new
                 {
-                    SavingBalanceId = table.Column<long>(type: "bigint", nullable: false)
+                    SavingsBalanceId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SavingId = table.Column<long>(type: "bigint", nullable: false),
+                    SavingsId = table.Column<long>(type: "bigint", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SavingsBalance", x => x.SavingBalanceId);
+                    table.PrimaryKey("PK_SavingsBalance", x => x.SavingsBalanceId);
                     table.ForeignKey(
-                        name: "FK_SavingsBalance_Savings_SavingId",
-                        column: x => x.SavingId,
+                        name: "FK_SavingsBalance_Savings_SavingsId",
+                        column: x => x.SavingsId,
                         principalTable: "Savings",
-                        principalColumn: "SavingId",
+                        principalColumn: "SavingsId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -75,9 +75,9 @@ namespace API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SavingsBalance_SavingId",
+                name: "IX_SavingsBalance_SavingsId",
                 table: "SavingsBalance",
-                column: "SavingId");
+                column: "SavingsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ClerkId",

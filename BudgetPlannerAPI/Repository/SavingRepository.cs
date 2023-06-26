@@ -4,18 +4,18 @@ using Repository.Contracts;
 
 namespace Repository
 {
-    public class SavingRepository : RepositoryBase<Saving>, ISavingRepository
+    public class SavingsRepository : RepositoryBase<Savings>, ISavingsRepository
     {
-        public SavingRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
+        public SavingsRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
 
-        public Saving CreateSaving(Saving saving)
+        public Savings CreateSavings(Savings savings)
         {
-            return Create(saving);
+            return Create(savings);
         }
 
-        public Saving? SelectById(long savingId, bool trackChanges = false)
+        public Savings? SelectById(long savingsId, bool trackChanges = false)
         {
-            return FindByCondition(saving => saving.SavingId == savingId, trackChanges).FirstOrDefault();
+            return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).FirstOrDefault();
         }
     }
 }

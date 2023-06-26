@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.DataTransferObjects.Saving
+using Common.DataTransferObjects.SavingsBalance;
+
+namespace Common.DataTransferObjects.Savings
 {
-    public class CreateSavingDto
+    public class CreateSavingsDto
     {
         [Required]
         public long UserId { get; set; }
@@ -11,5 +13,6 @@ namespace Common.DataTransferObjects.Saving
         public string Description { get; set; } = string.Empty;
         [Required]
         public decimal Goal { get; set; }
+        public IEnumerable<CreateSavingsBalanceDto> SavingsBalances { get; set; } = new List<CreateSavingsBalanceDto>();
     }
 }

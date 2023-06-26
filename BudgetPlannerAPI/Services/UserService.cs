@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+
 using Common.DataTransferObjects.User;
 using Common.Exceptions.User;
 using Common.Models;
@@ -32,6 +33,11 @@ namespace Services
             _repositoryManager.Save();
 
             return user;
+        }
+
+        public IEnumerable<User> SelectAll()
+        {
+            return _repositoryManager.User.SelectAll(false);
         }
 
         public User SelectById(long userId)

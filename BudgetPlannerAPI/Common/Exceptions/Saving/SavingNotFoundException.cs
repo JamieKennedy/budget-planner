@@ -1,10 +1,10 @@
 ﻿using Common.Exceptions.Base;
 
-namespace Common.Exceptions.Saving
+namespace Common.Exceptions.Savings
 {
-    public class SavingNotFoundException : NotFoundException
+    public class SavingsNotFoundException : NotFoundException
     {
-        public SavingNotFoundException(long savingId) : base($"No saving found with SavingId: {savingId}")
+        public SavingsNotFoundException(long savingsId) : base($"No savings found with SavingsId: {savingsId}")
         {
         }
     }

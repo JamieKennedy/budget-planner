@@ -22,13 +22,13 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
+            modelBuilder.Entity("Common.Models.Savings", b =>
                 {
-                    b.Property<long>("SavingId")
+                    b.Property<long>("SavingsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -49,20 +49,20 @@ namespace API.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("SavingId");
+                    b.HasKey("SavingsId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Savings", (string)null);
+                    b.ToTable("Savings");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
+            modelBuilder.Entity("Common.Models.SavingsBalance", b =>
                 {
-                    b.Property<long>("SavingBalanceId")
+                    b.Property<long>("SavingsBalanceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingBalanceId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsBalanceId"));
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
@@ -70,17 +70,17 @@ namespace API.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("SavingId")
+                    b.Property<long>("SavingsId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("SavingBalanceId");
+                    b.HasKey("SavingsBalanceId");
 
-                    b.HasIndex("SavingId");
+                    b.HasIndex("SavingsId");
 
-                    b.ToTable("SavingsBalance", (string)null);
+                    b.ToTable("SavingsBalance");
                 });
 
-            modelBuilder.Entity("Common.Models.User.UserModel", b =>
+            modelBuilder.Entity("Common.Models.User", b =>
                 {
                     b.Property<long>("UserId")
                         .ValueGeneratedOnAdd()
@@ -97,12 +97,12 @@ namespace API.Migrations
                         .IsUnique()
                         .HasFilter("[ClerkId] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
+            modelBuilder.Entity("Common.Models.Savings", b =>
                 {
-                    b.HasOne("Common.Models.User.UserModel", "User")
+                    b.HasOne("Common.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -111,15 +111,20 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
+            modelBuilder.Entity("Common.Models.SavingsBalance", b =>
                 {
-                    b.HasOne("Common.Models.Saving.Saving", "Saving")
-                        .WithMany()
-                        .HasForeignKey("SavingId")
+                    b.HasOne("Common.Models.Savings", "Savings")
+                        .WithMany("SavingsBalances")
+                        .HasForeignKey("SavingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Saving");
+                    b.Navigation("Savings");
+                });
+
+            modelBuilder.Entity("Common.Models.Savings", b =>
+                {
+                    b.Navigation("SavingsBalances");
                 });
 #pragma warning restore 612, 618
         }

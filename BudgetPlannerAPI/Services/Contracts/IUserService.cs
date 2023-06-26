@@ -7,5 +7,6 @@ namespace Services.Contracts
     {
         User CreateUser(CreateUserDto createUserDto);
         User SelectById(long userId);
+        IEnumerable<User> SelectAll();
     }
 }

@@ -1,30 +1,32 @@
 ﻿using Common.Models;
+
 using Repository.Contracts;
 
 namespace Repository
 {
-    public class SavingBalanceRepository : RepositoryBase<SavingBalance>, ISavingBalanceRepository
+    public class SavingsBalanceRepository : RepositoryBase<SavingsBalance>, ISavingsBalanceRepository
     {
-        public SavingBalanceRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
+        public SavingsBalanceRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
 
-        public SavingBalance CreateSavingBalance(SavingBalance savingBalanceModel)
+        public SavingsBalance CreateSavingsBalance(long savingsId, SavingsBalance savingsBalanceModel)
         {
-            return Create(savingBalanceModel);
+            savingsBalanceModel.SavingsId = savingsId;
+            return Create(savingsBalanceModel);
         }
 
-        public void DeleteSavingBalance(SavingBalance savingBalanceModel)
+        public void DeleteSavingsBalance(SavingsBalance savingsBalanceModel)
         {
-            Delete(savingBalanceModel);
+            Delete(savingsBalanceModel);
         }
 
-        public SavingBalance? SelectById(long savingBalanceId, bool trackChanges = false)
+        public SavingsBalance? SelectById(long savingsBalanceId, bool trackChanges = false)
         {
-            return FindByCondition(savingBalance => savingBalance.SavingBalanceId == savingBalanceId, trackChanges).FirstOrDefault();
+            return FindByCondition(savingsBalance => savingsBalance.SavingsBalanceId == savingsBalanceId, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<SavingBalance> SelectBySavingId(long savingId, bool trackChanges = false)
+        public IEnumerable<SavingsBalance> SelectBySavingsId(long savingsId, bool trackChanges = false)
         {
-            return FindByCondition(savingBalance => savingBalance.SavingId == savingId, trackChanges);
+            return FindByCondition(savingsBalance => savingsBalance.SavingsId == savingsId, trackChanges);
         }
     }
 }

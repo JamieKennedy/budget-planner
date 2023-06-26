@@ -3,8 +3,8 @@
 public interface IRepositoryManager
 {
     IUserRepository User { get; }
-    ISavingRepository Saving { get; }
-    ISavingBalanceRepository SavingBalance { get; }
+    ISavingsRepository Savings { get; }
+    ISavingsBalanceRepository SavingsBalance { get; }
 
     void Save();
 }

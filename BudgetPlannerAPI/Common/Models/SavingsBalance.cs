@@ -3,15 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
-    public class SavingBalance
+    public class SavingsBalance
     {
         [Key]
-        public long SavingBalanceId { get; set; }
-        [ForeignKey(nameof(Models.Saving))]
-        public long SavingId { get; set; }
+        public long SavingsBalanceId { get; set; }
+        [ForeignKey(nameof(Savings))]
+        public long SavingsId { get; set; }
+        public Savings? Savings { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
         public DateTime Created { get; set; }
-        public Saving? Saving { get; set; }
+
     }
 }

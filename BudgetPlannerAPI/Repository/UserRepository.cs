@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+
 using Repository.Contracts;
 
 namespace Repository
@@ -10,6 +11,11 @@ namespace Repository
         public User CreateUser(User user)
         {
             return Create(user);
+        }
+
+        public IEnumerable<User> SelectAll(bool trackChanges = false)
+        {
+            return FindAll(trackChanges);
         }
 
         public User? SelectById(long userId, bool trackChanges = false)

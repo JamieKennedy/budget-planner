@@ -3,6 +3,6 @@
 public interface IServiceManager
 {
     IUserService UserService { get; }
-    ISavingService SavingService { get; }
-    ISavingBalanceService SavingBalanceService { get; }
+    ISavingsService SavingsService { get; }
+    ISavingsBalanceService SavingsBalanceService { get; }
 }

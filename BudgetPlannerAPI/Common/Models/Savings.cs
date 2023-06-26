@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
-    public class Saving
+    public class Savings
     {
         [Key]
-        public long SavingId { get; set; }
+        public long SavingsId { get; set; }
         [ForeignKey(nameof(Models.User))]
         public long UserId { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -17,6 +17,6 @@ namespace Common.Models
         public DateTime Created { get; set; } = DateTime.Now;
 
         public User? User { get; set; }
-        public List<SavingBalance> SavingBalances { get; set; } = new List<SavingBalance>();
+        public IEnumerable<SavingsBalance> SavingsBalances { get; set; } = new List<SavingsBalance>();
     }
 }

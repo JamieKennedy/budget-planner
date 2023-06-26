@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Common.DataTransferObjects.SavingBalance
+namespace Common.DataTransferObjects.SavingsBalance
 {
-    public class CreateSavingBalanceDto
+    public class CreateSavingsBalanceDto
     {
-        [Required]
-        public long SavingId { get; set; }
         [Required]
         [Range(0, double.MaxValue)]
         public decimal Balance { get; set; }

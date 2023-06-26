@@ -12,8 +12,8 @@ using Repository;
 namespace API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230625090601_UsersSavingsSavingsBalance")]
-    partial class UsersSavingsSavingsBalance
+    [Migration("20230626093434_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,13 +25,13 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
+            modelBuilder.Entity("Common.Models.Savings", b =>
                 {
-                    b.Property<long>("SavingId")
+                    b.Property<long>("SavingsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -52,20 +52,20 @@ namespace API.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("SavingId");
+                    b.HasKey("SavingsId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Savings");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
+            modelBuilder.Entity("Common.Models.SavingsBalance", b =>
                 {
-                    b.Property<long>("SavingBalanceId")
+                    b.Property<long>("SavingsBalanceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingBalanceId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SavingsBalanceId"));
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
@@ -73,17 +73,17 @@ namespace API.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("SavingId")
+                    b.Property<long>("SavingsId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("SavingBalanceId");
+                    b.HasKey("SavingsBalanceId");
 
-                    b.HasIndex("SavingId");
+                    b.HasIndex("SavingsId");
 
                     b.ToTable("SavingsBalance");
                 });
 
-            modelBuilder.Entity("Common.Models.User.UserModel", b =>
+            modelBuilder.Entity("Common.Models.User", b =>
                 {
                     b.Property<long>("UserId")
                         .ValueGeneratedOnAdd()
@@ -103,9 +103,9 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Common.Models.Saving.Saving", b =>
+            modelBuilder.Entity("Common.Models.Savings", b =>
                 {
-                    b.HasOne("Common.Models.User.UserModel", "User")
+                    b.HasOne("Common.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -114,15 +114,20 @@ namespace API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.Models.SavingBalance.SavingBalance", b =>
+            modelBuilder.Entity("Common.Models.SavingsBalance", b =>
                 {
-                    b.HasOne("Common.Models.Saving.Saving", "Saving")
-                        .WithMany()
-                        .HasForeignKey("SavingId")
+                    b.HasOne("Common.Models.Savings", "Savings")
+                        .WithMany("SavingsBalances")
+                        .HasForeignKey("SavingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Saving");
+                    b.Navigation("Savings");
+                });
+
+            modelBuilder.Entity("Common.Models.Savings", b =>
+                {
+                    b.Navigation("SavingsBalances");
                 });
 #pragma warning restore 612, 618
         }

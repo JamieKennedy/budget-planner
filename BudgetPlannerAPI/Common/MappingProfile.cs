@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Common.DataTransferObjects.Saving;
-using Common.DataTransferObjects.SavingBalance;
+
+using Common.DataTransferObjects.Savings;
+using Common.DataTransferObjects.SavingsBalance;
 using Common.DataTransferObjects.User;
 using Common.Models;
 
@@ -13,11 +14,13 @@ namespace Common
             // User
             CreateMap<CreateUserDto, User>();
 
-            // Saving
-            CreateMap<CreateSavingDto, Saving>();
+            // Savings
+            CreateMap<CreateSavingsDto, Savings>();
+            CreateMap<Savings, SavingsDto>();
 
-            // Saving Balance
-            CreateMap<CreateSavingBalanceDto, SavingBalance>();
+            // Savings Balance
+            CreateMap<CreateSavingsBalanceDto, SavingsBalance>();
+            CreateMap<SavingsBalance, SavingsBalanceDto>();
         }
 
         public static IMapper CreateMapper()

@@ -18,8 +18,8 @@ public class ServiceManager : IServiceManager
 
     // Services
     private readonly Lazy<IUserService> _userService;
-    private readonly Lazy<ISavingService> _savingService;
-    private readonly Lazy<ISavingBalanceService> _savingBalanceService;
+    private readonly Lazy<ISavingsService> _savingsService;
+    private readonly Lazy<ISavingsBalanceService> _savingsBalanceService;
 
     public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager)
     {
@@ -28,13 +28,13 @@ public class ServiceManager : IServiceManager
         _mapper = mapper;
 
         _userService = new Lazy<IUserService>(() => new UserService(configuration, mapper, repositoryManager));
-        _savingService = new Lazy<ISavingService>(() => new SavingService(configuration, mapper, repositoryManager));
-        _savingBalanceService = new Lazy<ISavingBalanceService>(() => new SavingBalanceService(configuration, mapper, repositoryManager));
+        _savingsService = new Lazy<ISavingsService>(() => new SavingsService(configuration, mapper, repositoryManager));
+        _savingsBalanceService = new Lazy<ISavingsBalanceService>(() => new SavingsBalanceService(configuration, mapper, repositoryManager));
     }
 
     public IUserService UserService => _userService.Value;
 
-    public ISavingService SavingService => _savingService.Value;
+    public ISavingsService SavingsService => _savingsService.Value;
 
-    public ISavingBalanceService SavingBalanceService => _savingBalanceService.Value;
+    public ISavingsBalanceService SavingsBalanceService => _savingsBalanceService.Value;
 }

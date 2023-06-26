@@ -1,4 +1,5 @@
 ﻿using Common.DataTransferObjects.User;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;
@@ -30,6 +31,14 @@ namespace API.Controllers
             var user = _serviceManager.UserService.SelectById(userId);
 
             return Ok(user);
+        }
+
+        [HttpGet(Name = "GetAllUsers")]
+        public IActionResult GetAll()
+        {
+            var users = _serviceManager.UserService.SelectAll();
+
+            return Ok(users);
         }
     }
 }
