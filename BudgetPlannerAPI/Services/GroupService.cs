@@ -15,9 +15,9 @@ namespace Services
 {
     internal class GroupService : IGroupService
     {
-        private IConfiguration _configuration;
-        private IMapper _mapper;
-        private IRepositoryManager _repositoryManager;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
+        private readonly IRepositoryManager _repositoryManager;
 
         public GroupService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager)
         {
@@ -28,10 +28,7 @@ namespace Services
 
         public GroupDto CreateGroup(long userId, CreateGroupDto createGroupDto)
         {
-            var user = _repositoryManager.User.SelectById(userId);
-
-            if (user is null) throw new UserNotFoundException(userId);
-
+            _ = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(userId);
             var groupModel = _mapper.Map<Group>(createGroupDto);
             groupModel.GroupOwnerId = userId;
 
@@ -45,10 +42,7 @@ namespace Services
 
         public GroupDto SelectById(long groupId, bool trackChanges = false)
         {
-            var group = _repositoryManager.Group.SelectById(groupId, trackChanges);
-
-            if (group is null) throw new GroupNotFoundException(groupId);
-
+            var group = _repositoryManager.Group.SelectById(groupId, trackChanges) ?? throw new GroupNotFoundException(groupId);
             var groupDto = _mapper.Map<GroupDto>(group);
 
             return groupDto;

@@ -42,13 +42,7 @@ namespace Services
 
         public User SelectById(long userId)
         {
-            var user = _repositoryManager.User.SelectById(userId);
-
-            if (user is null)
-            {
-                throw new UserNotFoundException(userId);
-            }
-
+            var user = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(userId);
             return user;
         }
     }

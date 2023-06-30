@@ -28,9 +28,8 @@ namespace Services
 
         public SavingsDto CreateSavings(long userId, CreateSavingsDto createSavingsDto)
         {
-            var user = _repositoryManager.User.SelectById(userId);
-
-            if (user is null) throw new UserNotFoundException(createSavingsDto.UserId);
+            // Check user exists
+            _ = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(createSavingsDto.UserId);
 
             var savingsModel = _mapper.Map<Savings>(createSavingsDto);
 
@@ -44,10 +43,7 @@ namespace Services
 
         public SavingsDto SelectById(long savingsId)
         {
-            var savings = _repositoryManager.Savings.SelectById(savingsId);
-
-            if (savings is null) throw new SavingsNotFoundException(savingsId);
-
+            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
             savings.SavingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savings.SavingsId);
 
             var savingsDto = _mapper.Map<SavingsDto>(savings);
