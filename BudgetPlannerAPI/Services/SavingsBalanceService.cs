@@ -33,8 +33,9 @@ namespace Services
             if (savings is null) throw new SavingsNotFoundException(savingsId);
 
             var savingsBalanceModel = _mapper.Map<SavingsBalance>(createSavingsBalanceDto);
+            savingsBalanceModel.SavingsId = savingsId;
 
-            var savingsBalance = _repositoryManager.SavingsBalance.CreateSavingsBalance(savingsId, savingsBalanceModel);
+            var savingsBalance = _repositoryManager.SavingsBalance.CreateSavingsBalance(savingsBalanceModel);
             _repositoryManager.Save();
 
             var savingsBalanceDto = _mapper.Map<SavingsBalanceDto>(savingsBalance);

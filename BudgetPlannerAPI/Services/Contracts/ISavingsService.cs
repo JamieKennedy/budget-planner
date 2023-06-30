@@ -4,7 +4,7 @@ namespace Services.Contracts
 {
     public interface ISavingsService
     {
-        SavingsDto CreateSavings(CreateSavingsDto createSavingsDto);
+        SavingsDto CreateSavings(long userId, CreateSavingsDto createSavingsDto);
         SavingsDto SelectById(long savingsId);
     }
 }

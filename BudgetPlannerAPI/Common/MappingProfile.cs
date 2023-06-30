@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 
+using Common.DataTransferObjects.Group;
+using Common.DataTransferObjects.GroupMember;
 using Common.DataTransferObjects.Savings;
 using Common.DataTransferObjects.SavingsBalance;
 using Common.DataTransferObjects.User;
@@ -21,6 +23,14 @@ namespace Common
             // Savings Balance
             CreateMap<CreateSavingsBalanceDto, SavingsBalance>();
             CreateMap<SavingsBalance, SavingsBalanceDto>();
+
+            // Group
+            CreateMap<CreateGroupDto, Group>();
+            CreateMap<Group, GroupDto>();
+
+            // GroupMember
+            CreateMap<CreateGroupMemberDto, GroupMember>();
+            CreateMap<GroupMember, GroupMemberDto>();
         }
 
         public static IMapper CreateMapper()

@@ -1,4 +1,5 @@
 ﻿using Common.DataTransferObjects.SavingsBalance;
+using Common.Exceptions.SavingBalance;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,23 +18,25 @@ namespace API.Controllers
             _serviceManager = serviceManager;
         }
 
-        [HttpPost]
+        [HttpPost(Name = nameof(CreateSavingsBalance))]
         public IActionResult CreateSavingsBalance(long savingsId, [FromBody] CreateSavingsBalanceDto createSavingsBalanceDto)
         {
             var savingsBalance = _serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
 
-            return CreatedAtRoute("GetSavingsBalanceById", new { savingsId, savingsBalance.SavingsBalanceId }, savingsBalance);
+            return CreatedAtRoute(nameof(GetSavingsBalanceById), new { savingsId, savingsBalance.SavingsBalanceId }, savingsBalance);
         }
 
-        [HttpGet("id/{savingsBalanceId}", Name = "GetSavingsBalanceById")]
-        public IActionResult GetSavingsBalanceById(long savingsBalanceId)
+        [HttpGet("{savingsBalanceId}", Name = nameof(GetSavingsBalanceById))]
+        public IActionResult GetSavingsBalanceById(long savingsId, long savingsBalanceId)
         {
             var savingsBalance = _serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
+
+            if (savingsBalance.SavingsId != savingsId) throw new InvalidSavingsIdForSavingsBalance(savingsBalanceId, savingsId);
 
             return Ok(savingsBalance);
         }
 
-        [HttpGet(Name = "GetSavingsBalanceBySavingsId")]
+        [HttpGet(Name = nameof(GetSavingsBalanceBySavingsId))]
         public IActionResult GetSavingsBalanceBySavingsId(long savingsId)
         {
             var savingsBalances = _serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);

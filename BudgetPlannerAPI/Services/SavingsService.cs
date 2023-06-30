@@ -26,9 +26,9 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public SavingsDto CreateSavings(CreateSavingsDto createSavingsDto)
+        public SavingsDto CreateSavings(long userId, CreateSavingsDto createSavingsDto)
         {
-            var user = _repositoryManager.User.SelectById(createSavingsDto.UserId);
+            var user = _repositoryManager.User.SelectById(userId);
 
             if (user is null) throw new UserNotFoundException(createSavingsDto.UserId);
 

@@ -6,7 +6,7 @@ using Services.Contracts;
 
 namespace API.Controllers
 {
-    [Route("api/savings")]
+    [Route("api/user/{userId}/savings")]
     [ApiController]
     public class SavingsController : ControllerBase
     {
@@ -17,16 +17,16 @@ namespace API.Controllers
             _serviceManager = serviceManager;
         }
 
-        [HttpPost(Name = "CreateSavings")]
-        public IActionResult Create([FromBody] CreateSavingsDto createSavingsDto)
+        [HttpPost(Name = nameof(CreateSavings))]
+        public IActionResult CreateSavings(long userId, [FromBody] CreateSavingsDto createSavingsDto)
         {
-            var savings = _serviceManager.SavingsService.CreateSavings(createSavingsDto);
+            var savings = _serviceManager.SavingsService.CreateSavings(userId, createSavingsDto);
 
-            return CreatedAtRoute("GetSavings", new { savingsId = savings.SavingsId }, savings);
+            return CreatedAtRoute(nameof(GetSavings), new { savingsId = savings.SavingsId }, savings);
         }
 
-        [HttpGet("{savingsId}", Name = "GetSavings")]
-        public IActionResult Get(long savingsId)
+        [HttpGet("{savingsId}", Name = nameof(GetSavings))]
+        public IActionResult GetSavings(long savingsId)
         {
             var savings = _serviceManager.SavingsService.SelectById(savingsId);
 

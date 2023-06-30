@@ -21,4 +21,6 @@ public class RepositoryContext : DbContext
     public DbSet<User>? Users { get; set; }
     public DbSet<Savings>? Savings { get; set; }
     public DbSet<SavingsBalance>? SavingsBalance { get; set; }
+    public DbSet<Group>? Groups { get; set; }
+    public DbSet<GroupMember> GroupMembers { get; set; }
 }

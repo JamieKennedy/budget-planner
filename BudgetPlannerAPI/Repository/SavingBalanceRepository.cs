@@ -8,9 +8,8 @@ namespace Repository
     {
         public SavingsBalanceRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
 
-        public SavingsBalance CreateSavingsBalance(long savingsId, SavingsBalance savingsBalanceModel)
+        public SavingsBalance CreateSavingsBalance(SavingsBalance savingsBalanceModel)
         {
-            savingsBalanceModel.SavingsId = savingsId;
             return Create(savingsBalanceModel);
         }
 
