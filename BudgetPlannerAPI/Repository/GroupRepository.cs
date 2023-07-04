@@ -15,7 +15,7 @@ namespace Repository
             return Create(group);
         }
 
-        public Group? SelectById(long groupId, bool trackChanges = false)
+        public Group? SelectById(Guid groupId, bool trackChanges = false)
         {
             return FindByCondition(group => group.GroupId == groupId, trackChanges).FirstOrDefault();
         }

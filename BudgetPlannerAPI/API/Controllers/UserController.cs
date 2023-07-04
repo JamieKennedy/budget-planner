@@ -18,27 +18,34 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = nameof(CreateUser))]
-        public IActionResult CreateUser(CreateUserDto createUserDto)
+        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            var user = _serviceManager.UserService.CreateUser(createUserDto);
+            var result = await _serviceManager.UserService.CreateUser(createUserDto);
 
-            return CreatedAtAction(nameof(GetUserById), routeValues: new { user.UserId }, user);
+            if (result.Succeeded)
+            {
+                var user = await _serviceManager.UserService.SelectByEmail(createUserDto.Email);
+
+                return CreatedAtAction(nameof(GetUserById), routeValues: new { UserId = user.Id }, user);
+            }
+
+            return BadRequest(result.Errors);
         }
 
         [HttpGet("{userId}", Name = nameof(GetUserById))]
-        public IActionResult GetUserById(long userId)
+        public async Task<IActionResult> GetUserById(Guid userId)
         {
-            var user = _serviceManager.UserService.SelectById(userId);
+            var user = await _serviceManager.UserService.SelectById(userId);
 
             return Ok(user);
         }
 
-        [HttpGet(Name = nameof(GetAllUsers))]
-        public IActionResult GetAllUsers()
+        [HttpGet("{emailAddress}", Name = nameof(GetUserByEmail))]
+        public async Task<IActionResult> GetUserByEmail(string emailAddress)
         {
-            var users = _serviceManager.UserService.SelectAll();
+            var user = await _serviceManager.UserService.SelectByEmail(emailAddress);
 
-            return Ok(users);
+            return Ok(user);
         }
     }
 }

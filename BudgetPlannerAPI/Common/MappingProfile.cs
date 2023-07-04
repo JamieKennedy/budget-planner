@@ -14,7 +14,10 @@ namespace Common
         public MappingProfile()
         {
             // User
-            CreateMap<CreateUserDto, User>();
+            CreateMap<CreateUserDto, User>()
+                .ForMember(user => user.UserName,
+                    opt => opt.MapFrom(userRegistrationDto => userRegistrationDto.Email));
+            CreateMap<User, UserDto>();
 
             // Savings
             CreateMap<CreateSavingsDto, Savings>();

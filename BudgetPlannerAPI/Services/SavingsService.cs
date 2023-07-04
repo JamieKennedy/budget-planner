@@ -5,6 +5,7 @@ using Common.Exceptions.Savings;
 using Common.Exceptions.User;
 using Common.Models;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 using Repository.Contracts;
@@ -18,18 +19,20 @@ namespace Services
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IRepositoryManager _repositoryManager;
+        private readonly UserManager<User> _userManager;
 
-        public SavingsService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager)
+        public SavingsService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
         {
             _configuration = configuration;
             _mapper = mapper;
             _repositoryManager = repositoryManager;
+            _userManager = userManager;
         }
 
-        public SavingsDto CreateSavings(long userId, CreateSavingsDto createSavingsDto)
+        public async Task<SavingsDto> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto)
         {
             // Check user exists
-            _ = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(createSavingsDto.UserId);
+            _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(createSavingsDto.UserId);
 
             var savingsModel = _mapper.Map<Savings>(createSavingsDto);
 
@@ -41,7 +44,7 @@ namespace Services
             return savingsDto;
         }
 
-        public SavingsDto SelectById(long savingsId)
+        public SavingsDto SelectById(Guid savingsId)
         {
             var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
             savings.SavingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savings.SavingsId);

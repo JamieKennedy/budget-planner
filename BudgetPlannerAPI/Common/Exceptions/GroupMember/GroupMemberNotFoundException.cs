@@ -4,7 +4,7 @@ namespace Common.Exceptions.GroupMember
 {
     public class GroupMemberNotFoundException : NotFoundException
     {
-        public GroupMemberNotFoundException(long groupMemberId) : base($"No group member found with GroupMemeberId: {groupMemberId}")
+        public GroupMemberNotFoundException(Guid groupMemberId) : base($"No group member found with GroupMemeberId: {groupMemberId}")
         {
         }
     }

@@ -5,6 +5,7 @@ using Common.Exceptions.Group;
 using Common.Exceptions.User;
 using Common.Models;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 using Repository.Contracts;
@@ -18,17 +19,19 @@ namespace Services
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IRepositoryManager _repositoryManager;
+        private readonly UserManager<User> _userManager;
 
-        public GroupService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager)
+        public GroupService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
         {
             _configuration = configuration;
             _mapper = mapper;
             _repositoryManager = repositoryManager;
+            _userManager = userManager;
         }
 
-        public GroupDto CreateGroup(long userId, CreateGroupDto createGroupDto)
+        public async Task<GroupDto> CreateGroup(Guid userId, CreateGroupDto createGroupDto)
         {
-            _ = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(userId);
+            _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
             var groupModel = _mapper.Map<Group>(createGroupDto);
             groupModel.GroupOwnerId = userId;
 
@@ -40,7 +43,7 @@ namespace Services
             return groupDto;
         }
 
-        public GroupDto SelectById(long groupId, bool trackChanges = false)
+        public GroupDto SelectById(Guid groupId, bool trackChanges = false)
         {
             var group = _repositoryManager.Group.SelectById(groupId, trackChanges) ?? throw new GroupNotFoundException(groupId);
             var groupDto = _mapper.Map<GroupDto>(group);

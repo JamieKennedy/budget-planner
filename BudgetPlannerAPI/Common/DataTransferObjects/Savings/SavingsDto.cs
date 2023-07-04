@@ -7,9 +7,9 @@ namespace Common.DataTransferObjects.Savings
     public class SavingsDto
     {
         [JsonProperty]
-        public long SavingsId { get; set; }
+        public Guid SavingsId { get; set; }
         [JsonProperty]
-        public long UserId { get; set; }
+        public Guid UserId { get; set; }
         [JsonProperty]
         public string Name { get; set; } = string.Empty;
         [JsonProperty]

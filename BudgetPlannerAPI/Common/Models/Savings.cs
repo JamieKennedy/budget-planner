@@ -6,9 +6,9 @@ namespace Common.Models
     public class Savings
     {
         [Key]
-        public long SavingsId { get; set; }
+        public Guid SavingsId { get; set; }
         [ForeignKey(nameof(Models.User))]
-        public long UserId { get; set; }
+        public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         [Column(TypeName = "decimal(18,2)")]

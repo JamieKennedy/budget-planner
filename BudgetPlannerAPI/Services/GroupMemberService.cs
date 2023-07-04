@@ -26,7 +26,7 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public GroupMemberDto CreateGroupMember(long groupId, CreateGroupMemberDto createGroupMemberDto)
+        public GroupMemberDto CreateGroupMember(Guid groupId, CreateGroupMemberDto createGroupMemberDto)
         {
             var group = _repositoryManager.Group.SelectById(groupId) ?? throw new GroupNotFoundException(groupId);
             var groupMemberModel = _mapper.Map<GroupMember>(createGroupMemberDto);
@@ -40,7 +40,7 @@ namespace Services
             return groupMemberDto;
         }
 
-        public IEnumerable<GroupMemberDto> SelectByGroupId(long groupId, bool trackChanges = false)
+        public IEnumerable<GroupMemberDto> SelectByGroupId(Guid groupId, bool trackChanges = false)
         {
             // Check group exists 
             _ = _repositoryManager.Group.SelectById(groupId) ?? throw new GroupNotFoundException(groupId);
@@ -51,7 +51,7 @@ namespace Services
             return groupDtos;
         }
 
-        public GroupMemberDto SelectById(long groupMemberId, bool trackChanges = false)
+        public GroupMemberDto SelectById(Guid groupMemberId, bool trackChanges = false)
         {
             var groupMember = _repositoryManager.GroupMember.SelectById(groupMemberId) ?? throw new GroupMemberNotFoundException(groupMemberId);
             var groupMemberDto = _mapper.Map<GroupMemberDto>(groupMember);

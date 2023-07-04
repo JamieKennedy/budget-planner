@@ -15,12 +15,12 @@ namespace Repository
             return Create(member);
         }
 
-        public IEnumerable<GroupMember> SelectByGroupId(long groupId, bool trackChanges = false)
+        public IEnumerable<GroupMember> SelectByGroupId(Guid groupId, bool trackChanges = false)
         {
             return FindByCondition(groupMember => groupMember.GroupId == groupId, trackChanges);
         }
 
-        public GroupMember? SelectById(long groupMemberId, bool trackChanges = false)
+        public GroupMember? SelectById(Guid groupMemberId, bool trackChanges = false)
         {
             return FindByCondition(groupMember => groupMember.GroupMemberId == groupMemberId, trackChanges).FirstOrDefault();
         }

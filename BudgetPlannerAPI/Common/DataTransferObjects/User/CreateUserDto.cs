@@ -1,12 +1,8 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
-
-namespace Common.DataTransferObjects.User
+﻿namespace Common.DataTransferObjects.User
 {
     public class CreateUserDto
     {
-        [Required]
-        public string ClerkId { get; set; } = string.Empty;
+        public required string Email { get; set; }
+        public required string Password { get; set; }
     }
 }

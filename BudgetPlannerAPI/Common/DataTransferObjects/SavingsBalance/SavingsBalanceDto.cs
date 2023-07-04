@@ -5,9 +5,9 @@ namespace Common.DataTransferObjects.SavingsBalance
     public class SavingsBalanceDto
     {
         [JsonProperty]
-        public long SavingsBalanceId { get; set; }
+        public Guid SavingsBalanceId { get; set; }
         [JsonProperty]
-        public long SavingsId { get; set; }
+        public Guid SavingsId { get; set; }
         [JsonProperty]
         public decimal Balance { get; set; }
 

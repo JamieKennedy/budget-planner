@@ -18,15 +18,15 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = nameof(CreateSavings))]
-        public IActionResult CreateSavings(long userId, [FromBody] CreateSavingsDto createSavingsDto)
+        public async Task<IActionResult> CreateSavings(Guid userId, [FromBody] CreateSavingsDto createSavingsDto)
         {
-            var savings = _serviceManager.SavingsService.CreateSavings(userId, createSavingsDto);
+            var savings = await _serviceManager.SavingsService.CreateSavings(userId, createSavingsDto);
 
             return CreatedAtRoute(nameof(GetSavings), new { savingsId = savings.SavingsId }, savings);
         }
 
         [HttpGet("{savingsId}", Name = nameof(GetSavings))]
-        public IActionResult GetSavings(long savingsId)
+        public IActionResult GetSavings(Guid savingsId)
         {
             var savings = _serviceManager.SavingsService.SelectById(savingsId);
 

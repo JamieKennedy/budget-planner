@@ -2,7 +2,7 @@
 
 public interface IRepositoryManager
 {
-    IUserRepository User { get; }
+    ITokenRepository Tokens { get; }
     ISavingsRepository Savings { get; }
     ISavingsBalanceRepository SavingsBalance { get; }
     IGroupRepository Group { get; }

@@ -1,12 +1,13 @@
 ﻿using Common.DataTransferObjects.User;
-using Common.Models;
+
+using Microsoft.AspNetCore.Identity;
 
 namespace Services.Contracts
 {
     public interface IUserService
     {
-        User CreateUser(CreateUserDto createUserDto);
-        User SelectById(long userId);
-        IEnumerable<User> SelectAll();
+        Task<IdentityResult> CreateUser(CreateUserDto createUserDto);
+        Task<UserDto> SelectById(Guid userId);
+        Task<UserDto> SelectByEmail(string emailAddress);
     }
 }

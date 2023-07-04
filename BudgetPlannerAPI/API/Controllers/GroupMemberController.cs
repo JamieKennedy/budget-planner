@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = nameof(CreateGroupMember))]
-        public IActionResult CreateGroupMember(long groupId, [FromBody] CreateGroupMemberDto createGroupMemberDto)
+        public IActionResult CreateGroupMember(Guid groupId, [FromBody] CreateGroupMemberDto createGroupMemberDto)
         {
             var groupMember = _serviceManager.GroupMemberService.CreateGroupMember(groupId, createGroupMemberDto);
 
@@ -27,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{groupMemberId}", Name = nameof(GetGroupMember))]
-        public IActionResult GetGroupMember(long groupId, long groupMemberId)
+        public IActionResult GetGroupMember(Guid groupId, Guid groupMemberId)
         {
             var groupMember = _serviceManager.GroupMemberService.SelectById(groupMemberId);
 
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpGet(Name = nameof(GetGroupMembersByGroupId))]
-        public IActionResult GetGroupMembersByGroupId(long groupId)
+        public IActionResult GetGroupMembersByGroupId(Guid groupId)
         {
             var groupMembers = _serviceManager.GroupMemberService.SelectByGroupId(groupId);
 

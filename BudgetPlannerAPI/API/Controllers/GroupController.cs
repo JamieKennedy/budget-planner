@@ -18,15 +18,15 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = nameof(CreateGroup))]
-        public IActionResult CreateGroup(long userId, CreateGroupDto createGroupDto)
+        public async Task<IActionResult> CreateGroup(Guid userId, CreateGroupDto createGroupDto)
         {
-            var group = _serviceManager.GroupService.CreateGroup(userId, createGroupDto);
+            var group = await _serviceManager.GroupService.CreateGroup(userId, createGroupDto);
 
             return CreatedAtRoute(nameof(GetGroup), new { userId, group.GroupId }, group);
         }
 
         [HttpGet("{groupId}", Name = nameof(GetGroup))]
-        public IActionResult GetGroup(long groupId)
+        public IActionResult GetGroup(Guid groupId)
         {
             var group = _serviceManager.GroupService.SelectById(groupId);
 

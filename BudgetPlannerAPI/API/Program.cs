@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Middleware;
+
 using Common;
 using Common.Constants;
 
@@ -12,6 +13,15 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 
 // Logger
 builder.Services.ConfigureLoggerManager();
+
+
+
+// Identity
+builder.Services.ConfigureIdentity();
+
+// Auth
+builder.Services.AddAuthentication();
+builder.Services.ConfigureJwt(builder.Configuration);
 
 // Managers
 builder.Services.ConfigureRepositoryManager();

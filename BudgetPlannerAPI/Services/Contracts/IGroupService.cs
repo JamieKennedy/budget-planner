@@ -4,7 +4,7 @@ namespace Services.Contracts
 {
     public interface IGroupService
     {
-        GroupDto CreateGroup(long userId, CreateGroupDto createGroupDto);
-        GroupDto SelectById(long groupId, bool trackChanges = false);
+        Task<GroupDto> CreateGroup(Guid userId, CreateGroupDto createGroupDto);
+        GroupDto SelectById(Guid groupId, bool trackChanges = false);
     }
 }

@@ -26,7 +26,7 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public SavingsBalanceDto CreateSavingsBalance(long savingsId, CreateSavingsBalanceDto createSavingsBalanceDto)
+        public SavingsBalanceDto CreateSavingsBalance(Guid savingsId, CreateSavingsBalanceDto createSavingsBalanceDto)
         {
             // check savings exists
             _ = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
@@ -42,14 +42,14 @@ namespace Services
             return savingsBalanceDto;
         }
 
-        public void DeleteSavingsBalance(long savingsBalanceId)
+        public void DeleteSavingsBalance(Guid savingsBalanceId)
         {
             var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId) ?? throw new SavingsBalanceNotFoundException(savingsBalanceId);
             _repositoryManager.SavingsBalance.DeleteSavingsBalance(savingsBalance);
             _repositoryManager.Save();
         }
 
-        public SavingsBalanceDto SelectById(long savingsBalanceId, bool trackChanges = false)
+        public SavingsBalanceDto SelectById(Guid savingsBalanceId, bool trackChanges = false)
         {
             var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId, trackChanges) ?? throw new SavingsBalanceNotFoundException(savingsBalanceId);
             var savingsBalanceDto = _mapper.Map<SavingsBalanceDto>(savingsBalance);
@@ -57,7 +57,7 @@ namespace Services
             return savingsBalanceDto;
         }
 
-        public IEnumerable<SavingsBalanceDto> SelectBySavingsId(long savingsId, bool trackChanges = false)
+        public IEnumerable<SavingsBalanceDto> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
         {
             var savingsBalancesDto = new List<SavingsBalanceDto>();
             var savingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savingsId, trackChanges);

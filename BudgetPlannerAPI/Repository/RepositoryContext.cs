@@ -1,24 +1,18 @@
 ﻿using Common.Models;
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
-public class RepositoryContext : DbContext
+public class RepositoryContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public RepositoryContext(DbContextOptions options) : base(options) { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
 
-        // Define unique index for user based on ClerkId
-        modelBuilder.Entity<User>()
-            .HasIndex(user => user.ClerkId)
-            .IsUnique();
-    }
 
-    public DbSet<User>? Users { get; set; }
+    public DbSet<Token>? Tokens { get; set; }
     public DbSet<Savings>? Savings { get; set; }
     public DbSet<SavingsBalance>? SavingsBalance { get; set; }
     public DbSet<Group>? Groups { get; set; }

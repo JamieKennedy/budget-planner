@@ -18,12 +18,12 @@ namespace Repository
             Delete(savingsBalanceModel);
         }
 
-        public SavingsBalance? SelectById(long savingsBalanceId, bool trackChanges = false)
+        public SavingsBalance? SelectById(Guid savingsBalanceId, bool trackChanges = false)
         {
             return FindByCondition(savingsBalance => savingsBalance.SavingsBalanceId == savingsBalanceId, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<SavingsBalance> SelectBySavingsId(long savingsId, bool trackChanges = false)
+        public IEnumerable<SavingsBalance> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
         {
             return FindByCondition(savingsBalance => savingsBalance.SavingsId == savingsId, trackChanges);
         }

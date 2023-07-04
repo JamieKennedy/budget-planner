@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Common.Models
 {
-    public class User
+    public class User : IdentityUser<Guid>
     {
-        [Key]
-        public long UserId { get; set; }
-        public string? ClerkId { get; set; }
     }
 }

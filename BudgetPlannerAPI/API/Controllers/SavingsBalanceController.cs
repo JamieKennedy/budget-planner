@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost(Name = nameof(CreateSavingsBalance))]
-        public IActionResult CreateSavingsBalance(long savingsId, [FromBody] CreateSavingsBalanceDto createSavingsBalanceDto)
+        public IActionResult CreateSavingsBalance(Guid savingsId, [FromBody] CreateSavingsBalanceDto createSavingsBalanceDto)
         {
             var savingsBalance = _serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
 
@@ -27,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{savingsBalanceId}", Name = nameof(GetSavingsBalanceById))]
-        public IActionResult GetSavingsBalanceById(long savingsId, long savingsBalanceId)
+        public IActionResult GetSavingsBalanceById(Guid savingsId, Guid savingsBalanceId)
         {
             var savingsBalance = _serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
 
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpGet(Name = nameof(GetSavingsBalanceBySavingsId))]
-        public IActionResult GetSavingsBalanceBySavingsId(long savingsId)
+        public IActionResult GetSavingsBalanceBySavingsId(Guid savingsId)
         {
             var savingsBalances = _serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
 

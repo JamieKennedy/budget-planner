@@ -13,7 +13,7 @@ namespace Repository
             return Create(savings);
         }
 
-        public Savings? SelectById(long savingsId, bool trackChanges = false)
+        public Savings? SelectById(Guid savingsId, bool trackChanges = false)
         {
             return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).FirstOrDefault();
         }

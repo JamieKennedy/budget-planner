@@ -6,9 +6,9 @@ namespace Common.Models
     public class GroupMember
     {
         [Key]
-        public long GroupMemberId { get; set; }
+        public Guid GroupMemberId { get; set; }
         [ForeignKey(nameof(Group))]
-        public long GroupId { get; set; }
+        public Guid GroupId { get; set; }
         public Group? Group { get; set; }
         public string Name { get; set; } = string.Empty;
     }

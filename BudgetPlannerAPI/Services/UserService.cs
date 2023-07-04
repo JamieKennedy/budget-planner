@@ -4,9 +4,8 @@ using Common.DataTransferObjects.User;
 using Common.Exceptions.User;
 using Common.Models;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-
-using Repository.Contracts;
 
 using Services.Contracts;
 
@@ -16,34 +15,38 @@ namespace Services
     {
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        private readonly IRepositoryManager _repositoryManager;
+        private readonly UserManager<User> _userManager;
 
-        public UserService(IConfiguration configuration, IMapper mapper, IRepositoryManager repositoryManager)
+        public UserService(IConfiguration configuration, IMapper mapper, UserManager<User> userManager)
         {
             _configuration = configuration;
             _mapper = mapper;
-            _repositoryManager = repositoryManager;
+            _userManager = userManager;
         }
 
-        public User CreateUser(CreateUserDto createUserDto)
+        public async Task<IdentityResult> CreateUser(CreateUserDto createUserDto)
         {
             var userModel = _mapper.Map<User>(createUserDto);
 
-            var user = _repositoryManager.User.CreateUser(userModel);
-            _repositoryManager.Save();
+            var result = await _userManager.CreateAsync(userModel, createUserDto.Password);
 
-            return user;
+            return result;
         }
 
-        public IEnumerable<User> SelectAll()
+        public async Task<UserDto> SelectByEmail(string emailAddress)
         {
-            return _repositoryManager.User.SelectAll(false);
+            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
         }
 
-        public User SelectById(long userId)
+        public async Task<UserDto> SelectById(Guid userId)
         {
-            var user = _repositoryManager.User.SelectById(userId) ?? throw new UserNotFoundException(userId);
-            return user;
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
         }
     }
 }
