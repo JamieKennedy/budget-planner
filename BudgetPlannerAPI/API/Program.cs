@@ -14,7 +14,8 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 // Logger
 builder.Services.ConfigureLoggerManager();
 
-
+// Cors
+builder.Services.ConfigureCorsPolicy(builder.Configuration);
 
 // Identity
 builder.Services.ConfigureIdentity();

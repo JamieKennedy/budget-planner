@@ -1,9 +1,7 @@
-import { SignOutButton } from "@clerk/clerk-react";
-
 const Dashboard = () => {
     return (
         <div>
-            <SignOutButton />
+            <h1>Dashboard</h1>
         </div>
     );
 };

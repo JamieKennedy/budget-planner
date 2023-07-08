@@ -46,7 +46,9 @@ namespace API.Controllers
             Response.Cookies.Append("AuthCookie", JsonConvert.SerializeObject(authCookie), new CookieOptions()
             {
                 Expires = userAuthenticationDto.KeepLoggedIn ? DateTimeOffset.Now.AddDays(int.Parse(refreshExpiry)) : null,
-                HttpOnly = true
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true
             });
 
             return Ok(tokenDto.AccessToken);
@@ -78,13 +80,32 @@ namespace API.Controllers
                     Response.Cookies.Append("AuthCookie", JsonConvert.SerializeObject(authCookie), new CookieOptions()
                     {
                         Expires = authCookie.KeepLoggedIn ? DateTimeOffset.Now.AddDays(int.Parse(refreshExpiry)) : null,
-                        HttpOnly = true
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.None,
+                        Secure = true
                     });
 
                     return Ok(newToken.AccessToken);
                 }
             }
             return Unauthorized("Invalid Refresh Token");
+        }
+
+        [HttpPost("Logout", Name = nameof(Logout))]
+        public IActionResult Logout()
+        {
+            if (Request.Cookies.TryGetValue("AuthCookie", out var authCookieString))
+            {
+                Response.Cookies.Append("AuthCookie", authCookieString, new CookieOptions()
+                {
+                    Expires = DateTimeOffset.MinValue,
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Secure = true
+                });
+            }
+
+            return Ok();
         }
     }
 }
