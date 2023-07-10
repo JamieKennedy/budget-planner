@@ -7,7 +7,7 @@ import { TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
 import SavingsBalanceAddForm from "./SavingsBalnceAddForm";
 
 interface ISavingsItemProps {
-    addBalance: (savingsId: string, newBalance: TSavingsBalanceCreate) => void;
+    addBalance: (savingsId: string, newBalance: TSavingsBalanceCreate) => Promise<void>;
     item: TSavings;
 }
 
@@ -26,9 +26,9 @@ const SavingsItem = ({ item, addBalance }: ISavingsItemProps) => {
 
     const addNewBalance = useCallback(
         async (newBalance: TSavingsBalanceCreate) => {
-            addBalance(item.savingsId, newBalance);
-
-            setAddingBalance(false);
+            addBalance(item.savingsId, newBalance).then(() => {
+                setAddingBalance(false);
+            });
         },
         [addBalance, item.savingsId]
     );
@@ -45,7 +45,7 @@ const SavingsItem = ({ item, addBalance }: ISavingsItemProps) => {
         <>
             {addingBalance && (
                 <Modal closeFn={() => setAddingBalance(false)}>
-                    <SavingsBalanceAddForm addBalance={addNewBalance} />
+                    <SavingsBalanceAddForm addBalance={addNewBalance} closeFn={() => setAddingBalance(false)} />
                 </Modal>
             )}
             <div className='w-full min-h-fit rounded-md border-2 border-gray-300 my-2 shadow-md  items-center px-5 '>

@@ -7,9 +7,9 @@ interface IFormErrorMessageProps {
 
 const FormErrorMessage: FunctionComponent<IFormErrorMessageProps> = ({ message }: IFormErrorMessageProps) => {
     return (
-        <div className='inline-flex items-center text-red-200'>
+        <div className='inline-flex items-center text-red-600'>
             <BiError className='mr-1' />{" "}
-            <p>
+            <p className='font-semibold'>
                 <span role='alert'>{message}</span>
             </p>
         </div>

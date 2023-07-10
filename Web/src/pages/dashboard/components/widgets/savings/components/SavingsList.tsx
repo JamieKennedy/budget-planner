@@ -3,7 +3,7 @@ import { TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
 import SavingsItem from "./SavingsItem";
 
 interface ISavingsListProps {
-    addBalance: (savingsId: string, newBalance: TSavingsBalanceCreate) => void;
+    addBalance: (savingsId: string, newBalance: TSavingsBalanceCreate) => Promise<void>;
     items: TSavings[] | null;
 }
 
