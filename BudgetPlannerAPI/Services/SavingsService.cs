@@ -32,9 +32,10 @@ namespace Services
         public async Task<SavingsDto> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto)
         {
             // Check user exists
-            _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(createSavingsDto.UserId);
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(createSavingsDto.UserId);
 
             var savingsModel = _mapper.Map<Savings>(createSavingsDto);
+            savingsModel.UserId = user.Id;
 
             var savings = _repositoryManager.Savings.CreateSavings(savingsModel);
             _repositoryManager.Save();
@@ -52,6 +53,19 @@ namespace Services
             var savingsDto = _mapper.Map<SavingsDto>(savings);
 
             return savingsDto;
+        }
+
+        public async Task<IEnumerable<SavingsDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) throw new UserNotFoundException(userId);
+
+            var savings = _repositoryManager.Savings.SelectByUserId(user.Id, trackChanges);
+
+            var savingsDtos = _mapper.Map<IEnumerable<SavingsDto>>(savings) ?? Enumerable.Empty<SavingsDto>();
+
+            return savingsDtos;
         }
     }
 }

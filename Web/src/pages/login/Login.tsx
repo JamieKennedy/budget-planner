@@ -3,23 +3,29 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Authentication } from "../../api/Auth";
+import { User } from "../../api/User";
 import FormErrorMessage from "../../components/misc/ui/FormErrorMessage";
 import FormSubmitButton from "../../components/misc/ui/FormSubmitButton";
 import { NavigationConst } from "../../constants/NavigationConst";
 import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
-import { AuthorizeRequest } from "../../types/Api";
+import useAppStore from "../../state/Store";
+import { TAuthorizeRequest } from "../../types/Api";
 import { FormState } from "../../types/Enum";
+import { TUser } from "../../types/User";
+import { AuthUtils } from "../../utils/AuthUtils";
 
 const Login = () => {
     const [formState, setFormState] = useState<FormState>(FormState.Default);
     const [loginError, setLoginError] = useState<string | null>(null);
-    const [login] = useApi<string, AuthorizeRequest>(Authentication.Login, false, true);
+    const [login] = useApi<string, TAuthorizeRequest>(Authentication.Login, false, true);
+    const [getUser] = useApi<TUser, string>(User.GetUserById, true);
     const [, setAccessToken] = useAuth();
+    const [setUser] = useAppStore((appState) => [appState.setUser]);
     const navigate = useNavigate();
 
     const onSubmit = useCallback(
-        async (data: AuthorizeRequest) => {
+        async (data: TAuthorizeRequest) => {
             setFormState(FormState.Pending);
 
             const [accessToken, loginError] = await login({
@@ -44,17 +50,30 @@ const Login = () => {
             }
 
             setAccessToken(accessToken);
+            
+
+            const userId = AuthUtils.getTokenPayload(accessToken).Id;
+
+            const [user, userError] = await getUser(userId);
+
+            if (userError) {
+                setLoginError("Unable to retrieve the user");
+                setFormState(FormState.Default);
+                return;
+            }
+
+            setUser(user);
             setFormState(FormState.Default);
             navigate(NavigationConst.Dashboard);
         },
-        [login, navigate, setAccessToken]
+        [getUser, login, navigate, setAccessToken, setUser]
     );
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<AuthorizeRequest>();
+    } = useForm<TAuthorizeRequest>();
 
     return (
         <div className='flex min-h-screen flex-1 bg-gray-900'>

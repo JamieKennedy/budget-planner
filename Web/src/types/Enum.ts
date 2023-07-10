@@ -9,3 +9,9 @@ export enum AuthState {
     Failure,
     Pending,
 }
+
+export enum PageState {
+    Loading,
+    Loaded,
+    AuthError,
+}

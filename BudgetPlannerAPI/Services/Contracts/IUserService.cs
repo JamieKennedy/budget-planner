@@ -9,5 +9,6 @@ namespace Services.Contracts
         Task<IdentityResult> CreateUser(CreateUserDto createUserDto);
         Task<UserDto> SelectById(Guid userId);
         Task<UserDto> SelectByEmail(string emailAddress);
+        List<UserDto> GetAll();
     }
 }

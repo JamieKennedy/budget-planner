@@ -17,6 +17,8 @@ namespace Common.DataTransferObjects.Savings
         [JsonProperty]
         public decimal Goal { get; set; }
         [JsonProperty]
+        public DateTime? GoalDate { get; set; }
+        [JsonProperty]
         public DateTime LastModified { get; set; }
         [JsonProperty]
         public DateTime Created { get; set; }

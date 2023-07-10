@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from "axios";
 
-import { ErrorResponse } from "../types/Api";
+import { z } from "zod";
+import { TErrorResponse } from "../types/Api";
 import { HttpClientUtils } from "../utils/HttpClientUtils";
 
 class HttpClient {
@@ -10,27 +11,47 @@ class HttpClient {
         this._client = axios.create(config);
     }
 
-    public get = async <T>(url: string, config?: AxiosRequestConfig): Promise<T | ErrorResponse> => {
+    public get = async <T>(url: string, schema?: z.ZodType<T>, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
-            const response: AxiosResponse<T> = await this._client.get(url, config);
-            return response.data;
+            const response: AxiosResponse = await this._client.get(url, config);
+            if (schema) {
+                const result = schema.safeParse(response.data);
+
+                if (result.success) {
+                    return result.data;
+                }
+
+                console.log(result.error);
+                throw new Error(result.error.toString());
+            }
+            return response.data as T;
         } catch (error) {
             return this.handleError(error);
         }
     };
 
-    public post = async <T, V>(url: string, data?: V, config?: AxiosRequestConfig): Promise<T | ErrorResponse> => {
+    public post = async <T, V>(url: string, data?: V, schema?: z.ZodType<T>, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.post(url, data, config);
-            return response.data;
+            if (schema) {
+                const result = schema.safeParse(response.data);
+
+                if (result.success) {
+                    return result.data;
+                }
+
+                console.log(result.error);
+                throw new Error(result.error.toString());
+            }
+            return response.data as T;
         } catch (error) {
             return this.handleError(error);
         }
     };
 
-    public patch = async <T, V>(url: string, data: V, config?: AxiosRequestConfig): Promise<T | ErrorResponse> => {
+    public patch = async <T, V>(url: string, data: V, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.patch(url, data, config);
@@ -40,7 +61,7 @@ class HttpClient {
         }
     };
 
-    public delete = async <T>(url: string, config?: AxiosRequestConfig): Promise<T | ErrorResponse> => {
+    public delete = async <T>(url: string, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.delete(url, config);
@@ -50,12 +71,12 @@ class HttpClient {
         }
     };
 
-    private handleError = (error: unknown): ErrorResponse => {
+    private handleError = (error: unknown): TErrorResponse => {
         if (isAxiosError(error)) {
             return {
                 StatusCode: error.response?.status ?? 500,
                 Message: error.response?.data?.[0]?.Message ?? error.message ?? "Something went wrong",
-            } as ErrorResponse;
+            } as TErrorResponse;
         }
 
         if (HttpClientUtils.IsErrorResponse(error)) {

@@ -13,6 +13,7 @@ namespace Common.DataTransferObjects.Savings
         public string Description { get; set; } = string.Empty;
         [Required]
         public decimal Goal { get; set; }
+        public DateTime? GoalDate { get; set; }
         public IEnumerable<CreateSavingsBalanceDto> SavingsBalances { get; set; } = new List<CreateSavingsBalanceDto>();
     }
 }

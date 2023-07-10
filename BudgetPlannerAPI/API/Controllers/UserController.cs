@@ -40,12 +40,20 @@ namespace API.Controllers
             return Ok(user);
         }
 
-        [HttpGet("{emailAddress}", Name = nameof(GetUserByEmail))]
+        [HttpGet("email/{emailAddress}", Name = nameof(GetUserByEmail))]
         public async Task<IActionResult> GetUserByEmail(string emailAddress)
         {
             var user = await _serviceManager.UserService.SelectByEmail(emailAddress);
 
             return Ok(user);
+        }
+
+        [HttpGet(Name = nameof(GetUsers))]
+        public IActionResult GetUsers()
+        {
+            var users = _serviceManager.UserService.GetAll();
+
+            return Ok(users);
         }
     }
 }

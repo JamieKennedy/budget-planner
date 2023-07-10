@@ -33,6 +33,15 @@ namespace Services
             return result;
         }
 
+        public List<UserDto> GetAll()
+        {
+            var users = _userManager.Users.ToList();
+
+            var userDtos = _mapper.Map<List<UserDto>>(users) ?? new List<UserDto>();
+
+            return userDtos;
+        }
+
         public async Task<UserDto> SelectByEmail(string emailAddress)
         {
             var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);

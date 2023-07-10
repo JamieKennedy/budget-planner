@@ -13,6 +13,7 @@ namespace Common.Models
         public string? Description { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Goal { get; set; }
+        public DateTime? GoalDate { get; set; }
         public DateTime LastModified { get; set; } = DateTime.Now;
         public DateTime Created { get; set; } = DateTime.Now;
 

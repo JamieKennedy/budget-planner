@@ -1,4 +1,4 @@
-import { ErrorResponse, ErrorResponseSchema } from "../types/Api";
+import { ErrorResponseSchema, TErrorResponse } from "../types/Api";
 
 import { AxiosRequestConfig } from "axios";
 import { apiResponse } from "../hooks/useApi";
@@ -27,10 +27,10 @@ export namespace HttpClientUtils {
      * set the error state and return undefined
      *
      * @template V
-     * @param {(V | ErrorResponse)} response
+     * @param {(V | TErrorResponse)} response
      * @return {*}
      */
-    export const HandleErrorResponse = <V>(response: V | ErrorResponse): apiResponse<V> => {
+    export const HandleErrorResponse = <V>(response: V | TErrorResponse): apiResponse<V> => {
         if (IsErrorResponse(response)) {
             return [undefined, response];
         }
@@ -44,7 +44,7 @@ export namespace HttpClientUtils {
      * @param {any} response
      * @return {boolean}  {response is ErrorResponse}
      */
-    export const IsErrorResponse = (response: unknown): response is ErrorResponse => {
+    export const IsErrorResponse = (response: unknown): response is TErrorResponse => {
         return ErrorResponseSchema.safeParse(response).success;
     };
 

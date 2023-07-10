@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export type AuthorizeRequest = z.infer<typeof AuthorizeRequestSchema>;
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
-export type TokenPair = z.infer<typeof TokenPairSchema>;
-export type TokenPayload = z.infer<typeof TokenPayloadSchema>;
+export type TAuthorizeRequest = z.infer<typeof AuthorizeRequestSchema>;
+export type TErrorResponse = z.infer<typeof ErrorResponseSchema>;
+export type TTokenPair = z.infer<typeof TokenPairSchema>;
+export type TTokenPayload = z.infer<typeof TokenPayloadSchema>;
 
 const AuthorizeRequestSchema = z.object({
     email: z.string().email(),
@@ -23,12 +23,9 @@ const TokenPairSchema = z.object({
 
 const TokenPayloadSchema = z.object({
     aud: z.string(),
-    customerGroupId: z.number(),
     exp: z.number(),
     iat: z.number(),
     iss: z.number(),
-    memberId: z.number(),
     nbf: z.number(),
-    siteId: z.number(),
-    userId: z.number(),
+    Id: z.string(),
 });

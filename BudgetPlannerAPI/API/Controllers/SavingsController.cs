@@ -22,13 +22,21 @@ namespace API.Controllers
         {
             var savings = await _serviceManager.SavingsService.CreateSavings(userId, createSavingsDto);
 
-            return CreatedAtRoute(nameof(GetSavings), new { savingsId = savings.SavingsId }, savings);
+            return CreatedAtRoute(nameof(GetSavings), new { userId, savings.SavingsId }, savings);
         }
 
         [HttpGet("{savingsId}", Name = nameof(GetSavings))]
         public IActionResult GetSavings(Guid savingsId)
         {
             var savings = _serviceManager.SavingsService.SelectById(savingsId);
+
+            return Ok(savings);
+        }
+
+        [HttpGet(Name = nameof(GetSavingsForUser))]
+        public async Task<IActionResult> GetSavingsForUser(Guid userId)
+        {
+            var savings = await _serviceManager.SavingsService.SelectByUserId(userId);
 
             return Ok(savings);
         }

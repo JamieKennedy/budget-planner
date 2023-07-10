@@ -9,4 +9,5 @@ export namespace NavigationConst {
     export const PostSignUp = "/post-sign-up";
 
     export const Dashboard = "/dashboard/";
+    export const Settings = "/settings/";
 }
