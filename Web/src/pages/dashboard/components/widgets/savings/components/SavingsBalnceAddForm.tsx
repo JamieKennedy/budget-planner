@@ -1,4 +1,3 @@
-import { CurrencyPoundIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { useCallback, useState } from "react";
 
 import { useForm } from "react-hook-form";
