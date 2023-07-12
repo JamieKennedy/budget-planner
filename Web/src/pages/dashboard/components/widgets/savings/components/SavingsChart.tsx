@@ -10,38 +10,20 @@ interface ISavingsChartProps {
 type TChartDataItem = {
     date: number;
     balance: number;
-    target: number | null;
 };
 
 const SavingsChart = ({ item }: ISavingsChartProps) => {
     const earliestDate = item.savingsBalances[item.savingsBalances.length - 1].created.getTime();
     const lastDate = item.goalDate ? item.goalDate.getTime() : Date.now();
 
-    const getTargetForDate = (date: Date): number => {
-        const gradient = item.goal / (lastDate - earliestDate);
-        const yIntercept = item.goal - gradient * lastDate;
-
-        // y = mx + c
-        const result = gradient * date.getTime() + yIntercept;
-        return Math.round(result * 100) / 100;
-    };
-
     const chartData: TChartDataItem[] = item.savingsBalances
         .map((i) => {
-            const dataPoint: TChartDataItem = {
+            return {
                 date: i.created.getTime(),
                 balance: i.balance,
-                target: getTargetForDate(i.created),
-            };
-
-            return dataPoint;
+            } as TChartDataItem;
         })
         .reverse();
-
-    const dateFormat = (value: Date): string => {
-        return moment(value).format("DD/MM/YY");
-    };
-    console.log(new Date("2023/07/11").getTime());
 
     return (
         <div className='w-full h-72 col-span-3 flex flex-col items-center p-5'>
@@ -50,7 +32,7 @@ const SavingsChart = ({ item }: ISavingsChartProps) => {
                     <CartesianGrid stroke='#ccc' />
                     <XAxis
                         dataKey='date'
-                        tickFormatter={dateFormat}
+                        tickFormatter={(value) => moment(value).format("DD/MM/YY")}
                         domain={[earliestDate, lastDate]}
                         type='number'
                         tickCount={10}
