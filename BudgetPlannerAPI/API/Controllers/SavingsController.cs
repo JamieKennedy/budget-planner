@@ -40,5 +40,13 @@ namespace API.Controllers
 
             return Ok(savings);
         }
+
+        [HttpDelete("{savingsId}", Name = nameof(DeleteSavings))]
+        public async Task<IActionResult> DeleteSavings(Guid userId, Guid SavingsId)
+        {
+            await _serviceManager.SavingsService.DeleteById(userId, SavingsId);
+
+            return Ok();
+        }
     }
 }

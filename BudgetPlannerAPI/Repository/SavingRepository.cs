@@ -15,6 +15,11 @@ namespace Repository
             return Create(savings);
         }
 
+        public void DeleteSavings(Savings savings)
+        {
+            Delete(savings);
+        }
+
         public Savings? SelectById(Guid savingsId, bool trackChanges = false)
         {
             return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).FirstOrDefault();

@@ -67,5 +67,19 @@ namespace Services
 
             return savingsDtos;
         }
+
+        public async Task DeleteById(Guid userId, Guid savingsId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) throw new UserNotFoundException(userId);
+
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+
+            if (savings is null) throw new SavingsNotFoundException(savingsId);
+
+            _repositoryManager.Savings.DeleteSavings(savings);
+            _repositoryManager.Save();
+        }
     }
 }

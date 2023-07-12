@@ -1,18 +1,30 @@
 import { useCallback, useState } from "react";
+import { SavingsBalanceSchema, TSavingsBalance, TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
 
 import { useForm } from "react-hook-form";
 import { BiPound } from "react-icons/bi";
+import { SavingsBalance } from "../../../../../../api/SavingsBalance";
 import FormErrorMessage from "../../../../../../components/misc/ui/FormErrorMessage";
 import FormSubmitButton from "../../../../../../components/misc/ui/FormSubmitButton";
+import useApi from "../../../../../../hooks/useApi";
 import { FormState } from "../../../../../../types/Enum";
-import { TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
+import { TSavings } from "../../../../../../types/Savings";
 
 interface ISavingsBalanceAddFormProps {
-    addBalance: (newBalance: TSavingsBalanceCreate) => void;
+    savingsData: TSavings[];
+    setSavingsData: React.Dispatch<React.SetStateAction<TSavings[] | null>>;
+    savingsId: string;
     closeFn: () => void;
 }
 
-const SavingsBalanceAddForm = ({ addBalance, closeFn }: ISavingsBalanceAddFormProps) => {
+const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn }: ISavingsBalanceAddFormProps) => {
+    const [createSavingsBalance] = useApi<
+        TSavingsBalance,
+        {
+            savingsId: string;
+            data: TSavingsBalanceCreate;
+        }
+    >(SavingsBalance.CreateSavingsBalnce, true);
     const [formState, setFormState] = useState<FormState>(FormState.Default);
 
     const {
@@ -25,11 +37,27 @@ const SavingsBalanceAddForm = ({ addBalance, closeFn }: ISavingsBalanceAddFormPr
         async (data: TSavingsBalanceCreate) => {
             setFormState(FormState.Pending);
 
-            addBalance(data);
+            const [balance, error] = await createSavingsBalance({ savingsId: savingsId, data: data }, SavingsBalanceSchema);
+            console.log(balance);
+
+            if (!error) {
+                if (savingsData) {
+                    setSavingsData(
+                        savingsData.map((item) => {
+                            if (item.savingsId !== savingsId) {
+                                return item;
+                            }
+
+                            return { ...item, savingsBalances: [...item.savingsBalances, balance] };
+                        })
+                    );
+                }
+            }
 
             setFormState(FormState.Default);
+            closeFn();
         },
-        [addBalance]
+        [closeFn, createSavingsBalance, savingsData, savingsId, setSavingsData]
     );
 
     return (

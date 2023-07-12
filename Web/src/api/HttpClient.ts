@@ -72,10 +72,11 @@ class HttpClient {
     };
 
     private handleError = (error: unknown): TErrorResponse => {
+        console.log(error);
         if (isAxiosError(error)) {
             return {
                 StatusCode: error.response?.status ?? 500,
-                Message: error.response?.data?.[0]?.Message ?? error.message ?? "Something went wrong",
+                Message: error.response?.data ?? error.message ?? "Something went wrong",
             } as TErrorResponse;
         }
 

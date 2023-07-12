@@ -1,19 +1,26 @@
 import { useCallback, useState } from "react";
 
+import { Savings } from "../../../../../../api/Savings";
 import ProgressBar from "../../../../../../components/misc/ui/ProgressBar";
 import Modal from "../../../../../../components/misc/ui/pageElements/Modal";
+import useApi from "../../../../../../hooks/useApi";
+import useAppStore from "../../../../../../state/Store";
 import { TSavings } from "../../../../../../types/Savings";
-import { TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
 import SavingsBalanceAddForm from "./SavingsBalnceAddForm";
+import SavingsChart from "./SavingsChart";
 
 interface ISavingsItemProps {
-    addBalance: (savingsId: string, newBalance: TSavingsBalanceCreate) => Promise<void>;
+    savingsData: TSavings[];
+    setSavingsData: React.Dispatch<React.SetStateAction<TSavings[] | null>>;
     item: TSavings;
 }
 
-const SavingsItem = ({ item, addBalance }: ISavingsItemProps) => {
+const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) => {
     const [expanded, setExpanded] = useState(false);
     const [addingBalance, setAddingBalance] = useState(false);
+    const [user, setError] = useAppStore((appState) => [appState.User, appState.setError]);
+
+    const [deleteSavings] = useApi<void, { userId: string; savingsId: string }>(Savings.Delete, true);
 
     const currentBalance: number =
         (item?.savingsBalances?.length ?? 0) === 0 ? 0 : item.savingsBalances.sort((a, b) => b.created.getTime() - a.created.getTime())[0]?.balance ?? 0;
@@ -24,28 +31,41 @@ const SavingsItem = ({ item, addBalance }: ISavingsItemProps) => {
         setAddingBalance(true);
     }, []);
 
-    const addNewBalance = useCallback(
-        async (newBalance: TSavingsBalanceCreate) => {
-            addBalance(item.savingsId, newBalance).then(() => {
-                setAddingBalance(false);
-            });
-        },
-        [addBalance, item.savingsId]
-    );
-
     const handleEdit = useCallback(async (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         e.stopPropagation();
     }, []);
 
-    const handleDelete = useCallback(async (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-        e.stopPropagation();
-    }, []);
+    const handleDelete = useCallback(
+        async (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+            e.stopPropagation();
+
+            if (user) {
+                const [, error] = await deleteSavings({
+                    userId: user?.id,
+                    savingsId: item.savingsId,
+                });
+
+                if (!error) {
+                    setSavingsData(savingsData.filter((stateItem) => stateItem.savingsId !== item.savingsId));
+                    return;
+                }
+
+                setError(error.Message);
+            }
+        },
+        [deleteSavings, item.savingsId, savingsData, setError, setSavingsData, user]
+    );
 
     return (
         <>
             {addingBalance && (
                 <Modal closeFn={() => setAddingBalance(false)}>
-                    <SavingsBalanceAddForm addBalance={addNewBalance} closeFn={() => setAddingBalance(false)} />
+                    <SavingsBalanceAddForm
+                        closeFn={() => setAddingBalance(false)}
+                        savingsId={item.savingsId}
+                        savingsData={savingsData}
+                        setSavingsData={setSavingsData}
+                    />
                 </Modal>
             )}
             <div className='w-full min-h-fit rounded-md border-2 border-gray-300 my-2 shadow-md  items-center px-5 '>
@@ -117,7 +137,7 @@ const SavingsItem = ({ item, addBalance }: ISavingsItemProps) => {
                     </div>
                 </div>
 
-                {expanded && <div className='w-full h-72 col-span-3'></div>}
+                {expanded && item.savingsBalances && item.savingsBalances.length > 0 && <SavingsChart item={item} />}
             </div>
         </>
     );
