@@ -8,5 +8,6 @@ namespace Services.Contracts
         SavingsDto SelectById(Guid savingsId);
         Task<IEnumerable<SavingsDto>> SelectByUserId(Guid userId, bool trackChanges = false);
         Task DeleteById(Guid userId, Guid savingsId);
+        Task<SavingsDto> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto);
     }
 }

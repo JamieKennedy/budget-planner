@@ -48,5 +48,13 @@ namespace API.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("{savingsId}", Name = nameof(PatchSavings))]
+        public async Task<IActionResult> PatchSavings(Guid userId, Guid savingsId, [FromBody] UpdateSavingsDto updateSavingsDto)
+        {
+            var updatedSavings = await _serviceManager.SavingsService.UpdateSavings(userId, savingsId, updateSavingsDto);
+
+            return Ok(updatedSavings);
+        }
     }
 }

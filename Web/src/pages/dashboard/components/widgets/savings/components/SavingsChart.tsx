@@ -26,9 +26,9 @@ const SavingsChart = ({ item }: ISavingsChartProps) => {
         .reverse();
 
     return (
-        <div className='w-full h-72 col-span-3 flex flex-col items-center p-5'>
+        <div className='w-full h-72 col-span-3 flex flex-col items-center pt-5'>
             <ResponsiveContainer width='100%' height='100%'>
-                <LineChart width={700} height={300} data={chartData} margin={{ bottom: 50 }}>
+                <LineChart width={700} height={300} data={chartData} margin={{ bottom: 10 }}>
                     <CartesianGrid stroke='#ccc' />
                     <XAxis
                         dataKey='date'

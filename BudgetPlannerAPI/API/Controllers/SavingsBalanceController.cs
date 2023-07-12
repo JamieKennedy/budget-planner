@@ -23,8 +23,6 @@ namespace API.Controllers
         {
             var savingsBalance = _serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
 
-            Thread.Sleep(2000);
-
             return CreatedAtRoute(nameof(GetSavingsBalanceById), new { savingsId, savingsBalance.SavingsBalanceId }, savingsBalance);
         }
 
@@ -44,6 +42,14 @@ namespace API.Controllers
             var savingsBalances = _serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
 
             return Ok(savingsBalances);
+        }
+
+        [HttpDelete("{savingsBalanceId}")]
+        public IActionResult DeleteSavingsBalance(Guid savingsBalanceId)
+        {
+            _serviceManager.SavingsBalanceService.DeleteSavingsBalance(savingsBalanceId);
+
+            return Ok();
         }
     }
 }

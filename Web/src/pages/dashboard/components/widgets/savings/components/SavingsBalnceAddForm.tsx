@@ -91,7 +91,7 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
                         <input
                             {...register("balance", {
                                 required: "balance is required",
-                                pattern: { value: new RegExp("^[1-9]\\d*([\\,\\.]\\d{2})?$"), message: "Invalid Balance" },
+                                pattern: { value: new RegExp("^[0-9]\\d*([\\,\\.]\\d{2})?$"), message: "Invalid Balance" },
                             })}
                             id='balance'
                             type='text'

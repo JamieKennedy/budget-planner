@@ -81,5 +81,28 @@ namespace Services
             _repositoryManager.Savings.DeleteSavings(savings);
             _repositoryManager.Save();
         }
+
+        public async Task<SavingsDto> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) throw new UserNotFoundException(userId);
+
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+
+            if (savings is null) throw new SavingsNotFoundException(savingsId);
+
+            // update properties if supplied
+            savings.Name = updateSavingsDto.Name is null ? savings.Name : updateSavingsDto.Name;
+            savings.Description = updateSavingsDto.Description is null ? savings.Description : updateSavingsDto.Description;
+            savings.Goal = updateSavingsDto.Goal is null ? savings.Goal : updateSavingsDto.Goal.Value;
+            savings.GoalDate = updateSavingsDto.GoalDate == DateTime.MinValue ? savings.GoalDate : updateSavingsDto.GoalDate;
+            savings.LastModified = DateTime.Now;
+
+            Savings updatedSavings = _repositoryManager.Savings.UpdateSavings(savings);
+            _repositoryManager.Save();
+
+            return _mapper.Map<SavingsDto>(updatedSavings);
+        }
     }
 }

@@ -13,5 +13,6 @@ export const Endpoint = {
     },
     SavingsBalance: {
         CreateSavingsBalance: (savingsId: string) => `/api/savings/${savingsId}/savingsbalance`,
+        DeleteSavingsBalance: (savingsId: string, savingsBalanceId: string) => `/api/savings/${savingsId}/savingsbalance/${savingsBalanceId}`,
     },
 };

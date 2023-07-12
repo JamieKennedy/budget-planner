@@ -20,4 +20,13 @@ export namespace SavingsBalance {
             schema
         );
     };
+
+    export const DeleteSavingsBalance = async (
+        httpClient: HttpClient,
+        deleteSavingsBalanceRequest: { savingsId: string; savingsBalanceId: string }
+    ): Promise<void | TErrorResponse> => {
+        await httpClient.delete(
+            Endpoint.SavingsBalance.DeleteSavingsBalance(deleteSavingsBalanceRequest.savingsId, deleteSavingsBalanceRequest.savingsBalanceId)
+        );
+    };
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+
+using Microsoft.EntityFrameworkCore;
 
 using Repository.Contracts;
-
-using System.Linq.Expressions;
 
 namespace Repository;
 
@@ -35,9 +35,11 @@ public class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     }
 
-    public void Update(T entity)
+    public T Update(T entity)
     {
         _repositoryContext.Set<T>().Update(entity);
+
+        return entity;
     }
 
     public void Delete(T entity)

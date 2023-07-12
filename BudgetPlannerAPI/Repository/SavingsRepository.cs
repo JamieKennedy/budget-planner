@@ -29,5 +29,10 @@ namespace Repository
         {
             return FindByCondition(saving => saving.UserId == userId, trackChanges).Include(x => x.SavingsBalances);
         }
+
+        public Savings UpdateSavings(Savings savings)
+        {
+            return Update(savings);
+        }
     }
 }

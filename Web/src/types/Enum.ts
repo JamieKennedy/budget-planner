@@ -15,3 +15,9 @@ export enum PageState {
     Loaded,
     AuthError,
 }
+
+export enum TrendDirection {
+    Up,
+    Down,
+    Level,
+}
