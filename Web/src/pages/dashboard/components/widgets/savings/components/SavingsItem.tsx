@@ -70,7 +70,7 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
                 </Modal>
             )}
             <div className='w-full min-h-fit rounded-md border-2 border-gray-300 my-2 shadow-md  items-center px-5 '>
-                <div className='grid grid-cols-3 items-center' onClick={() => (item.savingsBalances ? setExpanded(!expanded) : null)}>
+                <div className='grid grid-cols-3 items-center' onClick={() => (item.description ? setExpanded(!expanded) : null)}>
                     <div className='flex flex-row items-center h-10'>
                         <svg
                             xmlns='http://www.w3.org/2000/svg'
@@ -138,23 +138,28 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
                     </div>
                 </div>
 
-                {expanded && item.savingsBalances && item.savingsBalances.length > 0 && (
-                    <div>
-                        <SavingsChart item={item} />
-                        <h2 className='font-semibold'>Balance History</h2>
-                        <div className='max-h-60 overflow-y-scroll mb-5 font-semibold'>
-                            {item.savingsBalances.map((savingsBalance, index) => {
-                                return (
-                                    <SavingsBalanceItem
-                                        key={savingsBalance.savingsBalanceId}
-                                        item={savingsBalance}
-                                        savingsData={savingsData}
-                                        setSavingsData={setSavingsData}
-                                        prevBalance={index === item.savingsBalances.length - 1 ? 0 : item.savingsBalances[index + 1].balance}
-                                    />
-                                );
-                            })}
-                        </div>
+                {expanded && item.description && (
+                    <div className='pb-3'>
+                        {item.description && <p>{item.description}</p>}
+                        {item.savingsBalances && item.savingsBalances.length > 0 && (
+                            <>
+                                <SavingsChart item={item} />
+                                <h2 className='font-semibold'>Balance History</h2>
+                                <div className='max-h-60 overflow-y-scroll mb-5 font-semibold'>
+                                    {item.savingsBalances.map((savingsBalance, index) => {
+                                        return (
+                                            <SavingsBalanceItem
+                                                key={savingsBalance.savingsBalanceId}
+                                                item={savingsBalance}
+                                                savingsData={savingsData}
+                                                setSavingsData={setSavingsData}
+                                                prevBalance={index === item.savingsBalances.length - 1 ? 0 : item.savingsBalances[index + 1].balance}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
                     </div>
                 )}
             </div>

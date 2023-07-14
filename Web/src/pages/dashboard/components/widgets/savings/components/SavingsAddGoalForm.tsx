@@ -88,7 +88,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                 </button>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className='h-fit'>
+                <div className='h-fit pt-5'>
                     <div className='h-24'>
                         <label htmlFor='name' className='block text-sm font-medium leading-6 e'>
                             Name
@@ -105,6 +105,21 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                             />
                         </div>
                         {errors.name && errors.name.message && <FormErrorMessage message={errors.name.message} />}
+                    </div>
+                    <div className='h-24'>
+                        <label htmlFor='name' className='block text-sm font-medium leading-6 e'>
+                            Description
+                        </label>
+                        <div className='relative  rounded-md shadow-sm'>
+                            <input
+                                {...register("description")}
+                                id='description'
+                                type='text'
+                                className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                                aria-invalid={errors.description ? "true" : "false"}
+                            />
+                        </div>
+                        {errors.description && errors.description.message && <FormErrorMessage message={errors.description.message} />}
                     </div>
                     <div className='h-24'>
                         <label htmlFor='goal' className='block text-sm font-medium leading-6 e'>
