@@ -11,5 +11,6 @@ export const SavingsBalanceSchema = z.object({
 });
 
 export const SavingsBalanceCreateSchema = z.object({
-    balance: z.number(),
+    balance: z.coerce.number(),
+    created: z.coerce.date().optional(),
 });

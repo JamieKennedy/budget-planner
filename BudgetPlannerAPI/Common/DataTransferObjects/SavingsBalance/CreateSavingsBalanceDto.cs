@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Newtonsoft.Json;
+
 namespace Common.DataTransferObjects.SavingsBalance
 {
     public class CreateSavingsBalanceDto

@@ -56,6 +56,7 @@ if (corsPolicy is not null)
 }
 
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

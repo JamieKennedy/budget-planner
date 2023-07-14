@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { SavingsBalanceSchema, TSavingsBalance, TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
+import { SavingsBalanceCreateSchema, SavingsBalanceSchema, TSavingsBalance, TSavingsBalanceCreate } from "../../../../../../types/SavingsBalance";
 
 import { useForm } from "react-hook-form";
 import { BiPound } from "react-icons/bi";
@@ -37,25 +37,34 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
         async (data: TSavingsBalanceCreate) => {
             setFormState(FormState.Pending);
 
-            const [balance, error] = await createSavingsBalance({ savingsId: savingsId, data: data }, SavingsBalanceSchema);
-            console.log(balance);
-
-            if (!error) {
-                if (savingsData) {
-                    setSavingsData(
-                        savingsData.map((item) => {
-                            if (item.savingsId !== savingsId) {
-                                return item;
-                            }
-
-                            return { ...item, savingsBalances: [...item.savingsBalances, balance] };
-                        })
-                    );
-                }
+            if (!data.created) {
+                data.created = undefined;
             }
 
-            setFormState(FormState.Default);
-            closeFn();
+            const result = SavingsBalanceCreateSchema.safeParse(data);
+            console.log(result);
+
+            if (result.success) {
+                const [balance, error] = await createSavingsBalance({ savingsId: savingsId, data: result.data }, SavingsBalanceSchema);
+                console.log(balance);
+
+                if (!error) {
+                    if (savingsData) {
+                        setSavingsData(
+                            savingsData.map((item) => {
+                                if (item.savingsId !== savingsId) {
+                                    return item;
+                                }
+
+                                return { ...item, savingsBalances: [...item.savingsBalances, balance] };
+                            })
+                        );
+                    }
+                }
+
+                setFormState(FormState.Default);
+                closeFn();
+            }
         },
         [closeFn, createSavingsBalance, savingsData, savingsId, setSavingsData]
     );
@@ -68,7 +77,7 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
             }}
         >
             <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-xl font-semibold'>Latest Balance</h2>
+                <h2 className='text-xl font-semibold'>Add Balance</h2>
                 <button onClick={() => closeFn()}>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -83,25 +92,45 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
                 </button>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className='h-24'>
-                    <div className='relative mt-2 rounded-md shadow-sm'>
-                        <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-                            <BiPound className='h-5 w-5 text-gray-400' aria-hidden='true' />
+                <div className='h-fit'>
+                    <div className='h-24'>
+                        <label htmlFor='balance' className='block text-sm font-medium leading-6 e'>
+                            Amount
+                        </label>
+                        <div className='relative  rounded-md shadow-sm'>
+                            <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
+                                <BiPound className='h-5 w-5 text-gray-400' aria-hidden='true' />
+                            </div>
+                            <input
+                                {...register("balance", {
+                                    required: "balance is required",
+                                    pattern: { value: new RegExp("^[0-9]\\d*([\\,\\.]\\d{2})?$"), message: "Invalid Balance" },
+                                })}
+                                id='balance'
+                                type='text'
+                                className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                                aria-invalid={errors.balance ? "true" : "false"}
+                            />
                         </div>
-                        <input
-                            {...register("balance", {
-                                required: "balance is required",
-                                pattern: { value: new RegExp("^[0-9]\\d*([\\,\\.]\\d{2})?$"), message: "Invalid Balance" },
-                            })}
-                            id='balance'
-                            type='text'
-                            className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                            aria-invalid={errors.balance ? "true" : "false"}
-                        />
+                        {errors.balance && errors.balance.message && <FormErrorMessage message={errors.balance.message} />}
                     </div>
-                    {errors.balance && errors.balance.message && <FormErrorMessage message={errors.balance.message} />}
+                    <div className='h-24'>
+                        <label htmlFor='date' className='block text-sm font-medium leading-6 '>
+                            Date
+                        </label>
+                        <div className='relativerounded-md shadow-sm'>
+                            <input
+                                {...register("created")}
+                                id='date'
+                                type='date'
+                                className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                                aria-invalid={errors.created ? "true" : "false"}
+                            />
+                        </div>
+                        {errors.created && errors.created.message && <FormErrorMessage message={errors.created.message} />}
+                    </div>
 
-                    <div className='h-24 mt-3'>
+                    <div className='mt-3'>
                         <FormSubmitButton
                             defaultStateText='Save'
                             formState={formState}
