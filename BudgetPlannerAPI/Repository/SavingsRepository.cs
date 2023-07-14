@@ -22,7 +22,7 @@ namespace Repository
 
         public Savings? SelectById(Guid savingsId, bool trackChanges = false)
         {
-            return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).FirstOrDefault();
+            return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).Include(x => x.SavingsBalances).FirstOrDefault();
         }
 
         public IEnumerable<Savings>? SelectByUserId(Guid userId, bool trackChanges = false)

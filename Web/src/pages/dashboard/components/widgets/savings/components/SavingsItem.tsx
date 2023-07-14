@@ -10,6 +10,7 @@ import { TSavings } from "../../../../../../types/Savings";
 import SavingsBalanceItem from "./SavingsBalanceItem";
 import SavingsBalanceAddForm from "./SavingsBalnceAddForm";
 import SavingsChart from "./SavingsChart";
+import SavingsEditGoalForm from "./SavingsEditGoalForm";
 
 interface ISavingsItemProps {
     savingsData: TSavings[];
@@ -20,6 +21,7 @@ interface ISavingsItemProps {
 const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) => {
     const [expanded, setExpanded] = useState(false);
     const [addingBalance, setAddingBalance] = useState(false);
+    const [editingSavings, setEditingSavings] = useState(false);
     const [user, setError] = useAppStore((appState) => [appState.User, appState.setError]);
 
     const [deleteSavings] = useApi<void, { userId: string; savingsId: string }>(Savings.Delete, true);
@@ -35,6 +37,7 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
 
     const handleEdit = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation();
+        setEditingSavings(true);
     }, []);
 
     const handleDelete = useCallback(
@@ -70,6 +73,11 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
                         savingsData={savingsData}
                         setSavingsData={setSavingsData}
                     />
+                </Modal>
+            )}
+            {editingSavings && (
+                <Modal closeFn={() => setEditingSavings(false)}>
+                    <SavingsEditGoalForm item={item} closeFn={() => setEditingSavings(false)} savingsData={savingsData} setSavingsData={setSavingsData} />
                 </Modal>
             )}
             <div className='w-full min-h-fit rounded-md border-2 border-gray-300 my-2 shadow-md  items-center px-5'>

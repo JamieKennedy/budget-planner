@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
-import { SavingsCreateSchema, SavingsSchema, TSavings, TSavingsCreate } from "../../../../../../types/Savings";
+import { SavingsEditSchema, SavingsSchema, TSavings, TSavingsEdit } from "../../../../../../types/Savings";
 
+import moment from "moment";
 import { useForm } from "react-hook-form";
 import { BiPound } from "react-icons/bi";
 import { Savings } from "../../../../../../api/Savings";
@@ -10,38 +11,39 @@ import useApi from "../../../../../../hooks/useApi";
 import useAppStore from "../../../../../../state/Store";
 import { FormState } from "../../../../../../types/Enum";
 
-interface ISavingsAddGoalFormProps {
-    userId: string;
-    savingsData: TSavings[] | null;
+interface ISavingsEditGoalFormProps {
+    item: TSavings;
+    savingsData: TSavings[];
     setSavingsData: React.Dispatch<React.SetStateAction<TSavings[] | null>>;
     closeFn: () => void;
 }
 
-const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: ISavingsAddGoalFormProps) => {
+const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISavingsEditGoalFormProps) => {
     const [formState, setFormState] = useState<FormState>(FormState.Default);
     const setError = useAppStore((appState) => appState.setError);
-    const [createSavings] = useApi<TSavings, TSavingsCreate>(Savings.Create, true);
+    const [editSavings] = useApi<TSavings, TSavingsEdit>(Savings.Edit, true);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<TSavingsCreate>();
+    } = useForm<TSavingsEdit>();
 
     const onSubmit = useCallback(
-        async (data: TSavingsCreate) => {
+        async (data: TSavingsEdit) => {
             setFormState(FormState.Pending);
 
             if (!data.goalDate) {
-                data.goalDate = undefined;
+                data.goalDate = null;
             }
 
-            data.userId = userId;
+            data.userId = item.userId;
+            data.savingsId = item.savingsId;
 
-            const parseResult = SavingsCreateSchema.safeParse(data);
+            const parseResult = SavingsEditSchema.safeParse(data);
 
             if (parseResult.success) {
-                const [newGoal, error] = await createSavings(parseResult.data, SavingsSchema);
+                const [updatedGoal, error] = await editSavings(parseResult.data, SavingsSchema);
 
                 if (error) {
                     setError(error.Message);
@@ -49,11 +51,15 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                     return;
                 }
 
-                if (savingsData) {
-                    setSavingsData([...savingsData, newGoal]);
-                } else {
-                    setSavingsData([newGoal]);
-                }
+                setSavingsData(
+                    savingsData.map((savingsDataItem) => {
+                        if (savingsDataItem.savingsId !== item.savingsId) {
+                            return savingsDataItem;
+                        }
+
+                        return updatedGoal;
+                    })
+                );
 
                 setFormState(FormState.Default);
                 closeFn();
@@ -62,7 +68,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                 setFormState(FormState.Default);
             }
         },
-        [closeFn, createSavings, savingsData, setError, setSavingsData, userId]
+        [closeFn, editSavings, item.savingsId, item.userId, savingsData, setError, setSavingsData]
     );
 
     return (
@@ -73,7 +79,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
             }}
         >
             <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-xl font-semibold'>Add new savings goal</h2>
+                <h2 className='text-xl font-semibold'>Edit savings goal</h2>
                 <button onClick={() => (formState === FormState.Default ? closeFn() : null)}>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -98,6 +104,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                                 {...register("name", {
                                     required: "name is required",
                                 })}
+                                defaultValue={item.name}
                                 id='name'
                                 type='text'
                                 className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -113,6 +120,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                         <div className='relative  rounded-md shadow-sm'>
                             <input
                                 {...register("description")}
+                                defaultValue={item.description}
                                 id='description'
                                 type='text'
                                 className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -134,6 +142,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                                     required: "goal is required",
                                     pattern: { value: new RegExp("^[0-9]\\d*([\\,\\.]\\d{2})?$"), message: "Invalid Goal Amount" },
                                 })}
+                                defaultValue={item.goal}
                                 id='goal'
                                 type='text'
                                 className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -149,6 +158,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                         <div className='relativerounded-md shadow-sm'>
                             <input
                                 {...register("goalDate")}
+                                defaultValue={moment(item.goalDate).format("yyyy-MM-DD")}
                                 id='date'
                                 type='date'
                                 className='block w-full mb-2 rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -170,4 +180,4 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
     );
 };
 
-export default SavingsAddGoalForm;
+export default SavingsEditGoalForm;

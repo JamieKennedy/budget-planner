@@ -51,11 +51,21 @@ class HttpClient {
         }
     };
 
-    public patch = async <T, V>(url: string, data: V, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
+    public patch = async <T, V>(url: string, data: V, schema?: z.ZodType<T>, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.patch(url, data, config);
-            return response.data;
+            if (schema) {
+                const result = schema.safeParse(response.data);
+
+                if (result.success) {
+                    return result.data;
+                }
+
+                console.log(result.error);
+                throw new Error(result.error.toString());
+            }
+            return response.data as T;
         } catch (error) {
             return this.handleError(error);
         }

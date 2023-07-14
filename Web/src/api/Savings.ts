@@ -1,4 +1,4 @@
-import { TSavings, TSavingsCreate } from "../types/Savings";
+import { TSavings, TSavingsCreate, TSavingsEdit } from "../types/Savings";
 
 import { z } from "zod";
 import { Endpoint } from "../constants/ApiConst";
@@ -20,5 +20,9 @@ export namespace Savings {
         schema: z.ZodType<TSavings>
     ): Promise<TSavings | TErrorResponse> => {
         return await httpClient.post(Endpoint.Savings.Create(createSavingsRequest.userId), createSavingsRequest, schema);
+    };
+
+    export const Edit = async (httpClient: HttpClient, request: TSavingsEdit, schema: z.ZodType<TSavings>): Promise<TSavings | TErrorResponse> => {
+        return await httpClient.patch(Endpoint.Savings.Edit(request.userId, request.savingsId), request, schema);
     };
 }
