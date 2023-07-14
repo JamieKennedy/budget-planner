@@ -145,7 +145,7 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
                             <>
                                 <SavingsChart item={item} />
                                 <h2 className='font-semibold'>Balance History</h2>
-                                <div className='max-h-60 overflow-y-scroll mb-5 font-semibold'>
+                                <div className='max-h-60 overflow-y-scroll mb-5 font-semibold scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300'>
                                     {item.savingsBalances.map((savingsBalance, index) => {
                                         return (
                                             <SavingsBalanceItem
