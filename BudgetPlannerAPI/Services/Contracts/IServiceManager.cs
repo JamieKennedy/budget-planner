@@ -6,6 +6,5 @@ public interface IServiceManager
     IAuthenticationService AuthenticationService { get; }
     ISavingsService SavingsService { get; }
     ISavingsBalanceService SavingsBalanceService { get; }
-    IGroupService GroupService { get; }
-    IGroupMemberService GroupMemberService { get; }
+
 }
