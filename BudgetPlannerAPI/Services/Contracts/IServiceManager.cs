@@ -6,5 +6,6 @@ public interface IServiceManager
     IAuthenticationService AuthenticationService { get; }
     ISavingsService SavingsService { get; }
     ISavingsBalanceService SavingsBalanceService { get; }
+    IExpenseCategoryService ExpenseCategoryService { get; }
 
 }

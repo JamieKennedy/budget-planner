@@ -9,7 +9,7 @@ namespace Common.Models
         public Guid SavingsBalanceId { get; set; }
         [ForeignKey(nameof(Savings))]
         public Guid SavingsId { get; set; }
-        public Savings? Savings { get; set; }
+        public Savings Savings { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
         public DateTime Created { get; set; }

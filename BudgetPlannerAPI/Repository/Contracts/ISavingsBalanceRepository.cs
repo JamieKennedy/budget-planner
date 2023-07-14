@@ -8,5 +8,6 @@ namespace Repository.Contracts
         SavingsBalance? SelectById(Guid savingsBalanceId, bool trackChanges = false);
         IEnumerable<SavingsBalance> SelectBySavingsId(Guid savingsId, bool trackChanges = false);
         void DeleteSavingsBalance(SavingsBalance savingsBalanceModel);
+
     }
 }

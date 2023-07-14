@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
-    public class Savings
+    public class Savings : ModelBase
     {
         [Key]
         public Guid SavingsId { get; set; }
@@ -14,10 +14,8 @@ namespace Common.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Goal { get; set; }
         public DateTime? GoalDate { get; set; }
-        public DateTime LastModified { get; set; } = DateTime.Now;
-        public DateTime Created { get; set; } = DateTime.Now;
 
-        public User? User { get; set; }
+        public User User { get; set; }
         public IEnumerable<SavingsBalance> SavingsBalances { get; set; } = new List<SavingsBalance>();
     }
 }

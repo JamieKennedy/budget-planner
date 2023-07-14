@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -11,9 +12,11 @@ using Repository;
 namespace API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20230714155807_RemovedGroupGroupMemberAddedContributors")]
+    partial class RemovedGroupGroupMemberAddedContributors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,8 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ColourHex")
+                    b.Property<string>("ColorHex")
+                        .IsRequired()
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
@@ -39,80 +43,17 @@ namespace API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("RecurringExpensesRecurringExpenseId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ContributerId");
 
-                    b.HasIndex("RecurringExpensesRecurringExpenseId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Contributors");
-                });
-
-            modelBuilder.Entity("Common.Models.ExpenseCategory", b =>
-                {
-                    b.Property<Guid>("ExpenseCategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ColourHex")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ExpenseCategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ExpenseCategories");
-                });
-
-            modelBuilder.Entity("Common.Models.RecurringExpenses", b =>
-                {
-                    b.Property<Guid>("RecurringExpenseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid?>("CategoryExpenseCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayOfMonth")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("RecurringExpenseId");
-
-                    b.HasIndex("CategoryExpenseCategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RecurringExpenses");
                 });
 
             modelBuilder.Entity("Common.Models.Savings", b =>
@@ -137,6 +78,7 @@ namespace API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -396,43 +338,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.Contributer", b =>
                 {
-                    b.HasOne("Common.Models.RecurringExpenses", null)
-                        .WithMany("Contributors")
-                        .HasForeignKey("RecurringExpensesRecurringExpenseId");
-
                     b.HasOne("Common.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.Models.ExpenseCategory", b =>
-                {
-                    b.HasOne("Common.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.Models.RecurringExpenses", b =>
-                {
-                    b.HasOne("Common.Models.ExpenseCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryExpenseCategoryId");
-
-                    b.HasOne("Common.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("User");
                 });
@@ -519,11 +429,6 @@ namespace API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Common.Models.RecurringExpenses", b =>
-                {
-                    b.Navigation("Contributors");
                 });
 
             modelBuilder.Entity("Common.Models.Savings", b =>

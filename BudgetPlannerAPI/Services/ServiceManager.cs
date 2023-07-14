@@ -24,6 +24,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAuthenticationService> _authenticationService;
     private readonly Lazy<ISavingsService> _savingsService;
     private readonly Lazy<ISavingsBalanceService> _savingsBalanceService;
+    private readonly Lazy<IExpenseCategoryService> _expenseCategoryService;
 
 
     public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
@@ -36,6 +37,7 @@ public class ServiceManager : IServiceManager
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(loggerManager, mapper, userManager, configuration, repositoryManager));
         _savingsService = new Lazy<ISavingsService>(() => new SavingsService(configuration, mapper, repositoryManager, userManager));
         _savingsBalanceService = new Lazy<ISavingsBalanceService>(() => new SavingsBalanceService(configuration, mapper, repositoryManager));
+        _expenseCategoryService = new Lazy<IExpenseCategoryService>(() => new ExpenseCategoryService(configuration, mapper, repositoryManager, userManager));
 
     }
 
@@ -47,5 +49,5 @@ public class ServiceManager : IServiceManager
 
     public ISavingsBalanceService SavingsBalanceService => _savingsBalanceService.Value;
 
-
+    public IExpenseCategoryService ExpenseCategoryService => _expenseCategoryService.Value;
 }
