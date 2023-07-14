@@ -146,6 +146,7 @@ const SavingsItem = ({ item, savingsData, setSavingsData }: ISavingsItemProps) =
                             {item.savingsBalances.map((savingsBalance, index) => {
                                 return (
                                     <SavingsBalanceItem
+                                        key={savingsBalance.savingsBalanceId}
                                         item={savingsBalance}
                                         savingsData={savingsData}
                                         setSavingsData={setSavingsData}

@@ -36,7 +36,7 @@ const SavingsChart = ({ item }: ISavingsChartProps) => {
                         domain={[earliestDate, lastDate]}
                         type='number'
                         tickCount={10}
-                        interval={"preserveStart"}
+                        interval={"preserveStartEnd"}
                     />
                     <YAxis domain={[0, item.goal]} interval={"preserveStart"} tickCount={100} padding={{ top: 10 }} tickFormatter={(value) => `£${value}`} />
                     <Tooltip formatter={(value) => `£${value}`} labelFormatter={(value) => moment(value).format("DD/MM/YY HH:mm")} />

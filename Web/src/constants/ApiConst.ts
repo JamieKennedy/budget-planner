@@ -10,6 +10,7 @@ export const Endpoint = {
     Savings: {
         GetSavingsForUserId: "Savings",
         Delete: (userId: string, savingsId: string) => `/api/user/${userId}/savings/${savingsId}`,
+        Create: (userId: string) => `/api/user/${userId}/savings`,
     },
     SavingsBalance: {
         CreateSavingsBalance: (savingsId: string) => `/api/savings/${savingsId}/savingsbalance`,
