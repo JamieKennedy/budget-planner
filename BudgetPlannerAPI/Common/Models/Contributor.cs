@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
-    public class Contributer : ModelBase
+    public class Contributor : ModelBase
     {
         [Key]
         public Guid ContributerId { get; set; }
