@@ -3,6 +3,7 @@ import ProtectedRoute from "./components/misc/ProtectedRoute";
 import { NavigationConst } from "./constants/NavigationConst";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Login from "./pages/login/Login";
+import Settings from "./pages/settings/Settings";
 
 export const router = createBrowserRouter(
     [
@@ -13,6 +14,10 @@ export const router = createBrowserRouter(
                 {
                     path: NavigationConst.Dashboard,
                     element: <Dashboard />,
+                },
+                {
+                    path: NavigationConst.Settings,
+                    element: <Settings />,
                 },
             ],
         },

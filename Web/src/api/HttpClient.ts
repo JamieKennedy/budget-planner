@@ -35,6 +35,7 @@ class HttpClient {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.post(url, data, config);
+
             if (schema) {
                 const result = schema.safeParse(response.data);
 
@@ -82,11 +83,11 @@ class HttpClient {
     };
 
     private handleError = (error: unknown): TErrorResponse => {
-        console.log(error);
+        console.log(isAxiosError(error));
         if (isAxiosError(error)) {
             return {
                 StatusCode: error.response?.status ?? 500,
-                Message: error.response?.data ?? error.message ?? "Something went wrong",
+                Message: error.response?.data?.Message ?? error.message ?? "Something went wrong",
             } as TErrorResponse;
         }
 

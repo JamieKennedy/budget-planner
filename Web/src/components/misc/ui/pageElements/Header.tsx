@@ -1,10 +1,11 @@
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useCallback, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 import { Dialog } from "@headlessui/react";
-import { Link } from "react-router-dom";
 import { NavigationConst } from "../../../../constants/NavigationConst";
 import { useLogout } from "../../../../hooks/useLogout";
+import { cn } from "../../../../utils/CssUtils";
 
 const navigation = [
     { name: "Dashboard", href: NavigationConst.Dashboard },
@@ -14,6 +15,12 @@ const navigation = [
 const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const logout = useLogout();
+    const location = useLocation();
+
+    const isHighlighted = (pageName: string): boolean => {
+        console.log(pageName, location.pathname);
+        return location.pathname.toLowerCase().includes(pageName.toLowerCase());
+    };
 
     const logoutHandler = useCallback(() => {
         logout();
@@ -25,7 +32,13 @@ const Header = () => {
                 <div className='flex items-center gap-x-12'>
                     <div className='hidden lg:flex lg:gap-x-12'>
                         {navigation.map((item) => (
-                            <Link to={item.href} className='text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600' key={item.name}>
+                            <Link
+                                to={item.href}
+                                className={cn("text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600", {
+                                    "text-blue-600": isHighlighted(item.name),
+                                })}
+                                key={item.name}
+                            >
                                 {item.name}
                             </Link>
                         ))}

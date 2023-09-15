@@ -34,6 +34,8 @@ const Login = () => {
                 keepLoggedIn: data.keepLoggedIn,
             });
 
+            console.log(accessToken, loginError);
+
             if (loginError) {
                 // Default to an error occured message
                 let errorMessage = "An error has occured, please try again";
@@ -50,7 +52,6 @@ const Login = () => {
             }
 
             setAccessToken(accessToken);
-            
 
             const userId = AuthUtils.getTokenPayload(accessToken).Id;
 

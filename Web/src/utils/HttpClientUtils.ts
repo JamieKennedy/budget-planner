@@ -45,6 +45,8 @@ export namespace HttpClientUtils {
      * @return {boolean}  {response is ErrorResponse}
      */
     export const IsErrorResponse = (response: unknown): response is TErrorResponse => {
+        console.log(response);
+        console.log(ErrorResponseSchema.safeParse(response));
         return ErrorResponseSchema.safeParse(response).success;
     };
 
