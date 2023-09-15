@@ -29,7 +29,7 @@ namespace Repository
 
         public Account UpdateAccount(Account account)
         {
-            throw new NotImplementedException();
+            return Update(account);
         }
     }
 }
