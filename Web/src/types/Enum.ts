@@ -14,3 +14,6 @@ export const PageState = z.enum(["Loading", "Loaded", "AuthError"]);
 
 export type ETrendDirection = z.infer<typeof TrendDirection>;
 export const TrendDirection = z.enum(["Up", "Down", "Level"]);
+
+export type ETheme = z.infer<typeof Theme>;
+export const Theme = z.enum(["Light", "Dark"]);

@@ -1,35 +1,43 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { Accounts } from "../../../../../api/Accounts";
-import Modal from "../../../../../components/misc/ui/pageElements/Modal";
-import useApi from "../../../../../hooks/useApi";
-import useAppStore from "../../../../../state/Store";
-import { TAccount } from "../../../../../types/Accounts";
-import { EWidgetState } from "../../../../../types/Enum";
-import AccountList from "./components/AccountList";
-import AddEditAccount from "./components/AddEditAccount";
+import { PlusIcon } from '@heroicons/react/20/solid';
+import { Accounts } from '../../../../../api/Accounts';
+import Modal from '../../../../../components/misc/ui/pageElements/Modal';
+import useApi from '../../../../../hooks/useApi';
+import useAppStore from '../../../../../state/Store';
+import { TAccount } from '../../../../../types/Accounts';
+import { EWidgetState } from '../../../../../types/Enum';
+import AccountList from './components/AccountList';
+import AddEditAccount from './components/AddEditAccount';
 
 const AccountsWidget = () => {
-    const [user, setError] = useAppStore((appState) => [appState.User, appState.setError]);
+    const [user, setError] = useAppStore((appState) => [
+        appState.User,
+        appState.setError,
+    ]);
 
     const [addingAccount, setAddingAccount] = useState(false);
     const [accounts, setAccounts] = useState<TAccount[]>([]);
-    const [widgetState, setWidgetState] = useState<EWidgetState>("Loading");
+    const [widgetState, setWidgetState] = useState<EWidgetState>('Loading');
 
-    const [fetchAccounts] = useApi<TAccount[], string>(Accounts.GetAccountsForUser, true);
+    const [fetchAccounts] = useApi<TAccount[], string>(
+        Accounts.GetAccountsForUser,
+        true
+    );
 
     const getAccounts = useCallback(async () => {
         if (user) {
-            const [remoteAccounts, remoteAccountsError] = await fetchAccounts(user.id);
+            const [remoteAccounts, remoteAccountsError] = await fetchAccounts(
+                user.id
+            );
 
             if (remoteAccountsError) {
                 setError(remoteAccounts);
-                setWidgetState("Errored");
+                setWidgetState('Errored');
                 return;
             }
 
-            setWidgetState("Loaded");
+            setWidgetState('Loaded');
             setAccounts(remoteAccounts);
         }
     }, [user, fetchAccounts, setError]);
@@ -73,27 +81,43 @@ const AccountsWidget = () => {
         <>
             {user && addingAccount && (
                 <Modal closeFn={() => setAddingAccount(false)}>
-                    <AddEditAccount addAccount={addAccount} closeFn={() => setAddingAccount(false)} />
+                    <AddEditAccount
+                        addAccount={addAccount}
+                        closeFn={() => setAddingAccount(false)}
+                    />
                 </Modal>
             )}
-            <section className='h-fit w-full p-5'>
-                <div className='relative'>
-                    <div className='absolute inset-0 flex items-center' aria-hidden='true'>
-                        <div className='w-full border-t border-gray-300' />
+            <section className="h-fit w-full p-5">
+                <div className="relative">
+                    <div
+                        className="absolute inset-0 flex items-center"
+                        aria-hidden="true"
+                    >
+                        <div className="w-full border-t border-gray-300" />
                     </div>
-                    <div className='relative flex items-center justify-between'>
-                        <span className='bg-white pr-3 text-xl font-semibold text-gray-900'>Accounts</span>
+                    <div className="relative flex items-center justify-between">
+                        <span className="bg-white dark:bg-dark pr-3 text-xl font-semibold text-gray-900 dark:text-white">
+                            Accounts
+                        </span>
                         <button
-                            type='button'
-                            className='inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
+                            type="button"
+                            className="inline-flex items-center gap-x-1.5 rounded-full bg-white dark:bg-dark px-3 py-1.5 text-sm font-semibold text-gray-900 dark:text-white shadow-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:hover:bg-dark"
                             onClick={() => setAddingAccount(true)}
                         >
-                            <PlusIcon className='-ml-1 -mr-0.5 h-5 w-5 text-gray-400' aria-hidden='true' />
+                            <PlusIcon
+                                className="-ml-1 -mr-0.5 h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                            />
                             <span>Add new account</span>
                         </button>
                     </div>
                 </div>
-                <AccountList accounts={accounts} widgetState={widgetState} removeAccount={removeAccount} editAccount={editAccount} />
+                <AccountList
+                    accounts={accounts}
+                    widgetState={widgetState}
+                    removeAccount={removeAccount}
+                    editAccount={editAccount}
+                />
             </section>
         </>
     );
