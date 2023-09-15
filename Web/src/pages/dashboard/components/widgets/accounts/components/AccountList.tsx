@@ -1,6 +1,6 @@
 import Skeleton from "react-loading-skeleton";
-import { EWidgetState } from "../../../../../../constants/Enum";
 import { TAccount } from "../../../../../../types/Accounts";
+import { EWidgetState } from "../../../../../../types/Enum";
 import AccountListItem from "./AccountListItem";
 
 interface IAccountListProps {

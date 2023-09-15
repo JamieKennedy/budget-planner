@@ -8,7 +8,7 @@ import FormErrorMessage from "../../../../../../components/misc/ui/FormErrorMess
 import FormSubmitButton from "../../../../../../components/misc/ui/FormSubmitButton";
 import useApi from "../../../../../../hooks/useApi";
 import useAppStore from "../../../../../../state/Store";
-import { FormState } from "../../../../../../types/Enum";
+import { EFormState } from "../../../../../../types/Enum";
 
 interface ISavingsAddGoalFormProps {
     userId: string;
@@ -18,7 +18,7 @@ interface ISavingsAddGoalFormProps {
 }
 
 const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: ISavingsAddGoalFormProps) => {
-    const [formState, setFormState] = useState<FormState>(FormState.Default);
+    const [formState, setFormState] = useState<EFormState>("Default");
     const setError = useAppStore((appState) => appState.setError);
     const [createSavings] = useApi<TSavings, TSavingsCreate>(Savings.Create, true);
 
@@ -30,7 +30,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
 
     const onSubmit = useCallback(
         async (data: TSavingsCreate) => {
-            setFormState(FormState.Pending);
+            setFormState("Pending");
 
             if (!data.goalDate) {
                 data.goalDate = undefined;
@@ -45,7 +45,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
 
                 if (error) {
                     setError(error.Message);
-                    setFormState(FormState.Default);
+                    setFormState("Default");
                     return;
                 }
 
@@ -55,11 +55,11 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
                     setSavingsData([newGoal]);
                 }
 
-                setFormState(FormState.Default);
+                setFormState("Default");
                 closeFn();
             } else {
                 console.log(parseResult.error);
-                setFormState(FormState.Default);
+                setFormState("Default");
             }
         },
         [closeFn, createSavings, savingsData, setError, setSavingsData, userId]
@@ -74,7 +74,7 @@ const SavingsAddGoalForm = ({ userId, savingsData, setSavingsData, closeFn }: IS
         >
             <div className='flex flex-row items-center justify-between'>
                 <h2 className='text-xl font-semibold'>Add new savings goal</h2>
-                <button onClick={() => (formState === FormState.Default ? closeFn() : null)}>
+                <button onClick={() => (formState === "Default" ? closeFn() : null)}>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'

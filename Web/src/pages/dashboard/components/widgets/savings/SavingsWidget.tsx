@@ -9,12 +9,12 @@ import { Savings } from "../../../../../api/Savings";
 import Modal from "../../../../../components/misc/ui/pageElements/Modal";
 import useApi from "../../../../../hooks/useApi";
 import useAppStore from "../../../../../state/Store";
-import { PageState } from "../../../../../types/Enum";
+import { EPageState } from "../../../../../types/Enum";
 import SavingsAddGoalForm from "./components/SavingsAddGoalForm";
 import SavingsItem from "./components/SavingsItem";
 
 const SavingsWidget = () => {
-    const [pageState, setPageState] = useState<PageState>(PageState.Loading);
+    const [pageState, setPageState] = useState<EPageState>("Loading");
     const [savingsData, setSavingsData] = useState<TSavings[] | null>(null);
     const [addingGoal, setAddingGoal] = useState(false);
     const user = useAppStore((appState) => appState.User);
@@ -27,14 +27,14 @@ const SavingsWidget = () => {
             if (!error) {
                 setSavingsData(savings);
                 console.log(savings);
-                setPageState(PageState.Loaded);
+                setPageState("Loaded");
                 return;
             }
 
             console.log(error);
         }
 
-        setPageState(PageState.AuthError);
+        setPageState("AuthError");
         return;
     }, [getSavings, user]);
 
@@ -43,7 +43,7 @@ const SavingsWidget = () => {
     useEffect(() => {
         if (isMounted.current) return;
 
-        if (pageState !== PageState.Loaded) {
+        if (pageState !== "Loaded") {
             fetch();
             console.log("Feth savings");
         }
@@ -75,14 +75,14 @@ const SavingsWidget = () => {
                         </button>
                     </div>
                 </div>
-                {pageState === PageState.Loaded && savingsData && (
+                {pageState === "Loaded" && savingsData && (
                     <div className='flex flex-col m-5'>
                         {savingsData.map((item) => {
                             return <SavingsItem key={item.savingsId} item={item} savingsData={savingsData} setSavingsData={setSavingsData} />;
                         })}
                     </div>
                 )}
-                {pageState === PageState.Loading && (
+                {pageState === "Loading" && (
                     <div className='flex flex-col m-5'>
                         <Skeleton className='my-2 h-10 rounded-md' count={savingsData ? savingsData.length : 2} />
                     </div>

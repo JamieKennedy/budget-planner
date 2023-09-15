@@ -7,7 +7,7 @@ import { SavingsBalance } from "../../../../../../api/SavingsBalance";
 import FormErrorMessage from "../../../../../../components/misc/ui/FormErrorMessage";
 import FormSubmitButton from "../../../../../../components/misc/ui/FormSubmitButton";
 import useApi from "../../../../../../hooks/useApi";
-import { FormState } from "../../../../../../types/Enum";
+import { EFormState } from "../../../../../../types/Enum";
 import { TSavings } from "../../../../../../types/Savings";
 
 interface ISavingsBalanceAddFormProps {
@@ -25,7 +25,7 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
             data: TSavingsBalanceCreate;
         }
     >(SavingsBalance.CreateSavingsBalnce, true);
-    const [formState, setFormState] = useState<FormState>(FormState.Default);
+    const [formState, setFormState] = useState<EFormState>("Default");
 
     const {
         register,
@@ -35,7 +35,7 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
 
     const onSubmit = useCallback(
         async (data: TSavingsBalanceCreate) => {
-            setFormState(FormState.Pending);
+            setFormState("Pending");
 
             if (!data.created) {
                 data.created = undefined;
@@ -62,7 +62,7 @@ const SavingsBalanceAddForm = ({ savingsData, setSavingsData, savingsId, closeFn
                     }
                 }
 
-                setFormState(FormState.Default);
+                setFormState("Default");
                 closeFn();
             }
         },

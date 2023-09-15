@@ -7,12 +7,12 @@ import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 import { useLogout } from "../../hooks/useLogout";
 import useAppStore from "../../state/Store";
-import { AuthState } from "../../types/Enum";
+import { EAuthState } from "../../types/Enum";
 import { TUser } from "../../types/User";
 import { AuthUtils } from "../../utils/AuthUtils";
 
 const ProtectedRoute = () => {
-    const [authState, setAuthState] = useState<AuthState>(AuthState.Pending);
+    const [authState, setAuthState] = useState<EAuthState>("Pending");
     const [user, setUser] = useAppStore((appState) => [appState.User, appState.setUser]);
     const [getAccessToken] = useAuth();
     const [getUser] = useApi<TUser, string>(User.GetUserById, true);
@@ -22,11 +22,11 @@ const ProtectedRoute = () => {
     const refresh = useCallback(async () => {
         const [accessToken, error] = await getAccessToken();
         if (error) {
-            setAuthState(AuthState.Failure);
+            setAuthState("Failure");
             return;
         }
         if (user) {
-            setAuthState(AuthState.Success);
+            setAuthState("Success");
         }
 
         const userId = AuthUtils.getTokenPayload(accessToken).Id;
@@ -34,12 +34,12 @@ const ProtectedRoute = () => {
         const [userData, userError] = await getUser(userId);
 
         if (userError) {
-            setAuthState(AuthState.Failure);
+            setAuthState("Failure");
             return;
         }
 
         setUser(userData);
-        setAuthState(AuthState.Success);
+        setAuthState("Success");
     }, [getAccessToken, getUser, setUser, user]);
 
     const isMounted = useRef(false);
@@ -51,11 +51,11 @@ const ProtectedRoute = () => {
         isMounted.current = true;
     }, [refresh]);
 
-    if (authState == AuthState.Pending) {
+    if (authState == "Pending") {
         return <p className='text-white'>Loading...</p>;
     }
 
-    if (authState == AuthState.Failure) {
+    if (authState == "Failure") {
         logout();
         return <Navigate to={NavigationConst.Login} />;
     }

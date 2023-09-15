@@ -3,10 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Accounts } from "../../../../../api/Accounts";
 import Modal from "../../../../../components/misc/ui/pageElements/Modal";
-import { EWidgetState } from "../../../../../constants/Enum";
 import useApi from "../../../../../hooks/useApi";
 import useAppStore from "../../../../../state/Store";
 import { TAccount } from "../../../../../types/Accounts";
+import { EWidgetState } from "../../../../../types/Enum";
 import AccountList from "./components/AccountList";
 import AddEditAccount from "./components/AddEditAccount";
 

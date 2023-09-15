@@ -8,7 +8,7 @@ import FormErrorMessage from "../../../../../../components/misc/ui/FormErrorMess
 import FormSubmitButton from "../../../../../../components/misc/ui/FormSubmitButton";
 import useApi from "../../../../../../hooks/useApi";
 import useAppStore from "../../../../../../state/Store";
-import { FormState } from "../../../../../../types/Enum";
+import { EFormState } from "../../../../../../types/Enum";
 
 interface IAddEditAccountProps {
     account?: TAccount;
@@ -33,7 +33,7 @@ const defaultValues = (account?: TAccount) => {
 
 const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditAccountProps) => {
     const [user, setAppError] = useAppStore((state) => [state.User, state.setError]);
-    const [formState, setFormState] = useState<FormState>(FormState.Default);
+    const [formState, setFormState] = useState<EFormState>("Default");
 
     const [updateAccount] = useApi<TAccount, TUpdateAccount>(Accounts.UpdateAccount);
     const [createAccount] = useApi<TAccount, TCreateAccount>(Accounts.CreateAccount);
@@ -79,7 +79,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
 
     const onSubmit = async (formData: TAddEditAccountFormData) => {
         if (!user) {
-            setFormState(FormState.Errored);
+            setFormState("Errored");
             setError("root", {
                 message: "An error has occured",
             });
@@ -108,7 +108,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
         >
             <div className='flex flex-row items-center justify-between'>
                 <h2 className='text-xl font-semibold'>Add new account</h2>
-                <button onClick={() => (formState === FormState.Default ? closeFn() : null)}>
+                <button onClick={() => (formState === "Default" ? closeFn() : null)}>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'

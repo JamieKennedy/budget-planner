@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { SavingsBalance } from "../../../../../../api/SavingsBalance";
 import useApi from "../../../../../../hooks/useApi";
 import useAppStore from "../../../../../../state/Store";
-import { TrendDirection } from "../../../../../../types/Enum";
+import { ETrendDirection } from "../../../../../../types/Enum";
 import { TSavings } from "../../../../../../types/Savings";
 import { TSavingsBalance } from "../../../../../../types/SavingsBalance";
 
@@ -18,8 +18,7 @@ const SavingsBalanceItem = ({ prevBalance, item, savingsData, setSavingsData }: 
     const setError = useAppStore((appState) => appState.setError);
     const [deleteSasvingsBalance] = useApi<void, { savingsId: string; savingsBalanceId: string }>(SavingsBalance.DeleteSavingsBalance, true);
 
-    const trendDirection: TrendDirection =
-        prevBalance < item.balance ? TrendDirection.Up : prevBalance > item.balance ? TrendDirection.Down : TrendDirection.Level;
+    const trendDirection: ETrendDirection = prevBalance < item.balance ? "Up" : prevBalance > item.balance ? "Down" : "Level";
 
     const handleDelete = useCallback(async () => {
         const [, error] = await deleteSasvingsBalance({ savingsId: item.savingsId, savingsBalanceId: item.savingsBalanceId });
@@ -50,7 +49,7 @@ const SavingsBalanceItem = ({ prevBalance, item, savingsData, setSavingsData }: 
             <p>£{item.balance}</p>
             <p>{moment(item.created).format("YY/MM/DD HH:mm")}</p>
             <div className='justify-self-start'>
-                {trendDirection === TrendDirection.Up ? (
+                {trendDirection === "Up" ? (
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'
@@ -65,7 +64,7 @@ const SavingsBalanceItem = ({ prevBalance, item, savingsData, setSavingsData }: 
                             d='M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941'
                         />
                     </svg>
-                ) : trendDirection === TrendDirection.Down ? (
+                ) : trendDirection === "Down" ? (
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'

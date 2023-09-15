@@ -9,7 +9,7 @@ import FormErrorMessage from "../../../../../../components/misc/ui/FormErrorMess
 import FormSubmitButton from "../../../../../../components/misc/ui/FormSubmitButton";
 import useApi from "../../../../../../hooks/useApi";
 import useAppStore from "../../../../../../state/Store";
-import { FormState } from "../../../../../../types/Enum";
+import { EFormState } from "../../../../../../types/Enum";
 
 interface ISavingsEditGoalFormProps {
     item: TSavings;
@@ -19,7 +19,7 @@ interface ISavingsEditGoalFormProps {
 }
 
 const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISavingsEditGoalFormProps) => {
-    const [formState, setFormState] = useState<FormState>(FormState.Default);
+    const [formState, setFormState] = useState<EFormState>("Default");
     const setError = useAppStore((appState) => appState.setError);
     const [editSavings] = useApi<TSavings, TSavingsEdit>(Savings.Edit, true);
 
@@ -31,7 +31,7 @@ const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISa
 
     const onSubmit = useCallback(
         async (data: TSavingsEdit) => {
-            setFormState(FormState.Pending);
+            setFormState("Pending");
 
             if (!data.goalDate) {
                 data.goalDate = null;
@@ -47,7 +47,7 @@ const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISa
 
                 if (error) {
                     setError(error.Message);
-                    setFormState(FormState.Default);
+                    setFormState("Default");
                     return;
                 }
 
@@ -61,11 +61,11 @@ const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISa
                     })
                 );
 
-                setFormState(FormState.Default);
+                setFormState("Default");
                 closeFn();
             } else {
                 console.log(parseResult.error);
-                setFormState(FormState.Default);
+                setFormState("Default");
             }
         },
         [closeFn, editSavings, item.savingsId, item.userId, savingsData, setError, setSavingsData]
@@ -80,7 +80,7 @@ const SavingsEditGoalForm = ({ item, savingsData, setSavingsData, closeFn }: ISa
         >
             <div className='flex flex-row items-center justify-between'>
                 <h2 className='text-xl font-semibold'>Edit savings goal</h2>
-                <button onClick={() => (formState === FormState.Default ? closeFn() : null)}>
+                <button onClick={() => (formState === "Default" ? closeFn() : null)}>
                     <svg
                         xmlns='http://www.w3.org/2000/svg'
                         fill='none'

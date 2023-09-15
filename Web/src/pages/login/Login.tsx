@@ -11,12 +11,12 @@ import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 import useAppStore from "../../state/Store";
 import { TAuthorizeRequest } from "../../types/Api";
-import { FormState } from "../../types/Enum";
+import { EFormState } from "../../types/Enum";
 import { TUser } from "../../types/User";
 import { AuthUtils } from "../../utils/AuthUtils";
 
 const Login = () => {
-    const [formState, setFormState] = useState<FormState>(FormState.Default);
+    const [formState, setFormState] = useState<EFormState>("Default");
     const [loginError, setLoginError] = useState<string | null>(null);
     const [login] = useApi<string, TAuthorizeRequest>(Authentication.Login, false, true);
     const [getUser] = useApi<TUser, string>(User.GetUserById, true);
@@ -26,7 +26,7 @@ const Login = () => {
 
     const onSubmit = useCallback(
         async (data: TAuthorizeRequest) => {
-            setFormState(FormState.Pending);
+            setFormState("Pending");
 
             const [accessToken, loginError] = await login({
                 email: data.email,
@@ -47,7 +47,7 @@ const Login = () => {
                 }
 
                 setLoginError(errorMessage);
-                setFormState(FormState.Default);
+                setFormState("Default");
                 return;
             }
 
@@ -59,12 +59,12 @@ const Login = () => {
 
             if (userError) {
                 setLoginError("Unable to retrieve the user");
-                setFormState(FormState.Default);
+                setFormState("Default");
                 return;
             }
 
             setUser(user);
-            setFormState(FormState.Default);
+            setFormState("Default");
             navigate(NavigationConst.Dashboard);
         },
         [getUser, login, navigate, setAccessToken, setUser]
