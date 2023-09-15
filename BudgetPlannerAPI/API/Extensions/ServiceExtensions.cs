@@ -26,10 +26,11 @@ public static class ServiceExtensions
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionStringBase = configuration.GetConnectionString("Default");
+
         var connectionStringBuilder = new SqlConnectionStringBuilder(connectionStringBase)
         {
-            UserID = configuration["SqlServer:username"],
-            Password = configuration["SqlServer:password"],
+            UserID = configuration["SQLServer:username"],
+            Password = configuration["SQLServer:password"],
         };
 
         services.AddDbContext<RepositoryContext>(options =>

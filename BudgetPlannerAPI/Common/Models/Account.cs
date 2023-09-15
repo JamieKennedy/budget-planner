@@ -3,18 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
-    public class RecurringExpenses : ModelBase
+    public class Account : ModelBase
     {
         [Key]
-        public Guid RecurringExpenseId { get; set; }
+        public Guid Id { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public string Name { get; set; }
-        public int DayOfMonth { get; set; }
+        [StringLength(maximumLength: 6, MinimumLength = 6)]
+        public string? ColourHex { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public Decimal Amount { get; set; }
-        public IEnumerable<Contributor> Contributors { get; set; } = Enumerable.Empty<Contributor>();
-        public ExpenseCategory? Category { get; set; }
+        public decimal Balance { get; set; }
         public User User { get; set; }
     }
 }

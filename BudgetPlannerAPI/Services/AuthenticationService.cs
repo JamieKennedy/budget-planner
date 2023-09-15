@@ -8,6 +8,7 @@ using AutoMapper;
 using Common.DataTransferObjects.Authentication;
 using Common.DataTransferObjects.Token;
 using Common.Exceptions.Configuration;
+using Common.Exceptions.User;
 using Common.Models;
 
 using LoggerService.Interfaces;
@@ -79,11 +80,7 @@ namespace Services
 
         public async Task<TokenDto> RefreshToken(RefreshTokenDto refreshTokenDto, bool trackChanges = false)
         {
-            var token = _repositoryManager.Tokens.SelectByRefreshToken(refreshTokenDto.RefreshToken, trackChanges);
-            if (token is null)
-            {
-                throw new RefreshTokenInvalidException("Invalid refresh token");
-            }
+            var token = _repositoryManager.Tokens.SelectByRefreshToken(refreshTokenDto.RefreshToken, trackChanges) ?? throw new RefreshTokenInvalidException("Invalid refresh token");
 
             if (!token.Active)
             {
@@ -206,6 +203,20 @@ namespace Services
             rng.GetBytes(randomNumber);
 
             return Convert.ToBase64String(randomNumber);
+        }
+
+        public async Task<string> GeneratePasswordResetToken(string emailAddress)
+        {
+            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPassword(string emailAddress, string resetToken, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+
+            return await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
         }
     }
 }

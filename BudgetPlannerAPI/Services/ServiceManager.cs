@@ -15,10 +15,6 @@ namespace Services;
 
 public class ServiceManager : IServiceManager
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILoggerManager _loggerManager;
-    private readonly IMapper _mapper;
-
     // Services
     private readonly Lazy<IUserService> _userService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
@@ -26,21 +22,18 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ISavingsBalanceService> _savingsBalanceService;
     private readonly Lazy<IExpenseCategoryService> _expenseCategoryService;
     private readonly Lazy<IContributorService> _contributorService;
+    private readonly Lazy<IAccountService> _accountService;
 
 
     public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
     {
-        _configuration = configuration;
-        _loggerManager = loggerManager;
-        _mapper = mapper;
-
         _userService = new Lazy<IUserService>(() => new UserService(configuration, mapper, userManager));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(loggerManager, mapper, userManager, configuration, repositoryManager));
         _savingsService = new Lazy<ISavingsService>(() => new SavingsService(configuration, mapper, repositoryManager, userManager));
         _savingsBalanceService = new Lazy<ISavingsBalanceService>(() => new SavingsBalanceService(configuration, mapper, repositoryManager));
         _expenseCategoryService = new Lazy<IExpenseCategoryService>(() => new ExpenseCategoryService(configuration, mapper, repositoryManager, userManager));
         _contributorService = new Lazy<IContributorService>(() => new ContributorService(configuration, mapper, repositoryManager, userManager));
-
+        _accountService = new Lazy<IAccountService>(() => new AccountService(configuration, mapper, repositoryManager, userManager));
     }
 
     public IUserService UserService => _userService.Value;
@@ -54,4 +47,6 @@ public class ServiceManager : IServiceManager
     public IExpenseCategoryService ExpenseCategoryService => _expenseCategoryService.Value;
 
     public IContributorService ContributorService => _contributorService.Value;
+
+    public IAccountService AccountService => _accountService.Value;
 }

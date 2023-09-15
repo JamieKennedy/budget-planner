@@ -57,9 +57,7 @@ namespace Services
 
         public async Task<IEnumerable<SavingsDto>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-
-            if (user is null) throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
             var savings = _repositoryManager.Savings.SelectByUserId(user.Id, trackChanges);
 
@@ -70,13 +68,9 @@ namespace Services
 
         public async Task DeleteById(Guid userId, Guid savingsId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
-            if (user is null) throw new UserNotFoundException(userId);
-
-            var savings = _repositoryManager.Savings.SelectById(savingsId);
-
-            if (savings is null) throw new SavingsNotFoundException(savingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
 
             _repositoryManager.Savings.DeleteSavings(savings);
             _repositoryManager.Save();
@@ -84,13 +78,9 @@ namespace Services
 
         public async Task<SavingsDto> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
-            if (user is null) throw new UserNotFoundException(userId);
-
-            var savings = _repositoryManager.Savings.SelectById(savingsId);
-
-            if (savings is null) throw new SavingsNotFoundException(savingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
 
             // update properties if supplied
             savings.Name = updateSavingsDto.Name is null ? savings.Name : updateSavingsDto.Name;

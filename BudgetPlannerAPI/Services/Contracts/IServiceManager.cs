@@ -8,5 +8,6 @@ public interface IServiceManager
     ISavingsBalanceService SavingsBalanceService { get; }
     IExpenseCategoryService ExpenseCategoryService { get; }
     IContributorService ContributorService { get; }
+    IAccountService AccountService { get; }
 
 }

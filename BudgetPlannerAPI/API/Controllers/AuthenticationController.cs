@@ -1,5 +1,6 @@
 ﻿using Common.DataTransferObjects.Authentication;
 using Common.DataTransferObjects.Token;
+using Common.Exceptions.Base;
 using Common.Exceptions.Configuration;
 
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace API.Controllers
         [HttpPost(Name = nameof(Authenticate))]
         public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto userAuthenticationDto)
         {
-            if (!await _serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) return Unauthorized();
+            if (!await _serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) throw new UnauthorisedException("Incorrect details");
 
             var tokenDto = _serviceManager.AuthenticationService.CreateToken();
 
@@ -103,6 +104,27 @@ namespace API.Controllers
                     SameSite = SameSiteMode.None,
                     Secure = true
                 });
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("Reset/Token", Name = nameof(GeneratePasswordResetToken))]
+        public async Task<IActionResult> GeneratePasswordResetToken([FromBody] ResetPasswordTokenDto resetPasswordTokenDto)
+        {
+            var token = await _serviceManager.AuthenticationService.GeneratePasswordResetToken(resetPasswordTokenDto.Email);
+
+            return Ok(token);
+        }
+
+        [HttpPost("Reset", Name = nameof(ResetPassword))]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            var result = await _serviceManager.AuthenticationService.ResetPassword(resetPasswordDto.Email, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
             }
 
             return Ok();

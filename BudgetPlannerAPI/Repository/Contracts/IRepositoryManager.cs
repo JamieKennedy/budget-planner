@@ -7,5 +7,6 @@ public interface IRepositoryManager
     ISavingsBalanceRepository SavingsBalance { get; }
     IExpenseCategoryRepository ExpenseCategory { get; }
     IContributorRepository Contributor { get; }
+    IAccountRepository Account { get; }
     void Save();
 }
