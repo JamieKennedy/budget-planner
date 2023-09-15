@@ -15,7 +15,7 @@ export namespace Accounts {
     };
 
     export const UpdateAccount = async (httpClient: HttpClient, request: TUpdateAccount): Promise<TAccount | TErrorResponse> => {
-        return httpClient.patch(Endpoint.Account.Base(request.userId), request);
+        return httpClient.patch(Endpoint.Account.Patch(request.userId, request.accountId), request);
     };
 
     export const DeleteAccount = async (HttpClient: HttpClient, request: { userId: string; accountId: string }): Promise<void | TErrorResponse> => {

@@ -21,6 +21,7 @@ export const CreateAccountSchema = z.object({
 
 export type TUpdateAccount = z.infer<typeof UpdateAccountSchema>;
 export const UpdateAccountSchema = z.object({
+    accountId: z.string(),
     userId: z.string(),
     name: z.string().nullish(),
     colourHex: z.string().nullish(),

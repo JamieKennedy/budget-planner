@@ -19,5 +19,6 @@ export const Endpoint = {
     },
     Account: {
         Base: (userId: string) => `/api/user/${userId}/account`,
+        Patch: (userId: string, accountId: string) => `/api/user/${userId}/account/${accountId}`,
     },
 };

@@ -90,7 +90,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
         let result = false;
 
         if (account) {
-            result = await onEdit({ userId: user.id, name: formData.name, balance: formData.balance });
+            result = await onEdit({ userId: user.id, accountId: account.id, name: formData.name, balance: formData.balance });
         } else {
             result = await onAdd({ userId: user.id, name: formData.name, balance: formData.balance });
         }
