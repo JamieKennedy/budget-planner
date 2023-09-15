@@ -1,6 +1,6 @@
-import { ETheme } from "../types/Enum";
-import { TUser } from "../types/User";
-import { stateCreator } from "./Store";
+import { ETheme } from '../types/Enum';
+import { TUser } from '../types/User';
+import { stateCreator } from './Store';
 
 export interface IAppState {
     User?: TUser;
@@ -10,7 +10,8 @@ export interface IAppState {
 }
 
 export const appState: stateCreator<IAppState> = (set) => ({
-    Theme: "Dark",
-    setTheme: (theme) => set((state: IAppState) => ({ ...state, Theme: theme })),
+    Theme: 'Dark',
+    setTheme: (theme) =>
+        set((state: IAppState) => ({ ...state, Theme: theme })),
     setUser: (user) => set((state: IAppState) => ({ ...state, User: user })),
 });

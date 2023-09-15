@@ -13,13 +13,15 @@ const MainPageLayout = ({ children }: IMainPageLayoutProps) => {
 
     return (
         <main
-            className={cn('w-full min-h-screen dark:bg-dark', {
+            className={cn('', {
                 dark: theme === 'Dark',
             })}
         >
-            <div className="container mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <Header />
-                {children}
+            <div className=" w-full min-h-screen dark:bg-dark">
+                <div className="container mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <Header />
+                    {children}
+                </div>
             </div>
             <ErrorAlert />
         </main>
