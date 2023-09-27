@@ -9,9 +9,9 @@ namespace Common.Models
         public Guid ContributerId { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [StringLength(maximumLength: 6, MinimumLength = 6)]
-        public string ColourHex { get; set; }
-        public User User { get; set; }
+        public string ColourHex { get; set; } = string.Empty;
+        public User? User { get; set; }
     }
 }

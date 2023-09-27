@@ -1,34 +1,25 @@
-﻿using Common.DataTransferObjects.Authentication;
-using Common.DataTransferObjects.Income;
-using Common.Utils;
+﻿using Common.DataTransferObjects.Income;
+
+using LoggerService.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class IncomeController : ControllerBase
+    public class IncomeController : BaseController
     {
-        public IServiceManager _serviceManager;
-
-        public IncomeController(IServiceManager serviceManager)
-        {
-            _serviceManager = serviceManager;
-        }
+        public IncomeController(IServiceManager serviceManager, ILoggerManager loggerManager) : base(serviceManager, loggerManager) { }
 
         [HttpPost(Name = nameof(PostAccount))]
         public async Task<IActionResult> PostAccount([FromBody] CreateIncomeDto createIncomeDto)
         {
-            AuthIdentity identity = HttpContext.GetAuthIdentity();
-
-            var income = await _serviceManager.IncomeService.CreateIncome(identity.Id, createIncomeDto);
+            var income = await serviceManager.IncomeService.CreateIncome(authIdentity.Id, createIncomeDto);
 
             return CreatedAtRoute(nameof(GetIncome), new { incomeId = income.Id }, income);
         }
@@ -36,9 +27,7 @@ namespace API.Controllers
         [HttpGet(Name = nameof(GetIncomeForUser))]
         public async Task<IActionResult> GetIncomeForUser()
         {
-            AuthIdentity identity = HttpContext.GetAuthIdentity();
-
-            var income = await _serviceManager.IncomeService.SelectByUserId(identity.Id);
+            var income = await serviceManager.IncomeService.SelectByUserId(authIdentity.Id);
 
             return Ok(income);
         }
@@ -46,9 +35,7 @@ namespace API.Controllers
         [HttpGet("{incomeId}", Name = nameof(GetIncome))]
         public async Task<IActionResult> GetIncome(Guid incomeId)
         {
-            AuthIdentity identity = HttpContext.GetAuthIdentity();
-
-            var income = await _serviceManager.IncomeService.SelectById(identity.Id, incomeId);
+            var income = await serviceManager.IncomeService.SelectById(authIdentity.Id, incomeId);
 
             return Ok(income);
         }
@@ -56,9 +43,7 @@ namespace API.Controllers
         [HttpDelete("{incomeId}", Name = nameof(DeleteIncome))]
         public async Task<IActionResult> DeleteIncome(Guid incomeId)
         {
-            AuthIdentity identity = HttpContext.GetAuthIdentity();
-
-            await _serviceManager.IncomeService.DeleteIncome(identity.Id, incomeId);
+            await serviceManager.IncomeService.DeleteIncome(authIdentity.Id, incomeId);
 
             return Accepted();
         }
@@ -66,9 +51,7 @@ namespace API.Controllers
         [HttpPatch("{incomeId}", Name = nameof(UpdateIncome))]
         public async Task<IActionResult> UpdateIncome(Guid incomeId, UpdateIncomeDto updateIncomeDto)
         {
-            AuthIdentity identity = HttpContext.GetAuthIdentity();
-
-            var updatedIncome = await _serviceManager.IncomeService.UpdateIncome(identity.Id, incomeId, updateIncomeDto);
+            var updatedIncome = await serviceManager.IncomeService.UpdateIncome(authIdentity.Id, incomeId, updateIncomeDto);
 
             return Ok(updatedIncome);
         }

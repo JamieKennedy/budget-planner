@@ -9,12 +9,12 @@ namespace Common.Models
         public Guid RecurringExpenseId { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int DayOfMonth { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public Decimal Amount { get; set; }
         public IEnumerable<Contributor> Contributors { get; set; } = Enumerable.Empty<Contributor>();
         public ExpenseCategory? Category { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }

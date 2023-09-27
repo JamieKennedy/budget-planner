@@ -15,7 +15,7 @@ namespace Common.Models
         public decimal Goal { get; set; }
         public DateTime? GoalDate { get; set; }
 
-        public User User { get; set; }
+        public User? User { get; set; }
         public IEnumerable<SavingsBalance> SavingsBalances { get; set; } = new List<SavingsBalance>();
     }
 }

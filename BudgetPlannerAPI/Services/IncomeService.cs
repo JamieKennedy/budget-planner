@@ -78,7 +78,7 @@ namespace Services
 
         public async Task<IEnumerable<IncomeDto>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
 
             var incomes = _repositoryManager.Income.SelectByUserId(userId, trackChanges);
 

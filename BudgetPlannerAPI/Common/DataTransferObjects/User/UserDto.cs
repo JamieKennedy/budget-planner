@@ -2,11 +2,11 @@
 {
     public class UserDto
     {
-        public string Id { get; init; }
-        public string UserName { get; init; }
-        public string Email { get; init; }
+        public Guid Id { get; init; }
+        public string UserName { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
         public bool EmailConfirmed { get; init; }
-        public string PhoneNumber { get; init; }
+        public string PhoneNumber { get; init; } = string.Empty;
         public bool PhoneNumberConfirmed { get; init; }
         public bool TwoFactorEnabled { get; init; }
     }
