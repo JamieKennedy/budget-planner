@@ -1,7 +1,7 @@
-import { TAuthorizeRequest, TErrorResponse } from "../types/Api";
+import { TAuthorizeRequest, TErrorResponse } from '../types/Api';
 
-import { Endpoint } from "../constants/ApiConst";
-import HttpClient from "./HttpClient";
+import { Endpoint } from '../constants/ApiConst';
+import HttpClient from './HttpClient';
 
 export namespace Authentication {
     export const Login = async (httpClient: HttpClient, loginRequest: TAuthorizeRequest): Promise<string | TErrorResponse> => {

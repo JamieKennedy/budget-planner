@@ -1,5 +1,5 @@
-import jwt_decode from "jwt-decode";
-import { TTokenPayload } from "../types/Api";
+import jwt_decode from 'jwt-decode';
+import { TTokenPayload } from '../types/Api';
 
 export namespace AuthUtils {
     export const getTokenPayload = (token: string): TTokenPayload => {

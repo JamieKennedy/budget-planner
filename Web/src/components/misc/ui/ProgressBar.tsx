@@ -5,9 +5,9 @@ interface IProgressBarProps {
 const ProgressBar = ({ percent }: IProgressBarProps) => {
     const boundPercent = Math.max(Math.min(percent, 100), 0);
 
-    const colorProp = "bg-blue-600";
+    const colorProp = 'bg-blue-600';
 
-    const width: string = boundPercent + "%";
+    const width: string = boundPercent + '%';
 
     return (
         <div className='hidden md:block h-2 w-36 rounded-full bg-gray-200 overflow-hidden'>

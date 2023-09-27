@@ -11,7 +11,6 @@ export interface IAppState {
 
 export const appState: stateCreator<IAppState> = (set) => ({
     Theme: 'Dark',
-    setTheme: (theme) =>
-        set((state: IAppState) => ({ ...state, Theme: theme })),
+    setTheme: (theme) => set((state: IAppState) => ({ ...state, Theme: theme })),
     setUser: (user) => set((state: IAppState) => ({ ...state, User: user })),
 });

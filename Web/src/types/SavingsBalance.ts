@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export type TSavingsBalance = z.infer<typeof SavingsBalanceSchema>;
 export type TSavingsBalanceCreate = z.infer<typeof SavingsBalanceCreateSchema>;

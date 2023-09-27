@@ -1,7 +1,7 @@
-import { ErrorResponseSchema, TErrorResponse } from "../types/Api";
+import { ErrorResponseSchema, TErrorResponse } from '../types/Api';
 
-import { AxiosRequestConfig } from "axios";
-import { apiResponse } from "../hooks/useApi";
+import { AxiosRequestConfig } from 'axios';
+import { apiResponse } from '../hooks/useApi';
 
 export namespace HttpClientUtils {
     export interface IHttpConfigOptions {
@@ -51,6 +51,6 @@ export namespace HttpClientUtils {
     };
 
     export const AppendId = (url: string, ...args: string[]) => {
-        return url + "/" + args.join("/");
+        return url + '/' + args.join('/');
     };
 }

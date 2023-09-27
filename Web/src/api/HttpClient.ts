@@ -1,8 +1,8 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 
-import { z } from "zod";
-import { TErrorResponse } from "../types/Api";
-import { HttpClientUtils } from "../utils/HttpClientUtils";
+import { z } from 'zod';
+import { TErrorResponse } from '../types/Api';
+import { HttpClientUtils } from '../utils/HttpClientUtils';
 
 class HttpClient {
     private _client: AxiosInstance;
@@ -87,7 +87,7 @@ class HttpClient {
         if (isAxiosError(error)) {
             return {
                 StatusCode: error.response?.status ?? 500,
-                Message: error.response?.data?.Message ?? error.message ?? "Something went wrong",
+                Message: error.response?.data?.Message ?? error.message ?? 'Something went wrong',
             } as TErrorResponse;
         }
 
@@ -97,7 +97,7 @@ class HttpClient {
 
         return {
             StatusCode: 500,
-            Message: "Something went wrong",
+            Message: 'Something went wrong',
         };
     };
 }

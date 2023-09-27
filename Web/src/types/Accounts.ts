@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export type TAccount = z.infer<typeof AccountSchema>;
 export const AccountSchema = z.object({

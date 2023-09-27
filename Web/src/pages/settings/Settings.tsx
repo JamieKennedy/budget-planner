@@ -1,4 +1,4 @@
-import MainPageLayout from "../../layouts/MainPageLayout";
+import MainPageLayout from '../../layouts/MainPageLayout';
 
 const Settings = () => {
     return <MainPageLayout></MainPageLayout>;

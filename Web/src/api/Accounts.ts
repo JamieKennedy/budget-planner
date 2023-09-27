@@ -1,9 +1,9 @@
-import { TAccount, TCreateAccount, TUpdateAccount } from "../types/Accounts";
+import { TAccount, TCreateAccount, TUpdateAccount } from '../types/Accounts';
 
-import { z } from "zod";
-import { Endpoint } from "../constants/ApiConst";
-import { TErrorResponse } from "../types/Api";
-import HttpClient from "./HttpClient";
+import { z } from 'zod';
+import { Endpoint } from '../constants/ApiConst';
+import { TErrorResponse } from '../types/Api';
+import HttpClient from './HttpClient';
 
 export namespace Accounts {
     export const GetAccountsForUser = async (httpClient: HttpClient, userId: string, schema: z.ZodType<TAccount[]>): Promise<TAccount[] | TErrorResponse> => {

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export type TAuthorizeRequest = z.infer<typeof AuthorizeRequestSchema>;
 export type TErrorResponse = z.infer<typeof ErrorResponseSchema>;

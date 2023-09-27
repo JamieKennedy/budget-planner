@@ -1,4 +1,4 @@
-import { stateCreator } from "./Store";
+import { stateCreator } from './Store';
 
 export interface IAuthState {
     Auth?: {

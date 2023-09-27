@@ -1,14 +1,14 @@
 export const Endpoint = {
     Authentication: {
-        Login: "/api/authentication",
-        Refresh: "/api/authentication/refresh",
-        Logout: "/api/authentication/logout",
+        Login: '/api/authentication',
+        Refresh: '/api/authentication/refresh',
+        Logout: '/api/authentication/logout',
     },
     User: {
-        GetUserById: "/api/User",
+        GetUserById: '/api/User',
     },
     Savings: {
-        GetSavingsForUserId: "Savings",
+        GetSavingsForUserId: 'Savings',
         Delete: (userId: string, savingsId: string) => `/api/user/${userId}/savings/${savingsId}`,
         Create: (userId: string) => `/api/user/${userId}/savings`,
         Edit: (userId: string, savingsId: string) => `/api/user/${userId}/savings/${savingsId}`,
@@ -20,5 +20,9 @@ export const Endpoint = {
     Account: {
         Base: (userId: string) => `/api/user/${userId}/account`,
         Patch: (userId: string, accountId: string) => `/api/user/${userId}/account/${accountId}`,
+    },
+    Income: {
+        Base: '/api/income',
+        Delete: (incomeId: string) => `${Endpoint.Income.Base}/${incomeId}`,
     },
 };

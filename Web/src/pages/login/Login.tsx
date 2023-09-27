@@ -1,22 +1,22 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
-import { Authentication } from "../../api/Auth";
-import { User } from "../../api/User";
-import FormErrorMessage from "../../components/misc/ui/FormErrorMessage";
-import FormSubmitButton from "../../components/misc/ui/FormSubmitButton";
-import { NavigationConst } from "../../constants/NavigationConst";
-import useApi from "../../hooks/useApi";
-import useAuth from "../../hooks/useAuth";
-import useAppStore from "../../state/Store";
-import { TAuthorizeRequest } from "../../types/Api";
-import { EFormState } from "../../types/Enum";
-import { TUser } from "../../types/User";
-import { AuthUtils } from "../../utils/AuthUtils";
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import { Authentication } from '../../api/Auth';
+import { User } from '../../api/User';
+import FormErrorMessage from '../../components/misc/ui/FormErrorMessage';
+import FormSubmitButton from '../../components/misc/ui/FormSubmitButton';
+import { NavigationConst } from '../../constants/NavigationConst';
+import useApi from '../../hooks/useApi';
+import useAuth from '../../hooks/useAuth';
+import useAppStore from '../../state/Store';
+import { TAuthorizeRequest } from '../../types/Api';
+import { EFormState } from '../../types/Enum';
+import { TUser } from '../../types/User';
+import { AuthUtils } from '../../utils/AuthUtils';
 
 const Login = () => {
-    const [formState, setFormState] = useState<EFormState>("Default");
+    const [formState, setFormState] = useState<EFormState>('Default');
     const [loginError, setLoginError] = useState<string | null>(null);
     const [login] = useApi<string, TAuthorizeRequest>(Authentication.Login, false, true);
     const [getUser] = useApi<TUser, string>(User.GetUserById, true);
@@ -26,7 +26,7 @@ const Login = () => {
 
     const onSubmit = useCallback(
         async (data: TAuthorizeRequest) => {
-            setFormState("Pending");
+            setFormState('Pending');
 
             const [accessToken, loginError] = await login({
                 email: data.email,
@@ -38,16 +38,16 @@ const Login = () => {
 
             if (loginError) {
                 // Default to an error occured message
-                let errorMessage = "An error has occured, please try again";
+                let errorMessage = 'An error has occured, please try again';
 
                 if (loginError.StatusCode && loginError.StatusCode === 401) {
                     // if reponse is unauthorised, change error message to
                     // incorrect details
-                    errorMessage = "Incorrect details";
+                    errorMessage = 'Incorrect details';
                 }
 
                 setLoginError(errorMessage);
-                setFormState("Default");
+                setFormState('Default');
                 return;
             }
 
@@ -58,13 +58,13 @@ const Login = () => {
             const [user, userError] = await getUser(userId);
 
             if (userError) {
-                setLoginError("Unable to retrieve the user");
-                setFormState("Default");
+                setLoginError('Unable to retrieve the user');
+                setFormState('Default');
                 return;
             }
 
             setUser(user);
-            setFormState("Default");
+            setFormState('Default');
             navigate(NavigationConst.Dashboard);
         },
         [getUser, login, navigate, setAccessToken, setUser]
@@ -93,12 +93,12 @@ const Login = () => {
                                     </label>
                                     <div className='mt-2'>
                                         <input
-                                            {...register("email", { required: "Email is required", pattern: { value: /[@]/g, message: "Invalid Email" } })}
+                                            {...register('email', { required: 'Email is required', pattern: { value: /[@]/g, message: 'Invalid Email' } })}
                                             id='email'
                                             type='email'
                                             autoComplete='email'
                                             className='block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-2'
-                                            aria-invalid={errors.email ? "true" : "false"}
+                                            aria-invalid={errors.email ? 'true' : 'false'}
                                         />
                                         {errors.email && errors.email.message && <FormErrorMessage message={errors.email.message} />}
                                     </div>
@@ -111,9 +111,9 @@ const Login = () => {
                                     <div className='mt-2'>
                                         <input
                                             id='password'
-                                            type={"password"}
-                                            {...register("password", { required: "Password is required" })}
-                                            aria-invalid={errors.password ? "true" : "false"}
+                                            type={'password'}
+                                            {...register('password', { required: 'Password is required' })}
+                                            aria-invalid={errors.password ? 'true' : 'false'}
                                             className='block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-2'
                                         />
                                         {errors.password && errors.password.message && <FormErrorMessage message={errors.password.message} />}
@@ -122,12 +122,7 @@ const Login = () => {
 
                                 <div className='flex items-center justify-between'>
                                     <div className='flex items-center'>
-                                        <input
-                                            id='keepLoggedIn'
-                                            type='checkbox'
-                                            {...register("keepLoggedIn")}
-                                            className='h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600'
-                                        />
+                                        <input id='keepLoggedIn' type='checkbox' {...register('keepLoggedIn')} className='h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600' />
                                         <label htmlFor='remember-me' className='ml-3 block text-sm leading-6 text-white'>
                                             Remember me
                                         </label>

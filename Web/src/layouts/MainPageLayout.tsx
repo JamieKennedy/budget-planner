@@ -17,8 +17,8 @@ const MainPageLayout = ({ children }: IMainPageLayoutProps) => {
                 dark: theme === 'Dark',
             })}
         >
-            <div className=" w-full min-h-screen dark:bg-dark">
-                <div className="container mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className=' w-full min-h-screen dark:bg-dark'>
+                <div className='container mx-auto max-w-7xl sm:px-6 lg:px-8'>
                     <Header />
                     {children}
                 </div>
