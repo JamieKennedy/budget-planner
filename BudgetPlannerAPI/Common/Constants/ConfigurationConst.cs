@@ -14,7 +14,19 @@
             public const string ALLOW_ALL = "*";
         }
 
+        public static class JWT
+        {
+            public const string SECTION = "JwtSettings";
+            public const string SECRET = "Secret";
+            public const string VALID_ISSUER = "ValidIssuer";
+            public const string VALID_AUDIENCE = "ValidAudience";
+        }
 
+        public static class Sql
+        {
+            public const string USERNAME = "SQLServer:username";
+            public const string PASSWORD = "SQLServer:password";
+        }
 
     }
 }

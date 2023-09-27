@@ -23,6 +23,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IExpenseCategoryService> _expenseCategoryService;
     private readonly Lazy<IContributorService> _contributorService;
     private readonly Lazy<IAccountService> _accountService;
+    private readonly Lazy<IIncomeService> _incomeService;
 
 
     public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
@@ -34,6 +35,7 @@ public class ServiceManager : IServiceManager
         _expenseCategoryService = new Lazy<IExpenseCategoryService>(() => new ExpenseCategoryService(configuration, mapper, repositoryManager, userManager));
         _contributorService = new Lazy<IContributorService>(() => new ContributorService(configuration, mapper, repositoryManager, userManager));
         _accountService = new Lazy<IAccountService>(() => new AccountService(configuration, mapper, repositoryManager, userManager));
+        _incomeService = new Lazy<IIncomeService>(() => new IncomeService(configuration, mapper, repositoryManager, userManager));
     }
 
     public IUserService UserService => _userService.Value;
@@ -49,4 +51,6 @@ public class ServiceManager : IServiceManager
     public IContributorService ContributorService => _contributorService.Value;
 
     public IAccountService AccountService => _accountService.Value;
+
+    public IIncomeService IncomeService => _incomeService.Value;
 }

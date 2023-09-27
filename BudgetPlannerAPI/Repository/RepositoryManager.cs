@@ -13,6 +13,7 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<IExpenseCategoryRepository> _expenseCategoryRepository;
     private readonly Lazy<IContributorRepository> _contributorRepository;
     private readonly Lazy<IAccountRepository> _accountRepository;
+    private readonly Lazy<IIncomeRepository> _incomeRepository;
 
     public RepositoryManager(RepositoryContext repositoryContext)
     {
@@ -23,6 +24,7 @@ public class RepositoryManager : IRepositoryManager
         _expenseCategoryRepository = new Lazy<IExpenseCategoryRepository>(() => new ExpenseCategoryRepository(repositoryContext));
         _contributorRepository = new Lazy<IContributorRepository>(() => new ContributorRepository(repositoryContext));
         _accountRepository = new Lazy<IAccountRepository>(() => new AccountRepository(repositoryContext));
+        _incomeRepository = new Lazy<IIncomeRepository>(() => new IncomeRepository(repositoryContext));
     }
 
     public ITokenRepository Tokens => _tokenRepository.Value;
@@ -31,6 +33,7 @@ public class RepositoryManager : IRepositoryManager
     public IExpenseCategoryRepository ExpenseCategory => _expenseCategoryRepository.Value;
     public IContributorRepository Contributor => _contributorRepository.Value;
     public IAccountRepository Account => _accountRepository.Value;
+    public IIncomeRepository Income => _incomeRepository.Value;
 
     public void Save()
     {

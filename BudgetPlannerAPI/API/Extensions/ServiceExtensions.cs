@@ -29,8 +29,8 @@ public static class ServiceExtensions
 
         var connectionStringBuilder = new SqlConnectionStringBuilder(connectionStringBase)
         {
-            UserID = configuration["SQLServer:username"],
-            Password = configuration["SQLServer:password"],
+            UserID = configuration[ConfigurationConst.Sql.USERNAME] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.USERNAME),
+            Password = configuration[ConfigurationConst.Sql.PASSWORD] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.PASSWORD),
         };
 
         services.AddDbContext<RepositoryContext>(options =>
@@ -71,8 +71,8 @@ public static class ServiceExtensions
 
     public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        var secret = jwtSettings["Secret"]; // Stored in dotnet user-secrets
+        var jwtSettings = configuration.GetSection(ConfigurationConst.JWT.SECTION);
+        var secret = jwtSettings[ConfigurationConst.JWT.SECRET] ?? Environment.GetEnvironmentVariable($"{ConfigurationConst.JWT.SECTION}:{ConfigurationConst.JWT.SECRET}");
 
         if (string.IsNullOrEmpty(secret))
         {
@@ -94,8 +94,8 @@ public static class ServiceExtensions
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings["ValidIssuer"],
-                ValidAudience = jwtSettings["ValidAudience"],
+                ValidIssuer = jwtSettings[ConfigurationConst.JWT.VALID_ISSUER],
+                ValidAudience = jwtSettings[ConfigurationConst.JWT.VALID_AUDIENCE],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
 
             };

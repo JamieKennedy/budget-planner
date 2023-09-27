@@ -1,7 +1,8 @@
-import { BiPencil, BiTrash } from 'react-icons/bi';
+import { BiDotsHorizontalRounded, BiPencil, BiTrash } from 'react-icons/bi';
 
 import { useState } from 'react';
 import { Accounts } from '../../../../../../api/Accounts';
+import PopoverMenu from '../../../../../../components/misc/ui/interactable/PopoverMenu';
 import Modal from '../../../../../../components/misc/ui/pageElements/Modal';
 import useApi from '../../../../../../hooks/useApi';
 import useAppStore from '../../../../../../state/Store';
@@ -57,13 +58,29 @@ const AccountListItem = ({
                 <p className=" text-base font-semibold">{account.name}</p>
                 <p className="ml-auto">£{account.balance}</p>
                 <div className="flex flex-row w-24 items-center justify-end gap-2">
-                    <button onClick={() => setEdditingAccount(true)}>
-                        <BiPencil className="w-6 h-6 hover:text-gray-500 dark:hover:text-gray-200" />
-                    </button>
+                    <PopoverMenu
+                        button={
+                            <BiDotsHorizontalRounded className="text-white h-6 w-6" />
+                        }
+                    >
+                        <div className="flex flex-col divide-y divide-gray-600 w-full">
+                            <button
+                                onClick={() => setEdditingAccount(true)}
+                                className="flex flex-row gap-2 p-2 pr-4 hover:text-gray-200 items-center hover:bg-slate-600"
+                            >
+                                <BiPencil className="w-5 h-5 hover:text-gray-500 dark:hover:text-gray-200" />
+                                <p className="text-base">Edit</p>
+                            </button>
 
-                    <button onClick={() => handleDelete()}>
-                        <BiTrash className="w-6 h-6 hover:text-gray-500 dark:hover:text-gray-200" />
-                    </button>
+                            <button
+                                onClick={() => handleDelete()}
+                                className="flex flex-row gap-2 p-2 pr-4 hover:text-gray-200 items-center hover:bg-slate-600 "
+                            >
+                                <BiTrash className="w-5 h-5 hover:text-gray-500 dark:hover:text-gray-200" />
+                                <p>Delete</p>
+                            </button>
+                        </div>
+                    </PopoverMenu>
                 </div>
             </div>
         </>

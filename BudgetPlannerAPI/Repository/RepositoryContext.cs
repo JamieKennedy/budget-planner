@@ -10,6 +10,13 @@ public class RepositoryContext : IdentityDbContext<User, IdentityRole<Guid>, Gui
 {
     public RepositoryContext(DbContextOptions options) : base(options) { }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Income>().HasOne(i => i.User).WithMany(u => u.Incomes).OnDelete(DeleteBehavior.NoAction);
+    }
+
 
     public DbSet<Token>? Tokens { get; set; }
     public DbSet<Savings>? Savings { get; set; }
@@ -18,4 +25,5 @@ public class RepositoryContext : IdentityDbContext<User, IdentityRole<Guid>, Gui
     public DbSet<ExpenseCategory>? ExpenseCategories { get; set; }
     public DbSet<RecurringExpenses>? RecurringExpenses { get; set; }
     public DbSet<Account>? Accounts { get; set; }
+    public DbSet<Income>? Income { get; set; }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using API.Extensions;
 using API.Middleware;
 
@@ -31,7 +33,10 @@ builder.Services.ConfigureServiceManager();
 // Auto Mapper
 builder.Services.AddSingleton(MappingProfile.CreateMapper());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+}); ;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

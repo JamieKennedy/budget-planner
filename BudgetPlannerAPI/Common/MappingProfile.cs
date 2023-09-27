@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.Account;
+using Common.DataTransferObjects.Income;
 using Common.DataTransferObjects.Savings;
 using Common.DataTransferObjects.SavingsBalance;
 using Common.DataTransferObjects.User;
@@ -29,6 +30,10 @@ namespace Common
             // Account
             CreateMap<CreateAccountDto, Account>();
             CreateMap<Account, AccountDto>();
+
+            // Income
+            CreateMap<CreateIncomeDto, Income>();
+            CreateMap<Income, IncomeDto>();
 
 
         }

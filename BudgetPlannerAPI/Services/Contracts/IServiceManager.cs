@@ -9,5 +9,6 @@ public interface IServiceManager
     IExpenseCategoryService ExpenseCategoryService { get; }
     IContributorService ContributorService { get; }
     IAccountService AccountService { get; }
+    IIncomeService IncomeService { get; }
 
 }

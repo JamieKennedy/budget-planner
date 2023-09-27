@@ -1,9 +1,15 @@
 import { useCallback, useState } from 'react';
-import { BiPencil, BiPlus, BiTrash } from 'react-icons/bi';
+import {
+    BiDotsHorizontalRounded,
+    BiPencil,
+    BiPlus,
+    BiTrash,
+} from 'react-icons/bi';
 
 import moment from 'moment';
 import { Savings } from '../../../../../../api/Savings';
 import ProgressBar from '../../../../../../components/misc/ui/ProgressBar';
+import PopoverMenu from '../../../../../../components/misc/ui/interactable/PopoverMenu';
 import Modal from '../../../../../../components/misc/ui/pageElements/Modal';
 import useApi from '../../../../../../hooks/useApi';
 import useAppStore from '../../../../../../state/Store';
@@ -165,18 +171,36 @@ const SavingsItem = ({
                                 {moment(item.goalDate).format('Do MMM yyyy')}
                             </p>
                         )}
-                        <div className="flex flex-row gap-3">
-                            <button onClick={(e) => handleAdd(e)}>
-                                <BiPlus className="w-6 h-6 hover:text-gray-500 dark:hover:text-gray-200" />
-                            </button>
-                            <button onClick={(e) => handleEdit(e)}>
-                                <BiPencil className="w-6 h-6 hover:text-gray-500 dark:hover:text-gray-200" />
-                            </button>
+                        <PopoverMenu
+                            button={
+                                <BiDotsHorizontalRounded className="text-white h-6 w-6" />
+                            }
+                        >
+                            <div className="flex flex-col divide-y divide-gray-600 w-full ">
+                                <button
+                                    onClick={(e) => handleAdd(e)}
+                                    className="flex flex-row gap-2 p-2 pr-4 hover:text-gray-200 items-center hover:bg-slate-600"
+                                >
+                                    <BiPlus className="w-5 h-5 hover:text-gray-500 dark:hover:text-gray-200" />
+                                    <p className="text-base">Add</p>
+                                </button>
+                                <button
+                                    onClick={(e) => handleEdit(e)}
+                                    className="flex flex-row gap-2 p-2 pr-4 hover:text-gray-200 items-center hover:bg-slate-600"
+                                >
+                                    <BiPencil className="w-5 h-5 hover:text-gray-500 dark:hover:text-gray-200" />
+                                    <p className="text-base">Edit</p>
+                                </button>
 
-                            <button onClick={(e) => handleDelete(e)}>
-                                <BiTrash className="w-6 h-6 hover:text-gray-500 dark:hover:text-gray-200" />
-                            </button>
-                        </div>
+                                <button
+                                    onClick={(e) => handleDelete(e)}
+                                    className="flex flex-row gap-2 p-2 pr-4 hover:text-gray-200 items-center hover:bg-slate-600"
+                                >
+                                    <BiTrash className="w-5 h-5 hover:text-gray-500 dark:hover:text-gray-200" />
+                                    <p className="text-base">Delete</p>
+                                </button>
+                            </div>
+                        </PopoverMenu>
                     </div>
                 </div>
 

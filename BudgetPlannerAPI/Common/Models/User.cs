@@ -4,5 +4,6 @@ namespace Common.Models
 {
     public class User : IdentityUser<Guid>
     {
+        public List<Income> Incomes { get; set; }
     }
 }

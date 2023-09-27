@@ -8,5 +8,6 @@ public interface IRepositoryManager
     IExpenseCategoryRepository ExpenseCategory { get; }
     IContributorRepository Contributor { get; }
     IAccountRepository Account { get; }
+    IIncomeRepository Income { get; }
     void Save();
 }
