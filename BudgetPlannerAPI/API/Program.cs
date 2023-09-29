@@ -30,6 +30,8 @@ builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 
+builder.Services.AddHttpContextAccessor();
+
 // Auto Mapper
 builder.Services.AddSingleton(MappingProfile.CreateMapper());
 

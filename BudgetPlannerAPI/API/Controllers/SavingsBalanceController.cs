@@ -1,6 +1,9 @@
 ﻿using Common.DataTransferObjects.SavingsBalance;
 using Common.Exceptions.SavingBalance;
 
+using LoggerService.Interfaces;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;
@@ -9,19 +12,16 @@ namespace API.Controllers
 {
     [Route("api/savings/{savingsId}/[controller]")]
     [ApiController]
-    public class SavingsBalanceController : ControllerBase
+    [Authorize]
+    public class SavingsBalanceController : BaseController
     {
-        private readonly IServiceManager _serviceManager;
 
-        public SavingsBalanceController(IServiceManager serviceManager)
-        {
-            _serviceManager = serviceManager;
-        }
+        public SavingsBalanceController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor) : base(serviceManager, loggerManager, contextAccessor) { }
 
         [HttpPost(Name = nameof(CreateSavingsBalance))]
         public IActionResult CreateSavingsBalance(Guid savingsId, [FromBody] CreateSavingsBalanceDto createSavingsBalanceDto)
         {
-            var savingsBalance = _serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
+            var savingsBalance = serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
 
             return CreatedAtRoute(nameof(GetSavingsBalanceById), new { savingsId, savingsBalance.SavingsBalanceId }, savingsBalance);
         }
@@ -29,7 +29,7 @@ namespace API.Controllers
         [HttpGet("{savingsBalanceId}", Name = nameof(GetSavingsBalanceById))]
         public IActionResult GetSavingsBalanceById(Guid savingsId, Guid savingsBalanceId)
         {
-            var savingsBalance = _serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
+            var savingsBalance = serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
 
             if (savingsBalance.SavingsId != savingsId) throw new InvalidSavingsIdForSavingsBalance(savingsBalanceId, savingsId);
 
@@ -39,7 +39,7 @@ namespace API.Controllers
         [HttpGet(Name = nameof(GetSavingsBalanceBySavingsId))]
         public IActionResult GetSavingsBalanceBySavingsId(Guid savingsId)
         {
-            var savingsBalances = _serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
+            var savingsBalances = serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
 
             return Ok(savingsBalances);
         }
@@ -47,7 +47,7 @@ namespace API.Controllers
         [HttpDelete("{savingsBalanceId}")]
         public IActionResult DeleteSavingsBalance(Guid savingsBalanceId)
         {
-            _serviceManager.SavingsBalanceService.DeleteSavingsBalance(savingsBalanceId);
+            serviceManager.SavingsBalanceService.DeleteSavingsBalance(savingsBalanceId);
 
             return Ok();
         }
