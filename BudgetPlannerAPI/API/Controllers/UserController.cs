@@ -12,7 +12,6 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UserController : BaseController
     {
         public UserController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor) : base(serviceManager, loggerManager, contextAccessor) { }
@@ -32,6 +31,7 @@ namespace API.Controllers
             return BadRequest(result.Errors);
         }
 
+        [Authorize]
         [HttpGet("{userId}", Name = nameof(GetUserById))]
         public async Task<IActionResult> GetUserById(Guid userId)
         {
@@ -42,6 +42,7 @@ namespace API.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpGet("email/{emailAddress}", Name = nameof(GetUserByEmail))]
         public async Task<IActionResult> GetUserByEmail(string emailAddress)
         {
@@ -50,6 +51,7 @@ namespace API.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpGet("all", Name = nameof(GetUsers))]
         public IActionResult GetUsers()
         {
