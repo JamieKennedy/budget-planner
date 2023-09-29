@@ -18,8 +18,9 @@ export const Endpoint = {
         DeleteSavingsBalance: (savingsId: string, savingsBalanceId: string) => `/api/savings/${savingsId}/savingsbalance/${savingsBalanceId}`,
     },
     Account: {
-        Base: (userId: string) => `/api/user/${userId}/account`,
-        Patch: (userId: string, accountId: string) => `/api/user/${userId}/account/${accountId}`,
+        Base: '/api/account',
+        Patch: (accountId: string) => `${Endpoint.Account.Base}/${accountId}`,
+        Delete: (accountId: string) => `${Endpoint.Account.Base}/${accountId}`,
     },
     Income: {
         Base: '/api/income',

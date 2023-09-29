@@ -1,7 +1,7 @@
 import { ErrorResponseSchema, TErrorResponse } from '../types/Api';
 
 import { AxiosRequestConfig } from 'axios';
-import { apiResponse } from '../hooks/useApi';
+import { TApiResponse } from '../hooks/useApi';
 
 export namespace HttpClientUtils {
     export interface IHttpConfigOptions {
@@ -30,7 +30,7 @@ export namespace HttpClientUtils {
      * @param {(V | TErrorResponse)} response
      * @return {*}
      */
-    export const HandleErrorResponse = <V>(response: V | TErrorResponse): apiResponse<V> => {
+    export const HandleErrorResponse = <V>(response: V | TErrorResponse): TApiResponse<V> => {
         if (IsErrorResponse(response)) {
             return [undefined, response];
         }

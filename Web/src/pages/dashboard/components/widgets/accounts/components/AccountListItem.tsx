@@ -18,15 +18,12 @@ interface IAccountListItemProps {
 const AccountListItem = ({ account, removeAccount, editAccount }: IAccountListItemProps) => {
     const [setError] = useAppStore((state) => [state.setError]);
 
-    const [deleteAccount] = useApi<void, { userId: string; accountId: string }>(Accounts.DeleteAccount);
+    const [deleteAccount] = useApi<void, string>(Accounts.DeleteAccount, true);
 
     const [edittingAccount, setEdditingAccount] = useState(false);
 
     const handleDelete = async () => {
-        const [, error] = await deleteAccount({
-            userId: account.userId,
-            accountId: account.id,
-        });
+        const [, error] = await deleteAccount({ requestData: account.id });
 
         if (error) {
             setError(error.Message);

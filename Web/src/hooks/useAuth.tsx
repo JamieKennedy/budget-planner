@@ -1,15 +1,15 @@
-import { Authentication } from "../api/Auth";
-import HttpClient from "../api/HttpClient";
-import useAppStore from "../state/Store";
-import { AuthUtils } from "../utils/AuthUtils";
-import { HttpClientUtils } from "../utils/HttpClientUtils";
-import { apiResponse } from "./useApi";
+import { Authentication } from '../api/Auth';
+import HttpClient from '../api/HttpClient';
+import useAppStore from '../state/Store';
+import { AuthUtils } from '../utils/AuthUtils';
+import { HttpClientUtils } from '../utils/HttpClientUtils';
+import { TApiResponse } from './useApi';
 
-const useAuth = (): [() => Promise<apiResponse<string>>, (accessToken?: string) => void] => {
+const useAuth = (): [() => Promise<TApiResponse<string>>, (accessToken?: string) => void] => {
     const accessToken = useAppStore((appState) => appState.Auth?.AccessToken);
     const setToken = useAppStore((appState) => appState.setToken);
 
-    const getAccessToken = async (): Promise<apiResponse<string>> => {
+    const getAccessToken = async (): Promise<TApiResponse<string>> => {
         if (!accessToken || AuthUtils.accessTokenExpired(accessToken)) {
             // No token in the state or access token in state has expired
             const httpClient = new HttpClient(

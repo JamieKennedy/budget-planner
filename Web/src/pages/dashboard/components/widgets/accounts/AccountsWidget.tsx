@@ -17,11 +17,11 @@ const AccountsWidget = () => {
     const [accounts, setAccounts] = useState<TAccount[]>([]);
     const [widgetState, setWidgetState] = useState<EWidgetState>('Loading');
 
-    const [fetchAccounts] = useApi<TAccount[], string>(Accounts.GetAccountsForUser, true);
+    const [fetchAccounts] = useApi<TAccount[]>(Accounts.GetAccountsForUser, true);
 
     const getAccounts = useCallback(async () => {
         if (user) {
-            const [remoteAccounts, remoteAccountsError] = await fetchAccounts(user.id);
+            const [remoteAccounts, remoteAccountsError] = await fetchAccounts({});
 
             if (remoteAccountsError) {
                 setError(remoteAccounts);

@@ -72,7 +72,7 @@ class HttpClient {
         }
     };
 
-    public delete = async <T>(url: string, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
+    public delete = async <T>(url: string, schema?: z.ZodType<T>, config?: AxiosRequestConfig): Promise<T | TErrorResponse> => {
         try {
             console.log(url);
             const response: AxiosResponse<T> = await this._client.delete(url, config);

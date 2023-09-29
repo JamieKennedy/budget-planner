@@ -1,6 +1,7 @@
 import MainPageLayout from '../../layouts/MainPageLayout';
 import WidgetContainer from './components/WidgetContainer';
 import AccountsWidget from './components/widgets/accounts/AccountsWidget';
+import IncomeWidget from './components/widgets/income/IncomeWidget';
 import SavingsWidget from './components/widgets/savings/SavingsWidget';
 
 const Dashboard = () => {
@@ -12,6 +13,9 @@ const Dashboard = () => {
                 </WidgetContainer>
                 <WidgetContainer className='col-span-1'>
                     <AccountsWidget />
+                </WidgetContainer>
+                <WidgetContainer className='col-span-1'>
+                    <IncomeWidget />
                 </WidgetContainer>
             </section>
         </MainPageLayout>

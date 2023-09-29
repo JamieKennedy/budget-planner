@@ -1,4 +1,4 @@
-import { TAccount, TCreateAccount, TUpdateAccount } from '../../../../../../types/Accounts';
+import { AccountSchema, TAccount, TCreateAccount, TUpdateAccount } from '../../../../../../types/Accounts';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -48,7 +48,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
     });
 
     const onEdit = async (editData: TUpdateAccount): Promise<boolean> => {
-        const [updatedAccount, updateError] = await updateAccount(editData);
+        const [updatedAccount, updateError] = await updateAccount({ requestData: editData, schema: AccountSchema });
 
         if (updateError) {
             setAppError(updateError.Message);
@@ -64,7 +64,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
     };
 
     const onAdd = async (addData: TCreateAccount) => {
-        const [newAccount, createAccountError] = await createAccount(addData);
+        const [newAccount, createAccountError] = await createAccount({ requestData: addData, schema: AccountSchema });
 
         if (createAccountError) {
             setAppError(createAccountError.Message);

@@ -1,14 +1,15 @@
-import { useState } from "react";
-import { z } from "zod";
-import HttpClient from "../api/HttpClient";
-import { TErrorResponse } from "../types/Api";
-import { HttpClientUtils } from "../utils/HttpClientUtils";
-import useAuth from "./useAuth";
+import { useState } from 'react';
+import { z } from 'zod';
+import HttpClient from '../api/HttpClient';
+import { TErrorResponse } from '../types/Api';
+import { HttpClientUtils } from '../utils/HttpClientUtils';
+import useAuth from './useAuth';
 
-type useApiResponse<T, U> = [(requestData: U, schema?: z.ZodType<T>) => Promise<apiResponse<T>>, boolean];
-export type apiResponse<T> = [T, undefined] | [undefined, TErrorResponse];
+type TUseApiResponse<T, U> = [(callerProps: TRequestProps<T, U>) => Promise<TApiResponse<T>>, boolean];
+export type TApiResponse<T> = [T, undefined] | [undefined, TErrorResponse];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type requestFn<T> = (httpClient: HttpClient, ...args: any[]) => Promise<T | TErrorResponse>;
+type TRequestFn<T, U = undefined> = (httpClient: HttpClient, props: TRequestProps<T, U>) => Promise<T | TErrorResponse>;
+export type TRequestProps<T, U = undefined> = { requestData: U; schema?: z.ZodType<T> };
 
 /**
  * A generic hook for calling the api, that takes a request function, that must take a HttpClient arg and returns
@@ -19,7 +20,7 @@ type requestFn<T> = (httpClient: HttpClient, ...args: any[]) => Promise<T | TErr
  * @param requiresAuth bool to specify if the request needs auth, defaults to false
  * @return {*}  {useApiResponse<T, U>}
  */
-const useApi = <T, U = void>(fetcher: requestFn<T>, requiresAuth?: boolean, requiresCredentials?: boolean): useApiResponse<T, U> => {
+const useApi = <T, U = undefined>(fetcher: Function, requiresAuth?: boolean, requiresCredentials?: boolean): TUseApiResponse<T, U> => {
     const [isLoading, setIsLoading] = useState(false);
     const [getAccessToken] = useAuth();
 
@@ -45,7 +46,7 @@ const useApi = <T, U = void>(fetcher: requestFn<T>, requiresAuth?: boolean, requ
         return new HttpClient(clientConfig);
     };
 
-    const callApi = async (requestData?: U, schema?: z.ZodType<T>): Promise<apiResponse<T>> => {
+    const callApi = async (props: TRequestProps<T, U>): Promise<TApiResponse<T>> => {
         setIsLoading(true);
 
         // attempt to create the client with appropriate data
@@ -57,7 +58,7 @@ const useApi = <T, U = void>(fetcher: requestFn<T>, requiresAuth?: boolean, requ
             return [undefined, clientError];
         }
 
-        const data = HttpClientUtils.HandleErrorResponse(await fetcher(client, requestData, schema));
+        const data = HttpClientUtils.HandleErrorResponse(await fetcher(client, props));
 
         setIsLoading(false);
         return data;
