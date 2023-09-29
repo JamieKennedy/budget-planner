@@ -8,7 +8,11 @@ namespace Repository;
 
 public class RepositoryContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    public RepositoryContext(DbContextOptions options) : base(options) { }
+    public RepositoryContext(DbContextOptions options) : base(options)
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

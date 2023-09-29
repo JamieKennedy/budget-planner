@@ -3,6 +3,8 @@ using Common.DataTransferObjects.Token;
 using Common.Exceptions.Base;
 using Common.Exceptions.Configuration;
 
+using LoggerService.Interfaces;
+
 using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
@@ -13,23 +15,22 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : BaseController
     {
-        private readonly IServiceManager _serviceManager;
         private readonly IConfiguration _configuration;
 
-        public AuthenticationController(IServiceManager serviceManager, IConfiguration configuration)
+        public AuthenticationController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor, IConfiguration configuration) : base(serviceManager, loggerManager, contextAccessor)
         {
-            _serviceManager = serviceManager;
             _configuration = configuration;
         }
+
 
         [HttpPost(Name = nameof(Authenticate))]
         public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto userAuthenticationDto)
         {
-            if (!await _serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) throw new UnauthorisedException("Incorrect details");
+            if (!await serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) throw new UnauthorisedException("Incorrect details");
 
-            var tokenDto = _serviceManager.AuthenticationService.CreateToken();
+            var tokenDto = serviceManager.AuthenticationService.CreateToken();
 
             var authCookie = new AuthenticationCookieDto()
             {
@@ -64,7 +65,7 @@ namespace API.Controllers
 
                 if (authCookie is not null)
                 {
-                    var newToken = await _serviceManager.AuthenticationService.RefreshToken(new RefreshTokenDto()
+                    var newToken = await serviceManager.AuthenticationService.RefreshToken(new RefreshTokenDto()
                     {
                         RefreshToken = authCookie.RefreshToken
                     });
@@ -112,7 +113,7 @@ namespace API.Controllers
         [HttpPost("Reset/Token", Name = nameof(GeneratePasswordResetToken))]
         public async Task<IActionResult> GeneratePasswordResetToken([FromBody] ResetPasswordTokenDto resetPasswordTokenDto)
         {
-            var token = await _serviceManager.AuthenticationService.GeneratePasswordResetToken(resetPasswordTokenDto.Email);
+            var token = await serviceManager.AuthenticationService.GeneratePasswordResetToken(resetPasswordTokenDto.Email);
 
             return Ok(token);
         }
@@ -120,7 +121,7 @@ namespace API.Controllers
         [HttpPost("Reset", Name = nameof(ResetPassword))]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
-            var result = await _serviceManager.AuthenticationService.ResetPassword(resetPasswordDto.Email, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
+            var result = await serviceManager.AuthenticationService.ResetPassword(resetPasswordDto.Email, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
 
             if (!result.Succeeded)
             {

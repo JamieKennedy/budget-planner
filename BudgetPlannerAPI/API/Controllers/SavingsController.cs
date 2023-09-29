@@ -1,58 +1,58 @@
 ﻿using Common.DataTransferObjects.Savings;
 
+using LoggerService.Interfaces;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;
 
 namespace API.Controllers
 {
-    [Route("api/user/{userId}/savings")]
+    [Route("api/savings")]
     [ApiController]
-    public class SavingsController : ControllerBase
+    [Authorize]
+    public class SavingsController : BaseController
     {
-        private readonly IServiceManager _serviceManager;
+        public SavingsController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor) : base(serviceManager, loggerManager, contextAccessor) { }
 
-        public SavingsController(IServiceManager serviceManager)
-        {
-            _serviceManager = serviceManager;
-        }
 
         [HttpPost(Name = nameof(CreateSavings))]
-        public async Task<IActionResult> CreateSavings(Guid userId, [FromBody] CreateSavingsDto createSavingsDto)
+        public async Task<IActionResult> CreateSavings([FromBody] CreateSavingsDto createSavingsDto)
         {
-            var savings = await _serviceManager.SavingsService.CreateSavings(userId, createSavingsDto);
+            var savings = await serviceManager.SavingsService.CreateSavings(AuthIdentity.Id, createSavingsDto);
 
-            return CreatedAtRoute(nameof(GetSavings), new { userId, savings.SavingsId }, savings);
+            return CreatedAtRoute(nameof(GetSavings), new { savings.SavingsId }, savings);
         }
 
         [HttpGet("{savingsId}", Name = nameof(GetSavings))]
         public IActionResult GetSavings(Guid savingsId)
         {
-            var savings = _serviceManager.SavingsService.SelectById(savingsId);
+            var savings = serviceManager.SavingsService.SelectById(savingsId);
 
             return Ok(savings);
         }
 
         [HttpGet(Name = nameof(GetSavingsForUser))]
-        public async Task<IActionResult> GetSavingsForUser(Guid userId)
+        public async Task<IActionResult> GetSavingsForUser()
         {
-            var savings = await _serviceManager.SavingsService.SelectByUserId(userId);
+            var savings = await serviceManager.SavingsService.SelectByUserId(AuthIdentity.Id);
 
             return Ok(savings);
         }
 
         [HttpDelete("{savingsId}", Name = nameof(DeleteSavings))]
-        public async Task<IActionResult> DeleteSavings(Guid userId, Guid SavingsId)
+        public async Task<IActionResult> DeleteSavings(Guid SavingsId)
         {
-            await _serviceManager.SavingsService.DeleteById(userId, SavingsId);
+            await serviceManager.SavingsService.DeleteById(AuthIdentity.Id, SavingsId);
 
             return Ok();
         }
 
         [HttpPatch("{savingsId}", Name = nameof(PatchSavings))]
-        public async Task<IActionResult> PatchSavings(Guid userId, Guid savingsId, [FromBody] UpdateSavingsDto updateSavingsDto)
+        public async Task<IActionResult> PatchSavings(Guid savingsId, [FromBody] UpdateSavingsDto updateSavingsDto)
         {
-            var updatedSavings = await _serviceManager.SavingsService.UpdateSavings(userId, savingsId, updateSavingsDto);
+            var updatedSavings = await serviceManager.SavingsService.UpdateSavings(AuthIdentity.Id, savingsId, updateSavingsDto);
 
             return Ok(updatedSavings);
         }

@@ -14,12 +14,12 @@ namespace API.Controllers
     [Authorize]
     public class IncomeController : BaseController
     {
-        public IncomeController(IServiceManager serviceManager, ILoggerManager loggerManager) : base(serviceManager, loggerManager) { }
+        public IncomeController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor) : base(serviceManager, loggerManager, contextAccessor) { }
 
         [HttpPost(Name = nameof(PostAccount))]
         public async Task<IActionResult> PostAccount([FromBody] CreateIncomeDto createIncomeDto)
         {
-            var income = await serviceManager.IncomeService.CreateIncome(authIdentity.Id, createIncomeDto);
+            var income = await serviceManager.IncomeService.CreateIncome(AuthIdentity.Id, createIncomeDto);
 
             return CreatedAtRoute(nameof(GetIncome), new { incomeId = income.Id }, income);
         }
@@ -27,7 +27,7 @@ namespace API.Controllers
         [HttpGet(Name = nameof(GetIncomeForUser))]
         public async Task<IActionResult> GetIncomeForUser()
         {
-            var income = await serviceManager.IncomeService.SelectByUserId(authIdentity.Id);
+            var income = await serviceManager.IncomeService.SelectByUserId(AuthIdentity.Id);
 
             return Ok(income);
         }
@@ -35,7 +35,7 @@ namespace API.Controllers
         [HttpGet("{incomeId}", Name = nameof(GetIncome))]
         public async Task<IActionResult> GetIncome(Guid incomeId)
         {
-            var income = await serviceManager.IncomeService.SelectById(authIdentity.Id, incomeId);
+            var income = await serviceManager.IncomeService.SelectById(AuthIdentity.Id, incomeId);
 
             return Ok(income);
         }
@@ -43,7 +43,7 @@ namespace API.Controllers
         [HttpDelete("{incomeId}", Name = nameof(DeleteIncome))]
         public async Task<IActionResult> DeleteIncome(Guid incomeId)
         {
-            await serviceManager.IncomeService.DeleteIncome(authIdentity.Id, incomeId);
+            await serviceManager.IncomeService.DeleteIncome(AuthIdentity.Id, incomeId);
 
             return Accepted();
         }
@@ -51,7 +51,7 @@ namespace API.Controllers
         [HttpPatch("{incomeId}", Name = nameof(UpdateIncome))]
         public async Task<IActionResult> UpdateIncome(Guid incomeId, UpdateIncomeDto updateIncomeDto)
         {
-            var updatedIncome = await serviceManager.IncomeService.UpdateIncome(authIdentity.Id, incomeId, updateIncomeDto);
+            var updatedIncome = await serviceManager.IncomeService.UpdateIncome(AuthIdentity.Id, incomeId, updateIncomeDto);
 
             return Ok(updatedIncome);
         }

@@ -8,7 +8,6 @@ using LoggerService.Interfaces;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,17 +24,16 @@ public static class ServiceExtensions
 {
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionStringBase = configuration.GetConnectionString("Default");
+        var connectionString = configuration.GetConnectionString("Default");
 
-        var connectionStringBuilder = new SqlConnectionStringBuilder(connectionStringBase)
-        {
-            UserID = configuration[ConfigurationConst.Sql.USERNAME] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.USERNAME),
-            Password = configuration[ConfigurationConst.Sql.PASSWORD] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.PASSWORD),
-        };
+        var userId = configuration[ConfigurationConst.Sql.USERNAME] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.USERNAME);
+        var password = configuration[ConfigurationConst.Sql.PASSWORD] ?? Environment.GetEnvironmentVariable(ConfigurationConst.Sql.PASSWORD);
+
+        connectionString = $"User Id={userId};Password={password};{connectionString}";
 
         services.AddDbContext<RepositoryContext>(options =>
         {
-            options.UseSqlServer(connectionStringBuilder.ConnectionString, b => b.MigrationsAssembly("API"));
+            options.UseNpgsql(connectionString, b => b.MigrationsAssembly("API"));
         });
     }
 

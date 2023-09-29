@@ -13,13 +13,23 @@ namespace API.Controllers
     {
         protected readonly IServiceManager serviceManager;
         protected readonly ILoggerManager loggerManager;
-        protected readonly AuthIdentity authIdentity;
 
-        public BaseController(IServiceManager serviceManager, ILoggerManager loggerManager)
+
+        private readonly IHttpContextAccessor _contextAccessor;
+
+        public BaseController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor)
         {
             this.serviceManager = serviceManager;
             this.loggerManager = loggerManager;
-            authIdentity = HttpContext.GetAuthIdentity();
+            _contextAccessor = contextAccessor;
+        }
+
+        protected AuthIdentity AuthIdentity
+        {
+            get
+            {
+                return _contextAccessor?.HttpContext?.GetAuthIdentity() ?? new AuthIdentity();
+            }
         }
     }
 }

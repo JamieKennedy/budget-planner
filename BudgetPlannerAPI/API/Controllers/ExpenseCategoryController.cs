@@ -1,58 +1,57 @@
 ﻿using Common.DataTransferObjects.ExpenseCategory;
 
+using LoggerService.Interfaces;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using Services.Contracts;
 
 namespace API.Controllers
 {
-    [Route("api/user/{userId}/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class ExpenseCategoryController : ControllerBase
+    [Authorize]
+    public class ExpenseCategoryController : BaseController
     {
-        private readonly IServiceManager _serviceManager;
-
-        public ExpenseCategoryController(IServiceManager serviceManager)
-        {
-            _serviceManager = serviceManager;
-        }
+        public ExpenseCategoryController(IServiceManager serviceManager, ILoggerManager loggerManager, IHttpContextAccessor contextAccessor) : base(serviceManager, loggerManager, contextAccessor) { }
 
         [HttpPost(Name = nameof(CreateExpenseCategory))]
-        public async Task<IActionResult> CreateExpenseCategory(Guid userId, [FromBody] CreateExpenseCategoryDto createExpenseCategoryDto)
+        public async Task<IActionResult> CreateExpenseCategory([FromBody] CreateExpenseCategoryDto createExpenseCategoryDto)
         {
-            var expenseCategory = await _serviceManager.ExpenseCategoryService.CreateExpenseCategory(userId, createExpenseCategoryDto);
+            var expenseCategory = await serviceManager.ExpenseCategoryService.CreateExpenseCategory(AuthIdentity.Id, createExpenseCategoryDto);
 
-            return CreatedAtRoute(nameof(GetExpenseCategory), new { userId, expenseCategory.ExpenseCategoryId }, expenseCategory);
+            return CreatedAtRoute(nameof(GetExpenseCategory), new { expenseCategory.ExpenseCategoryId }, expenseCategory);
         }
 
         [HttpPatch("{expenseCategoryId}", Name = nameof(UpdateExpenseCategory))]
-        public async Task<IActionResult> UpdateExpenseCategory(Guid userId, Guid expenseCategroyId, [FromBody] UpdateExpenseCategoryDto updateExpenseCategoryDto)
+        public async Task<IActionResult> UpdateExpenseCategory(Guid expenseCategroyId, [FromBody] UpdateExpenseCategoryDto updateExpenseCategoryDto)
         {
-            var updatedExpenseCategory = await _serviceManager.ExpenseCategoryService.UpdateExpenseCategory(userId, expenseCategroyId, updateExpenseCategoryDto);
+            var updatedExpenseCategory = await serviceManager.ExpenseCategoryService.UpdateExpenseCategory(AuthIdentity.Id, expenseCategroyId, updateExpenseCategoryDto);
 
             return Ok(updatedExpenseCategory);
         }
 
         [HttpDelete(Name = nameof(DeleteExpenseCategory))]
-        public IActionResult DeleteExpenseCategory(Guid userId, Guid expenseCategoryId)
+        public IActionResult DeleteExpenseCategory(Guid expenseCategoryId)
         {
-            _serviceManager.ExpenseCategoryService.DeleteExpenseCategory(userId, expenseCategoryId);
+            serviceManager.ExpenseCategoryService.DeleteExpenseCategory(AuthIdentity.Id, expenseCategoryId);
 
             return Ok();
         }
 
         [HttpGet("{expenseCategoryId}", Name = nameof(GetExpenseCategory))]
-        public async Task<IActionResult> GetExpenseCategory(Guid userId, Guid expenseCategoryId)
+        public async Task<IActionResult> GetExpenseCategory(Guid expenseCategoryId)
         {
-            var expenseCategory = await _serviceManager.ExpenseCategoryService.SelectById(userId, expenseCategoryId);
+            var expenseCategory = await serviceManager.ExpenseCategoryService.SelectById(AuthIdentity.Id, expenseCategoryId);
 
             return Ok(expenseCategory);
         }
 
         [HttpGet(Name = nameof(GetExpenseCategoryByUserId))]
-        public async Task<IActionResult> GetExpenseCategoryByUserId(Guid userId)
+        public async Task<IActionResult> GetExpenseCategoryByUserId()
         {
-            var expenseCategories = await _serviceManager.ExpenseCategoryService.SelectByUserId(userId);
+            var expenseCategories = await serviceManager.ExpenseCategoryService.SelectByUserId(AuthIdentity.Id);
 
             return Ok(expenseCategories);
         }
