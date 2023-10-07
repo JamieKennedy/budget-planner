@@ -1,23 +1,23 @@
 import Skeleton from 'react-loading-skeleton';
-import { EWidgetState } from '../../../../../../types/Enum';
+import { EQueryStatus } from '../../../../../../types/Enum';
 import { TIncome } from '../../../../../../types/Income';
 import IncomeListItem from './IncomeListItem';
 
 interface IIncomeListProps {
-    widgetState: EWidgetState;
+    widgetState: EQueryStatus;
     income: TIncome[];
 }
 
 const IncomeList = ({ widgetState, income }: IIncomeListProps) => {
     return (
         <div className='w-full h-fit flex flex-col items-center'>
-            {widgetState === 'Loading' && (
+            {widgetState === 'pending' && (
                 <div className='flex flex-col m-5 w-full'>
                     <Skeleton className='my-2 h-10 rounded-md' count={3} />
                 </div>
             )}
 
-            {widgetState === 'Loaded' && (
+            {widgetState === 'success' && (
                 <div className='flex flex-col w-full px-5 divide-y dark:text-white'>
                     {income
                         .sort((a, b) => a.amount - b.amount)

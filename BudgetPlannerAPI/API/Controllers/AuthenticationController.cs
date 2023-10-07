@@ -90,7 +90,7 @@ namespace API.Controllers
                     return Ok(newToken.AccessToken);
                 }
             }
-            return Unauthorized("Invalid Refresh Token");
+            throw new UnauthorisedException("Invalid Refresh Token");
         }
 
         [HttpPost("Logout", Name = nameof(Logout))]

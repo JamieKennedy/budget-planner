@@ -1,79 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { Accounts } from '../../../../../api/Accounts';
+import { useState } from 'react';
+import useAccount from '../../../../../api/hooks/useAccount';
 import Modal from '../../../../../components/misc/ui/pageElements/Modal';
-import useApi from '../../../../../hooks/useApi';
-import useAppStore from '../../../../../state/Store';
-import { TAccount } from '../../../../../types/Accounts';
-import { EWidgetState } from '../../../../../types/Enum';
 import AccountList from './components/AccountList';
 import AddEditAccount from './components/AddEditAccount';
 
 const AccountsWidget = () => {
-    const [user, setError] = useAppStore((appState) => [appState.User, appState.setError]);
+    const { accounts } = useAccount();
 
     const [addingAccount, setAddingAccount] = useState(false);
-    const [accounts, setAccounts] = useState<TAccount[]>([]);
-    const [widgetState, setWidgetState] = useState<EWidgetState>('Loading');
-
-    const [fetchAccounts] = useApi<TAccount[]>(Accounts.GetAccountsForUser, true);
-
-    const getAccounts = useCallback(async () => {
-        if (user) {
-            const [remoteAccounts, remoteAccountsError] = await fetchAccounts({});
-
-            if (remoteAccountsError) {
-                setError(remoteAccounts);
-                setWidgetState('Errored');
-                return;
-            }
-
-            setWidgetState('Loaded');
-            setAccounts(remoteAccounts);
-        }
-    }, [user, fetchAccounts, setError]);
-
-    const isMounted = useRef(false);
-    useEffect(() => {
-        if (isMounted.current) return;
-
-        getAccounts();
-
-        isMounted.current = true;
-
-        return () => {
-            isMounted.current = true;
-        };
-    }, [fetchAccounts, getAccounts, user]);
-
-    const removeAccount = (account: TAccount) => {
-        setAccounts((current) => {
-            return current.filter((c) => c.id !== account.id);
-        });
-    };
-
-    const addAccount = (account: TAccount) => {
-        setAccounts((current) => [...current, account]);
-    };
-
-    const editAccount = (account: TAccount) => {
-        setAccounts((current) =>
-            current.map((c) => {
-                if (c.id === account.id) {
-                    return account;
-                }
-
-                return c;
-            })
-        );
-    };
 
     return (
         <>
-            {user && addingAccount && (
+            {addingAccount && (
                 <Modal closeFn={() => setAddingAccount(false)}>
-                    <AddEditAccount addAccount={addAccount} closeFn={() => setAddingAccount(false)} />
+                    <AddEditAccount closeFn={() => setAddingAccount(false)} />
                 </Modal>
             )}
             <section className='h-fit w-full p-5'>
@@ -93,7 +34,7 @@ const AccountsWidget = () => {
                         </button>
                     </div>
                 </div>
-                <AccountList accounts={accounts} widgetState={widgetState} removeAccount={removeAccount} editAccount={editAccount} />
+                <AccountList accounts={accounts.data} widgetState={accounts.status} />
             </section>
         </>
     );

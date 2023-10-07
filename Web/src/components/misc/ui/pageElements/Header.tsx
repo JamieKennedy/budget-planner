@@ -1,11 +1,11 @@
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useCallback, useState } from 'react';
 import { BiSolidMoon, BiSolidSun } from 'react-icons/bi';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import { Dialog } from '@headlessui/react';
+import { useState } from 'react';
+import useAuth from '../../../../api/hooks/useAuth';
 import { NavigationConst } from '../../../../constants/NavigationConst';
-import { useLogout } from '../../../../hooks/useLogout';
 import useAppStore from '../../../../state/Store';
 import { ETheme } from '../../../../types/Enum';
 import { cn } from '../../../../utils/CssUtils';
@@ -20,17 +20,23 @@ const Header = () => {
     const [theme, setTheme] = useAppStore((state) => [state.Theme, state.setTheme]);
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const logout = useLogout();
+
+    const { logout } = useAuth();
+
     const location = useLocation();
 
     const isHighlighted = (pageName: string): boolean => {
-        console.log(pageName, location.pathname);
         return location.pathname.toLowerCase().includes(pageName.toLowerCase());
     };
 
-    const logoutHandler = useCallback(() => {
-        logout();
-    }, [logout]);
+    const logoutHandler = () => {
+        logout.mutate();
+    };
+
+    if (logout.isSuccess) {
+        console.log('navigate to login');
+        return <Navigate to={NavigationConst.Login} />;
+    }
 
     return (
         <header className='bg-white dark:bg-dark'>

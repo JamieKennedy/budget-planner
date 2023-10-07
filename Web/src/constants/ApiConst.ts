@@ -1,29 +1,12 @@
 export const Endpoint = {
     Authentication: {
-        Login: '/api/authentication',
-        Refresh: '/api/authentication/refresh',
-        Logout: '/api/authentication/logout',
+        Login: '/Authentication',
+        Refresh: '/Authentication/Refresh',
+        Logout: '/Authentication/Logout',
     },
-    User: {
-        GetUserById: '/api/User',
-    },
-    Savings: {
-        GetSavingsForUserId: 'Savings',
-        Delete: (userId: string, savingsId: string) => `/api/user/${userId}/savings/${savingsId}`,
-        Create: (userId: string) => `/api/user/${userId}/savings`,
-        Edit: (userId: string, savingsId: string) => `/api/user/${userId}/savings/${savingsId}`,
-    },
-    SavingsBalance: {
-        CreateSavingsBalance: (savingsId: string) => `/api/savings/${savingsId}/savingsbalance`,
-        DeleteSavingsBalance: (savingsId: string, savingsBalanceId: string) => `/api/savings/${savingsId}/savingsbalance/${savingsBalanceId}`,
-    },
-    Account: {
-        Base: '/api/account',
-        Patch: (accountId: string) => `${Endpoint.Account.Base}/${accountId}`,
-        Delete: (accountId: string) => `${Endpoint.Account.Base}/${accountId}`,
-    },
-    Income: {
-        Base: '/api/income',
-        Delete: (incomeId: string) => `${Endpoint.Income.Base}/${incomeId}`,
-    },
-};
+    User: '/User',
+    Savings: '/Savings',
+    SavingsBalance: (savingsId: string) => `/savings/${savingsId}/SavingsBalance` as const,
+    Account: '/Account',
+    Income: '/Income',
+} as const;

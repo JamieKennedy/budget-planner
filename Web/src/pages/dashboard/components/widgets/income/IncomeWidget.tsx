@@ -1,51 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { IncomeSchema, TIncome } from '../../../../../types/Income';
-
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { Income } from '../../../../../api/Income';
-import useApi from '../../../../../hooks/useApi';
-import useAppStore from '../../../../../state/Store';
-import { EWidgetState } from '../../../../../types/Enum';
+import useIncome from '../../../../../api/hooks/useIncome';
 import IncomeList from './components/IncomeList';
 
 interface IIncomeWidgetProps {}
 
 const IncomeWidget = ({}: IIncomeWidgetProps) => {
-    const [setError] = useAppStore((state) => [state.setError]);
-
-    const [widgetState, setWidgetState] = useState<EWidgetState>('Loading');
-    const [income, setIncome] = useState<TIncome[]>([]);
-
-    const [fetchIncome] = useApi<TIncome[]>(Income.GetIncomeForUser, true);
-
-    const getIncome = useCallback(async () => {
-        const [income, incomeError] = await fetchIncome({
-            schema: IncomeSchema.array(),
-            requestData: undefined,
-        });
-
-        if (incomeError) {
-            setError(incomeError.Message);
-            setWidgetState('Errored');
-            return;
-        }
-
-        setWidgetState('Loaded');
-        setIncome(income);
-    }, []);
-
-    const isMounted = useRef(false);
-    useEffect(() => {
-        if (isMounted.current) return;
-
-        getIncome();
-
-        isMounted.current = true;
-
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
+    const { income } = useIncome();
 
     return (
         <>
@@ -66,7 +26,7 @@ const IncomeWidget = ({}: IIncomeWidgetProps) => {
                         </button>
                     </div>
                 </div>
-                <IncomeList widgetState={widgetState} income={income} />
+                <IncomeList widgetState={income.status} income={income.data} />
             </section>
         </>
     );

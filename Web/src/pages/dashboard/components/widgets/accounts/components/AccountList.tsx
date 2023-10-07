@@ -1,30 +1,28 @@
 import Skeleton from 'react-loading-skeleton';
 import { TAccount } from '../../../../../../types/Accounts';
-import { EWidgetState } from '../../../../../../types/Enum';
+import { EQueryStatus } from '../../../../../../types/Enum';
 import AccountListItem from './AccountListItem';
 
 interface IAccountListProps {
     accounts: TAccount[];
-    widgetState: EWidgetState;
-    removeAccount: (account: TAccount) => void;
-    editAccount: (account: TAccount) => void;
+    widgetState: EQueryStatus;
 }
 
-const AccountList = ({ accounts, widgetState, removeAccount, editAccount }: IAccountListProps) => {
+const AccountList = ({ accounts, widgetState }: IAccountListProps) => {
     return (
         <div className='w-full h-fit flex flex-col items-center'>
-            {widgetState === 'Loading' && (
+            {widgetState === 'pending' && (
                 <div className='flex flex-col m-5 w-full'>
                     <Skeleton className='my-2 h-10 rounded-md' count={3} />
                 </div>
             )}
 
-            {widgetState === 'Loaded' && (
+            {widgetState === 'success' && (
                 <div className='flex flex-col w-full px-5 divide-y dark:text-white'>
                     {accounts
                         .sort((a, b) => a.balance - b.balance)
                         .map((account) => (
-                            <AccountListItem key={account.id} account={account} removeAccount={removeAccount} editAccount={editAccount} />
+                            <AccountListItem key={account.id} account={account} />
                         ))}
                     <div className='flex flex-row py-2 justify-between pr-24'>
                         <p className='text-right italic text-gray-600  dark:text-gray-300 pr-5'>Total:</p>
