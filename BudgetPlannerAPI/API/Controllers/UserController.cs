@@ -32,6 +32,15 @@ namespace API.Controllers
         }
 
         [Authorize]
+        [HttpGet(Name = nameof(GetCurrentUser))]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var user = await serviceManager.UserService.SelectById(AuthIdentity.Id);
+
+            return Ok(user);
+        }
+
+        [Authorize]
         [HttpGet("{userId}", Name = nameof(GetUserById))]
         public async Task<IActionResult> GetUserById(Guid userId)
         {

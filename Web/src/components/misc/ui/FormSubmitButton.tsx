@@ -1,23 +1,23 @@
 import { ReactNode } from 'react';
 import { BeatLoader } from 'react-spinners';
-import { EFormState } from '../../../types/Enum';
+import { EMutationStatus } from '../../../types/Enum';
 
 interface IFormSubmitProps {
     defaultStateText: string;
     enabled?: boolean;
-    formState: EFormState;
+    formState: EMutationStatus;
     className?: string;
     children?: ReactNode;
 }
 
 const FormSubmit = ({ defaultStateText, enabled = true, formState, className }: IFormSubmitProps) => {
-    const disabled: boolean = !enabled || formState !== 'Default';
+    const disabled: boolean = !enabled || formState == 'pending';
 
     const buttonElement = (): JSX.Element => {
         switch (formState) {
-            case 'Default':
+            case 'idle':
                 return <p>{defaultStateText}</p>;
-            case 'Pending':
+            case 'pending':
                 return (
                     <div className='w-full'>
                         <BeatLoader color='#ffffff' size={10} margin={0} />

@@ -1,14 +1,14 @@
 import Skeleton from 'react-loading-skeleton';
-import { TAccount } from '../../../../../../types/Accounts';
 import { EQueryStatus } from '../../../../../../types/Enum';
-import AccountListItem from './AccountListItem';
+import { TIncome } from '../../../../../../types/Income';
+import IncomeListItem from './IncomeListItem';
 
-interface IAccountListProps {
-    accounts: TAccount[];
+interface IIncomeListProps {
     widgetState: EQueryStatus;
+    income: TIncome[];
 }
 
-const AccountList = ({ accounts, widgetState }: IAccountListProps) => {
+const IncomeList = ({ widgetState, income }: IIncomeListProps) => {
     return (
         <div className='w-full h-fit flex flex-col items-center'>
             {widgetState === 'pending' && (
@@ -19,17 +19,17 @@ const AccountList = ({ accounts, widgetState }: IAccountListProps) => {
 
             {widgetState === 'success' && (
                 <div className='flex flex-col w-full px-5 divide-y dark:text-white'>
-                    {accounts
-                        .sort((a, b) => a.balance - b.balance)
-                        .map((account) => (
-                            <AccountListItem key={account.id} account={account} />
+                    {income
+                        .sort((a, b) => a.amount - b.amount)
+                        .map((income) => (
+                            <IncomeListItem key={income.id} income={income} />
                         ))}
                     <div className='flex flex-row py-2 justify-between pr-24'>
                         <p className='text-right italic text-gray-600  dark:text-gray-300 pr-5'>Total:</p>
                         <p className='italic text-gray-600 dark:text-gray-300'>
                             £
-                            {accounts
-                                .map((account) => account.balance)
+                            {income
+                                .map((income) => income.amount)
                                 .reduce((acc: number, val: number) => acc + val, 0)
                                 .toFixed(2)}
                         </p>
@@ -40,4 +40,4 @@ const AccountList = ({ accounts, widgetState }: IAccountListProps) => {
     );
 };
 
-export default AccountList;
+export default IncomeList;

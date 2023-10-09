@@ -22,7 +22,7 @@ export const SavingsCreateSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
     goal: z.coerce.number(),
-    goalDate: z.coerce.date().optional(),
+    goalDate: z.coerce.date().nullish(),
 });
 
 export const SavingsEditSchema = z.object({

@@ -84,6 +84,7 @@ namespace Services
             account.LastModified = updateAccountDto.LastModified;
 
             account = _repositoryManager.Account.UpdateAccount(account);
+            _repositoryManager.Save();
             return _mapper.Map<AccountDto>(account);
         }
     }

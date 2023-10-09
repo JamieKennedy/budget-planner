@@ -1,20 +1,15 @@
 import { TAccount, TCreateAccount, TUpdateAccount } from '../../../../../../types/Accounts';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { BiPound } from 'react-icons/bi';
-import { Accounts } from '../../../../../../api/Accounts';
+import useAccount from '../../../../../../api/hooks/useAccount';
 import FormErrorMessage from '../../../../../../components/misc/ui/FormErrorMessage';
 import FormSubmitButton from '../../../../../../components/misc/ui/FormSubmitButton';
-import useApi from '../../../../../../hooks/useApi';
 import useAppStore from '../../../../../../state/Store';
-import { EFormState } from '../../../../../../types/Enum';
 
 interface IAddEditAccountProps {
     account?: TAccount;
     closeFn: () => void;
-    addAccount?: (account: TAccount) => void;
-    editAccount?: (account: TAccount) => void;
 }
 
 type TAddEditAccountFormData = {
@@ -31,85 +26,58 @@ const defaultValues = (account?: TAccount) => {
     }
 };
 
-const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditAccountProps) => {
-    const [user, setAppError] = useAppStore((state) => [state.User, state.setError]);
-    const [formState, setFormState] = useState<EFormState>('Default');
+const AddEditAccount = ({ account, closeFn }: IAddEditAccountProps) => {
+    const setAppError = useAppStore((state) => state.setError);
 
-    const [updateAccount] = useApi<TAccount, TUpdateAccount>(Accounts.UpdateAccount);
-    const [createAccount] = useApi<TAccount, TCreateAccount>(Accounts.CreateAccount);
+    const { updateAccount, createAccount } = useAccount();
 
     const {
         register,
         handleSubmit,
-        setError,
         formState: { errors },
     } = useForm<TAddEditAccountFormData>({
         defaultValues: defaultValues(account),
     });
 
-    const onEdit = async (editData: TUpdateAccount): Promise<boolean> => {
-        const [updatedAccount, updateError] = await updateAccount(editData);
-
-        if (updateError) {
-            setAppError(updateError.Message);
-            return false;
-        }
-
-        if (!editAccount) {
-            return false;
-        }
-
-        editAccount(updatedAccount);
-        return true;
+    const onEdit = async (editData: TUpdateAccount) => {
+        updateAccount.mutate(editData, {
+            onSuccess: () => {
+                closeFn();
+            },
+            onError: (error) => {
+                setAppError(error.Message);
+            },
+        });
     };
 
     const onAdd = async (addData: TCreateAccount) => {
-        const [newAccount, createAccountError] = await createAccount(addData);
-
-        if (createAccountError) {
-            setAppError(createAccountError.Message);
-            return false;
-        }
-
-        if (!addAccount) {
-            return false;
-        }
-
-        addAccount(newAccount);
-        return true;
+        createAccount.mutate(addData, {
+            onSuccess: () => {
+                closeFn();
+            },
+            onError: (error) => {
+                setAppError(error.Message);
+            },
+        });
     };
 
     const onSubmit = async (formData: TAddEditAccountFormData) => {
-        if (!user) {
-            setFormState('Errored');
-            setError('root', {
-                message: 'An error has occured',
-            });
-
-            return;
-        }
-
-        let result = false;
-
         if (account) {
-            result = await onEdit({
-                userId: user.id,
+            onEdit({
                 accountId: account.id,
                 name: formData.name,
                 balance: formData.balance,
             });
         } else {
-            result = await onAdd({
-                userId: user.id,
+            onAdd({
                 name: formData.name,
                 balance: formData.balance,
             });
         }
-
-        if (result) {
-            closeFn();
-        }
     };
+
+    const status = account ? updateAccount.status : createAccount.status;
+
     return (
         <div
             className={'border-2 border-gray-200 dark:border-blueMain bg-white rounded-2xl shadow-xl overflow-hidden max-w-xl w-full h-fit flex flex-col p-5 pb-10 dark:bg-dark'}
@@ -119,7 +87,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
         >
             <div className='flex flex-row items-center justify-between dark:text-white'>
                 <h2 className='text-xl font-semibold'>Add new account</h2>
-                <button onClick={() => (formState === 'Default' ? closeFn() : null)}>
+                <button onClick={() => (status === 'idle' ? closeFn() : null)}>
                     <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6 hover:text-gray-500'>
                         <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
                     </svg>
@@ -167,7 +135,7 @@ const AddEditAccount = ({ account, closeFn, addAccount, editAccount }: IAddEditA
                     <div className='mt-3'>
                         <FormSubmitButton
                             defaultStateText='Save'
-                            formState={formState}
+                            formState={status}
                             className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-2'
                         />
                     </div>

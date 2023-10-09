@@ -1,80 +1,31 @@
-import { useCallback, useState } from 'react';
-
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { Authentication } from '../../api/Auth';
-import { User } from '../../api/User';
+import { Navigate } from 'react-router';
+import useAuth from '../../api/hooks/useAuth';
 import FormErrorMessage from '../../components/misc/ui/FormErrorMessage';
 import FormSubmitButton from '../../components/misc/ui/FormSubmitButton';
 import { NavigationConst } from '../../constants/NavigationConst';
-import useApi from '../../hooks/useApi';
-import useAuth from '../../hooks/useAuth';
-import useAppStore from '../../state/Store';
 import { TAuthorizeRequest } from '../../types/Api';
-import { EFormState } from '../../types/Enum';
-import { TUser } from '../../types/User';
-import { AuthUtils } from '../../utils/AuthUtils';
+import { accessTokenExpired } from '../../utils/JwtUtils';
 
 const Login = () => {
-    const [formState, setFormState] = useState<EFormState>('Default');
-    const [loginError, setLoginError] = useState<string | null>(null);
-    const [login] = useApi<string, TAuthorizeRequest>(Authentication.Login, false, true);
-    const [getUser] = useApi<TUser, string>(User.GetUserById, true);
-    const [, setAccessToken] = useAuth();
-    const [setUser] = useAppStore((appState) => [appState.setUser]);
-    const navigate = useNavigate();
-
-    const onSubmit = useCallback(
-        async (data: TAuthorizeRequest) => {
-            setFormState('Pending');
-
-            const [accessToken, loginError] = await login({
-                email: data.email,
-                password: data.password,
-                keepLoggedIn: data.keepLoggedIn,
-            });
-
-            console.log(accessToken, loginError);
-
-            if (loginError) {
-                // Default to an error occured message
-                let errorMessage = 'An error has occured, please try again';
-
-                if (loginError.StatusCode && loginError.StatusCode === 401) {
-                    // if reponse is unauthorised, change error message to
-                    // incorrect details
-                    errorMessage = 'Incorrect details';
-                }
-
-                setLoginError(errorMessage);
-                setFormState('Default');
-                return;
-            }
-
-            setAccessToken(accessToken);
-
-            const userId = AuthUtils.getTokenPayload(accessToken).Id;
-
-            const [user, userError] = await getUser(userId);
-
-            if (userError) {
-                setLoginError('Unable to retrieve the user');
-                setFormState('Default');
-                return;
-            }
-
-            setUser(user);
-            setFormState('Default');
-            navigate(NavigationConst.Dashboard);
-        },
-        [getUser, login, navigate, setAccessToken, setUser]
-    );
+    const { accessToken, login } = useAuth();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<TAuthorizeRequest>();
+
+    const onSubmit = (formData: TAuthorizeRequest) => {
+        login.mutate(formData);
+    };
+
+    if ((accessToken.data !== undefined && !accessTokenExpired(accessToken.data)) || login.isSuccess) {
+        // If login succeeded or active accessToken is in queryCache, navigate to the dashboard
+        return <Navigate to={NavigationConst.Dashboard} />;
+    }
+
+    // TODO: return loading state when accessToken query is fetching
 
     return (
         <div className='flex min-h-screen flex-1 bg-gray-900'>
@@ -132,12 +83,12 @@ const Login = () => {
                                 <div className='h-24'>
                                     <FormSubmitButton
                                         defaultStateText='Log In'
-                                        formState={formState}
+                                        formState={login.status}
                                         className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-2'
                                     />
-                                    {loginError && (
+                                    {login.isError && (
                                         <div className='flex justify-center'>
-                                            <FormErrorMessage message={loginError} />
+                                            <FormErrorMessage message={login.error.Message} />
                                         </div>
                                     )}
                                 </div>

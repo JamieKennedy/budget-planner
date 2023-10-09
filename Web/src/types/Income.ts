@@ -7,13 +7,13 @@ export const IncomeSchema = z.object({
     id: z.string(),
     userId: z.string(),
     accountId: z.string(),
-    Name: z.string(),
-    Amount: z.number(),
-    Occurrence: Occurrence,
-    OccurrsOn: OccurrsOn,
-    CustomOccurrsOn: z.number().nullish(),
-    Created: z.coerce.date(),
-    LastModified: z.coerce.date(),
+    name: z.string(),
+    amount: z.number(),
+    occurrence: Occurrence,
+    occurrsOn: OccurrsOn,
+    customOccurrsOn: z.number().nullish(),
+    created: z.coerce.date(),
+    lastModified: z.coerce.date(),
 });
 
 export type TCreateIncome = z.infer<typeof CreateIncomeSchema>;
@@ -21,17 +21,18 @@ export const CreateIncomeSchema = z.object({
     accountId: z.string(),
     name: z.string(),
     amount: z.number(),
-    Occurrence: Occurrence,
-    OccurrsOn: OccurrsOn,
-    CustomOccurrsOn: z.number().nullish(),
+    occurrence: Occurrence,
+    occurrsOn: OccurrsOn,
+    customOccurrsOn: z.number().nullish(),
 });
 
 export type TUpdateIncome = z.infer<typeof UpdateIncomeSchema>;
 export const UpdateIncomeSchema = z.object({
+    id: z.string(),
     accountId: z.string(),
     name: z.string().nullish(),
     amount: z.number().nullish(),
-    Occurrence: Occurrence.nullish(),
-    OccurrsOn: OccurrsOn.nullish(),
-    CustomOccurrsOn: z.number().nullish(),
+    occurrence: Occurrence.nullish(),
+    occurrsOn: OccurrsOn.nullish(),
+    customOccurrsOn: z.number().nullish(),
 });
