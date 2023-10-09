@@ -16,8 +16,13 @@ type TChartDataItem = {
 const SavingsChart = ({ item }: ISavingsChartProps) => {
     const theme = useAppStore((state) => state.Theme);
 
-    const earliestDate = item.savingsBalances[item.savingsBalances.length - 1].created.getTime();
-    const lastDate = item.goalDate ? item.goalDate.getTime() : Date.now();
+    var earliestDate = item.savingsBalances[item.savingsBalances.length - 1].created.getTime();
+    var lastDate: number = item.goalDate ? item.goalDate.getTime() : Date.now();
+
+    if (moment(earliestDate).isSame(moment(lastDate), 'day')) {
+        earliestDate = moment(earliestDate).add(-1, 'day').toDate().getTime();
+        lastDate = moment(lastDate).add(1, 'day').toDate().getTime();
+    }
 
     const chartData: TChartDataItem[] = item.savingsBalances
         .map((i) => {
@@ -39,7 +44,7 @@ const SavingsChart = ({ item }: ISavingsChartProps) => {
                         domain={[earliestDate, lastDate]}
                         type='number'
                         tickCount={10}
-                        interval={'preserveStartEnd'}
+                        interval={'equidistantPreserveStart'}
                         tick={{ fill: theme === 'Dark' ? 'white' : undefined }}
                     />
                     <YAxis domain={[0, item.goal]} interval={'preserveStart'} tickCount={100} padding={{ top: 10 }} tickFormatter={(value) => `£${value}`} tick={{ fill: theme === 'Dark' ? 'white' : undefined }} />

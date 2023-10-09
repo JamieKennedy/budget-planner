@@ -1,31 +1,19 @@
-import { TSavingsBalance, TSavingsBalanceCreate } from '../../types/SavingsBalance';
-import { fetchOptions, handleResponse, url, urlWithIds } from '../../utils/ApiUtils';
+import { SavingsBalanceSchema, TSavingsBalance, TSavingsBalanceCreate } from '../../types/SavingsBalance';
+import { configOptions, urlWithIds } from '../../utils/ApiUtils';
 
 import { Endpoint } from '../../constants/ApiConst';
+import AxiosClient from '../AxiosClient';
 
-export const CreateSavingsBalance = async (accessToken: string, savingsId: string, request: TSavingsBalanceCreate): Promise<TSavingsBalance> => {
-    return handleResponse(
-        await fetch(
-            url(Endpoint.SavingsBalance(savingsId)),
-            fetchOptions({
-                method: 'POST',
-                request: request,
-                accessToken: accessToken,
-            })
-        ),
-        'Json'
-    );
+export const CreateSavingsBalance = async (client: AxiosClient, accessToken: string, savingsId: string, request: TSavingsBalanceCreate): Promise<TSavingsBalance> => {
+    return client.post(Endpoint.SavingsBalance(savingsId), {
+        data: request,
+        schema: SavingsBalanceSchema,
+        config: configOptions({ accessToken: accessToken }),
+    });
 };
 
-export const DeleteSavingsBalance = async (accessToken: string, savingsId: string, savingsBalanceId: string): Promise<void> => {
-    return handleResponse(
-        await fetch(
-            url(urlWithIds(Endpoint.SavingsBalance(savingsId), savingsBalanceId)),
-            fetchOptions({
-                method: 'DELETE',
-                accessToken: accessToken,
-            })
-        ),
-        'Void'
-    );
+export const DeleteSavingsBalance = async (client: AxiosClient, accessToken: string, savingsId: string, savingsBalanceId: string): Promise<void> => {
+    return client.delete(urlWithIds(Endpoint.SavingsBalance(savingsId), savingsBalanceId), {
+        config: configOptions({ accessToken: accessToken }),
+    });
 };

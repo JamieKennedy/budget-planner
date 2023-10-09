@@ -1,40 +1,25 @@
-import { fetchOptions, handleResponse, url } from '../../utils/ApiUtils';
-
 import { Endpoint } from '../../constants/ApiConst';
 import { TAuthorizeRequest } from '../../types/Api';
+import { configOptions } from '../../utils/ApiUtils';
+import AxiosClient from '../AxiosClient';
 
-export const Login = async (request: TAuthorizeRequest): Promise<string> => {
-    const response = await fetch(
-        url(Endpoint.Authentication.Login),
-        fetchOptions({
-            method: 'POST',
-            requiresCredentials: true,
-            request: request,
-        })
-    );
-
-    return handleResponse(response, 'Text');
+export const Login = async (client: AxiosClient, request: TAuthorizeRequest): Promise<string> => {
+    return client.post(Endpoint.Authentication.Login, {
+        data: request,
+        config: configOptions({ requiresCredentials: true }),
+    });
 };
 
-export const Refresh = async (): Promise<string> => {
+export const Refresh = async (client: AxiosClient): Promise<string> => {
     console.log('refresh');
-    const response = await fetch(
-        url(Endpoint.Authentication.Refresh),
-        fetchOptions({
-            method: 'POST',
-            requiresCredentials: true,
-        })
-    );
 
-    return handleResponse(response, 'Text');
+    return client.post(Endpoint.Authentication.Refresh, {
+        config: configOptions({ requiresCredentials: true }),
+    });
 };
 
-export const Logout = async (): Promise<void> => {
-    fetch(
-        url(Endpoint.Authentication.Logout),
-        fetchOptions({
-            method: 'POST',
-            requiresCredentials: true,
-        })
-    );
+export const Logout = async (client: AxiosClient): Promise<void> => {
+    return client.post(Endpoint.Authentication.Logout, {
+        config: configOptions({ requiresCredentials: true }),
+    });
 };

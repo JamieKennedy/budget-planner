@@ -1,17 +1,12 @@
-import { fetchOptions, handleResponse, url } from '../../utils/ApiUtils';
+import { TUser, UserSchema } from '../../types/User';
 
 import { Endpoint } from '../../constants/ApiConst';
-import { TUser } from '../../types/User';
+import { configOptions } from '../../utils/ApiUtils';
+import AxiosClient from '../AxiosClient';
 
-export const GetUser = async (accessToken: string): Promise<TUser> => {
-    return handleResponse(
-        await fetch(
-            url(Endpoint.User),
-            fetchOptions({
-                method: 'GET',
-                accessToken: accessToken,
-            })
-        ),
-        'Json'
-    );
+export const GetUser = async (client: AxiosClient, accessToken: string): Promise<TUser> => {
+    return client.get(Endpoint.User, {
+        schema: UserSchema,
+        config: configOptions({ accessToken: accessToken }),
+    });
 };

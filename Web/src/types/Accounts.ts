@@ -5,7 +5,7 @@ export const AccountSchema = z.object({
     id: z.string(),
     userId: z.string(),
     name: z.string(),
-    colourHex: z.string(),
+    colourHex: z.string().nullish(),
     balance: z.number(),
     created: z.coerce.date(),
     lastModified: z.coerce.date(),

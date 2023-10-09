@@ -5,25 +5,27 @@ import { CreateAccount, DeleteAccount, GetAccounts, UpdateAccount } from '../fet
 import { TErrorResponse } from '../../types/Api';
 import { authenticatedFetcher } from '../../utils/ApiUtils';
 import { accessTokenExpired } from '../../utils/JwtUtils';
+import { useAxiosClient } from '../context/axiosContext';
 import useAuth from './useAuth';
 
 const useAccount = () => {
     const queryClient = useQueryClient();
 
+    const axiosClient = useAxiosClient();
     const { accessToken } = useAuth();
 
     const queryEnabled = accessToken.data !== undefined && !accessTokenExpired(accessToken.data);
 
     const accountQuery = useQuery<TAccount[], TErrorResponse>({
         queryKey: ['accounts'],
-        queryFn: () => authenticatedFetcher(GetAccounts, accessToken.data),
+        queryFn: () => authenticatedFetcher(GetAccounts, axiosClient, accessToken.data),
         enabled: queryEnabled,
         initialData: [],
     });
 
     const createAccount = useMutation<TAccount, TErrorResponse, TCreateAccount>({
         mutationKey: ['createAccount'],
-        mutationFn: (request) => authenticatedFetcher(CreateAccount, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(CreateAccount, axiosClient, accessToken.data, request),
         onSuccess: (data) => {
             queryClient.setQueryData<TAccount[]>(['accounts'], (current) => {
                 if (current) {
@@ -37,7 +39,7 @@ const useAccount = () => {
 
     const updateAccount = useMutation<TAccount, TErrorResponse, TUpdateAccount>({
         mutationKey: ['updateAccount'],
-        mutationFn: (request) => authenticatedFetcher(UpdateAccount, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(UpdateAccount, axiosClient, accessToken.data, request),
         onSuccess: (data) => {
             queryClient.setQueryData<TAccount[]>(['accounts'], (current) => {
                 if (current) {
@@ -55,7 +57,7 @@ const useAccount = () => {
 
     const deleteAccount = useMutation<void, TErrorResponse, string>({
         mutationKey: ['deleteAccount'],
-        mutationFn: (request) => authenticatedFetcher(DeleteAccount, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(DeleteAccount, axiosClient, accessToken.data, request),
         onSuccess: (_, request) => {
             console.log('Delete', request);
             queryClient.setQueryData<TAccount[]>(['accounts'], (current) => {

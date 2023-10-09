@@ -1,81 +1,37 @@
-import { ERequestMethod, EResponseType, ErrorResponseSchema, TErrorResponse } from '../types/Api';
+import { ErrorResponseSchema, TErrorResponse } from '../types/Api';
 
-import { z } from 'zod';
+import { AxiosRequestConfig } from 'axios';
+import AxiosClient from '../api/AxiosClient';
 import { accessTokenExpired } from './JwtUtils';
 
-type TFetcher<T> = (...args: any[]) => Promise<T>;
+type TFetcher<T> = (client: AxiosClient, accessToken: string, ...args: any[]) => Promise<T>;
 
-type TFetchOptions<T> = {
-    method: ERequestMethod;
-    request?: T;
-    accessToken?: string;
-    requiresCredentials?: boolean;
+/**
+ * Type narrowing Function to determine if an object is an error response at runtime
+ *
+ * @param {any} response
+ * @return {boolean}  {response is ErrorResponse}
+ */
+export const isErrorResponse = (response: unknown): response is TErrorResponse => {
+    console.log(response);
+    console.log(ErrorResponseSchema.safeParse(response));
+    return ErrorResponseSchema.safeParse(response).success;
 };
 
-export const authenticatedFetcher = async <T>(fetcher: TFetcher<T>, accessToken?: string, ...args: any[]): Promise<T> => {
-    return accessToken !== undefined && !accessTokenExpired(accessToken) ? fetcher(accessToken, ...args) : Promise.reject('Invalid access token');
+export const authenticatedFetcher = async <T>(fetcher: TFetcher<T>, client: AxiosClient, accessToken?: string, ...args: any[]): Promise<T> => {
+    return accessToken !== undefined && !accessTokenExpired(accessToken) ? fetcher(client, accessToken, ...args) : Promise.reject('Invalid access token');
 };
-
-export const authHeader = (accessToken: string): string => `Bearer ${accessToken}`;
 
 export const urlWithIds = (url: string, ...ids: string[]) => {
     const seperatedIds = ids.join('/');
     return `${url}/${seperatedIds}`;
 };
 
-export const url = (endpoint: string) => {
-    return import.meta.env.VITE_API_BASEURL + endpoint;
-};
-
-export const fetchOptions = <T = void>(options: TFetchOptions<T>): RequestInit => {
+export const configOptions = ({ requiresCredentials, accessToken }: { requiresCredentials?: boolean; accessToken?: string }): AxiosRequestConfig => {
     return {
-        method: options.method,
-        body: options.request ? JSON.stringify(options.request) : undefined,
-        credentials: options.requiresCredentials ? 'include' : undefined,
+        withCredentials: requiresCredentials,
         headers: {
-            'content-type': 'application/json',
-            Authorization: options.accessToken ? authHeader(options.accessToken) : '',
+            Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
         },
     };
-};
-
-export const handleResponse = async <T>(response: Response, responseType: EResponseType, schema?: z.ZodType<T>) => {
-    if (!response.ok) {
-        var error = await response.json();
-
-        const parseResult = ErrorResponseSchema.safeParse(error);
-
-        if (parseResult.success) {
-            throw error;
-        }
-
-        throw {
-            Message: 'An error has occured',
-            StatusCode: 500,
-        } as TErrorResponse;
-    }
-
-    let data = '';
-
-    if (responseType === 'Json') {
-        data = await response.json();
-    } else if (responseType === 'Text') {
-        data = await response.text();
-    } else {
-        return data as T;
-    }
-
-    if (schema) {
-        const parseResult = schema.safeParse(data);
-        if (parseResult.success) {
-            return parseResult.data;
-        } else {
-            throw {
-                StatusCode: 500,
-                Message: parseResult.error.message,
-            } as TErrorResponse;
-        }
-    }
-
-    return data as T;
 };

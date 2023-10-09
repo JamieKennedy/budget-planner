@@ -6,6 +6,7 @@ import useAppStore from '../../state/Store';
 import { TErrorResponse } from '../../types/Api';
 import { TSavings } from '../../types/Savings';
 import { authenticatedFetcher } from '../../utils/ApiUtils';
+import { useAxiosClient } from '../context/axiosContext';
 import useAuth from './useAuth';
 
 const useSavingsBalance = (savingsId: string) => {
@@ -14,10 +15,11 @@ const useSavingsBalance = (savingsId: string) => {
     const setError = useAppStore((state) => state.setError);
 
     const { accessToken } = useAuth();
+    const axiosClient = useAxiosClient();
 
     const createSavingsBalance = useMutation<TSavingsBalance, TErrorResponse, TSavingsBalanceCreate>({
         mutationKey: ['createSavingsBalance', savingsId],
-        mutationFn: (request) => authenticatedFetcher(CreateSavingsBalance, accessToken.data, savingsId, request),
+        mutationFn: (request) => authenticatedFetcher(CreateSavingsBalance, axiosClient, accessToken.data, savingsId, request),
         onSuccess: (data) => {
             queryClient.setQueryData<TSavings[]>(['savings'], (current) => {
                 if (current) {
@@ -38,7 +40,7 @@ const useSavingsBalance = (savingsId: string) => {
 
     const deleteSavingsBalance = useMutation<void, TErrorResponse, string>({
         mutationKey: ['deleteSavingsBalance', savingsId],
-        mutationFn: (request) => authenticatedFetcher(DeleteSavingsBalance, accessToken.data, savingsId, request),
+        mutationFn: (request) => authenticatedFetcher(DeleteSavingsBalance, axiosClient, accessToken.data, savingsId, request),
         onSuccess: (_, request) => {
             queryClient.setQueryData<TSavings[]>(['savings'], (current) => {
                 if (current) {

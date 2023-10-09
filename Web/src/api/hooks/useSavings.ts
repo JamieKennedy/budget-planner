@@ -6,6 +6,7 @@ import useAppStore from '../../state/Store';
 import { TErrorResponse } from '../../types/Api';
 import { authenticatedFetcher } from '../../utils/ApiUtils';
 import { accessTokenExpired } from '../../utils/JwtUtils';
+import { useAxiosClient } from '../context/axiosContext';
 import useAuth from './useAuth';
 
 const useSavings = () => {
@@ -13,19 +14,20 @@ const useSavings = () => {
     const setError = useAppStore((state) => state.setError);
 
     const { accessToken } = useAuth();
+    const axiosClient = useAxiosClient();
 
     const queryEnabled = accessToken.data !== undefined && !accessTokenExpired(accessToken.data);
 
     const savings = useQuery<TSavings[], TErrorResponse>({
         queryKey: ['savings'],
-        queryFn: () => authenticatedFetcher(GetSavings, accessToken.data),
+        queryFn: () => authenticatedFetcher(GetSavings, axiosClient, accessToken.data),
         enabled: queryEnabled,
         initialData: [],
     });
 
     const createSavings = useMutation<TSavings, TErrorResponse, TSavingsCreate>({
         mutationKey: ['createSavings'],
-        mutationFn: (request) => authenticatedFetcher(CreateSavings, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(CreateSavings, axiosClient, accessToken.data, request),
         onSuccess: (data) => {
             queryClient.setQueryData<TSavings[]>(['savings'], (current) => {
                 if (current) {
@@ -42,7 +44,7 @@ const useSavings = () => {
 
     const updateSavings = useMutation<TSavings, TErrorResponse, TSavingsEdit>({
         mutationKey: ['updateSavings'],
-        mutationFn: (request) => authenticatedFetcher(UpdateSavings, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(UpdateSavings, axiosClient, accessToken.data, request),
         onSuccess: (data, request) => {
             queryClient.setQueryData<TSavings[]>(['savings'], (current) => {
                 if (current) {
@@ -63,7 +65,7 @@ const useSavings = () => {
 
     const deleteSavings = useMutation<void, TErrorResponse, string>({
         mutationKey: ['deleteSavings'],
-        mutationFn: (request) => authenticatedFetcher(DeleteSavings, accessToken.data, request),
+        mutationFn: (request) => authenticatedFetcher(DeleteSavings, axiosClient, accessToken.data, request),
         onSuccess: (_, request) => {
             queryClient.setQueryData<TSavings[]>(['savings'], (current) => {
                 if (current) {

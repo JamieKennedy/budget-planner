@@ -28,6 +28,7 @@ export const CreateIncomeSchema = z.object({
 
 export type TUpdateIncome = z.infer<typeof UpdateIncomeSchema>;
 export const UpdateIncomeSchema = z.object({
+    id: z.string(),
     accountId: z.string(),
     name: z.string().nullish(),
     amount: z.number().nullish(),
