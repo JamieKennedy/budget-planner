@@ -95,9 +95,7 @@ namespace Services
 
             income.Name = updateIncomeDto.Name ?? income.Name;
             income.Amount = updateIncomeDto.Amount ?? income.Amount;
-            income.Occurrence = updateIncomeDto.Occurrence ?? income.Occurrence;
-            income.OccurrsOn = updateIncomeDto.OccurrsOn ?? income.OccurrsOn;
-            income.CustomOccurrsOn = updateIncomeDto.OccurrsOn == Common.Constants.Enums.EOccurrsOn.Custom ? updateIncomeDto.CustomOccurrsOn : null;
+
 
             _repositoryManager.Income.UpdateIncome(income);
             _repositoryManager.Save();

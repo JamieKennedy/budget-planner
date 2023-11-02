@@ -12,8 +12,8 @@ using Repository;
 namespace API.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230929094846_AddedDateTimeSwitch")]
-    partial class AddedDateTimeSwitch
+    [Migration("20231016154839_RecurrenceType")]
+    partial class RecurrenceType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,9 +134,6 @@ namespace API.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("CustomOccurrsOn")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("timestamp without time zone");
 
@@ -144,11 +141,8 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Occurrence")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OccurrsOn")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("RecurrencePatternId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -157,9 +151,43 @@ namespace API.Migrations
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("RecurrencePatternId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Income");
+                });
+
+            modelBuilder.Entity("Common.Models.RecurrencePattern", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<short?>("DayOfMonth")
+                        .HasColumnType("smallint");
+
+                    b.Property<short?>("DayOfWeek")
+                        .HasColumnType("smallint");
+
+                    b.Property<int?>("MaxRecurrencs")
+                        .HasColumnType("integer");
+
+                    b.Property<short?>("MonthOfYear")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("RecurrenceType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Seperation")
+                        .HasColumnType("integer");
+
+                    b.Property<short?>("WeekOfMonth")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecurrencePattern");
                 });
 
             modelBuilder.Entity("Common.Models.RecurringExpenses", b =>
@@ -522,6 +550,10 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Common.Models.RecurrencePattern", "RecurrencePattern")
+                        .WithMany()
+                        .HasForeignKey("RecurrencePatternId");
+
                     b.HasOne("Common.Models.User", "User")
                         .WithMany("Incomes")
                         .HasForeignKey("UserId")
@@ -529,6 +561,8 @@ namespace API.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
+
+                    b.Navigation("RecurrencePattern");
 
                     b.Navigation("User");
                 });

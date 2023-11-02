@@ -31,8 +31,6 @@ namespace Services
         private readonly IConfiguration _configuration;
         private readonly IRepositoryManager _repositoryManager;
 
-        private User? _user;
-
         public AuthenticationService(ILoggerManager loggerManager, IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IRepositoryManager repositoryManager)
         {
             _loggerManager = loggerManager;
@@ -44,30 +42,39 @@ namespace Services
 
         public async Task<bool> AuthenticateUser(UserAuthenticationDto userAuthenticationDto)
         {
-            _user = await _userManager.FindByEmailAsync(userAuthenticationDto.Email);
+            var user = await _userManager.FindByEmailAsync(userAuthenticationDto.Email) ?? throw new UserNotFoundException(userAuthenticationDto.Email);
 
-            bool authResult = false;
-
-            if (_user is not null)
-            {
-                authResult = await _userManager.CheckPasswordAsync(_user, userAuthenticationDto.Password);
-            }
+            bool authResult = await _userManager.CheckPasswordAsync(user, userAuthenticationDto.Password);
 
             if (!authResult)
             {
                 _loggerManager.LogWarning($"Authentication failed for email: {userAuthenticationDto.Email}");
+                await _userManager.AccessFailedAsync(user);
             }
+            else
+            {
+                user.LastLogin = DateTime.Now;
+                await _userManager.UpdateAsync(user);
+            }
+
 
             return authResult;
         }
 
-        public TokenDto CreateToken()
+        public async Task<TokenDto> CreateToken(string emailAddress)
+        {
+            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+
+            return await CreateToken(user);
+        }
+
+        public async Task<TokenDto> CreateToken(User user)
         {
             var signingCredentials = GetSigningCredentials();
-            var claims = GetClaims();
+            var claims = await GetClaims(user);
             var token = GetToken(signingCredentials, claims);
 
-            var refreshToken = CreateRefreshToken();
+            var refreshToken = CreateRefreshToken(user);
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -95,10 +102,10 @@ namespace Services
                 throw new RefreshTokenInvalidException("Inactive token");
             }
 
-            _user = await _userManager.FindByIdAsync(token.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(token.UserId.ToString()) ?? throw new UserNotFoundException(token.UserId);
 
             // Create new token
-            return CreateToken();
+            return await CreateToken(user);
         }
 
         private JwtSecurityToken GetToken(SigningCredentials signingCredentials, List<Claim> claims)
@@ -132,25 +139,35 @@ namespace Services
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private List<Claim> GetClaims()
+        private async Task<List<Claim>> GetClaims(User user)
         {
-            if (_user == null)
+            if (user == null)
             {
                 return new List<Claim>();
             }
 
+
+
             var claims = new List<Claim>
             {
-                new ("Id", _user.Id.ToString()),
-                new ("Email", _user.Email ?? string.Empty),
+                new ("Id", user.Id.ToString()),
+                new ("Email", user.Email ?? string.Empty)
+
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             return claims;
         }
 
-        private string CreateRefreshToken()
+        private string CreateRefreshToken(User user)
         {
-            var activeTokens = _repositoryManager.Tokens.SelectActiveByUserId(_user!.Id, true).ToList();
+            var activeTokens = _repositoryManager.Tokens.SelectActiveByUserId(user.Id, true).ToList();
 
             if (activeTokens.Any())
             {
@@ -183,7 +200,7 @@ namespace Services
 
             var tokenToInsert = new Token()
             {
-                UserId = _user!.Id,
+                UserId = user.Id,
                 RefreshToken = newToken,
                 Expires = DateTime.Now.AddDays(expiryDays),
                 Active = true

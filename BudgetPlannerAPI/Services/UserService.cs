@@ -22,6 +22,16 @@ namespace Services
             _configuration = configuration;
             _mapper = mapper;
             _userManager = userManager;
+
+        }
+
+        public async Task<IdentityResult> AssignRole(Guid userId, string roleName)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+
+            return result;
         }
 
         public async Task<IdentityResult> CreateUser(CreateUserDto createUserDto)
@@ -30,12 +40,28 @@ namespace Services
 
             var result = await _userManager.CreateAsync(userModel, createUserDto.Password);
 
+            if (_userManager.Users.Count() == 1)
+            {
+                await _userManager.AddToRoleAsync(userModel, "Admin");
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(userModel, "User");
+            }
+
+
+
             return result;
         }
 
-        public List<UserDto> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
             var users = _userManager.Users.ToList();
+            foreach (var user in users)
+            {
+                user.Roles = await _userManager.GetRolesAsync(user);
+            }
+
 
             var userDtos = _mapper.Map<List<UserDto>>(users) ?? new List<UserDto>();
 

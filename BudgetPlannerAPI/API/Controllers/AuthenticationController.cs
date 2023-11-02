@@ -24,13 +24,12 @@ namespace API.Controllers
             _configuration = configuration;
         }
 
-
         [HttpPost(Name = nameof(Authenticate))]
         public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto userAuthenticationDto)
         {
             if (!await serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) throw new UnauthorisedException("Incorrect details");
 
-            var tokenDto = serviceManager.AuthenticationService.CreateToken();
+            var tokenDto = await serviceManager.AuthenticationService.CreateToken(userAuthenticationDto.Email);
 
             var authCookie = new AuthenticationCookieDto()
             {

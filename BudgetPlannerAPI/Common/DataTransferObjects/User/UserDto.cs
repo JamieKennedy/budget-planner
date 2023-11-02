@@ -9,6 +9,10 @@
         public string PhoneNumber { get; init; } = string.Empty;
         public bool PhoneNumberConfirmed { get; init; }
         public bool TwoFactorEnabled { get; init; }
+        public DateTimeOffset? LockoutEnd { get; set; }
+        public bool LockoutEnabled { get; init; }
+        public DateTime? LastLogin { get; set; }
+        public IList<string> Roles { get; init; } = new List<string>();
     }
 
 }

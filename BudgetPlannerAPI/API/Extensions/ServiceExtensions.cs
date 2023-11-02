@@ -63,6 +63,7 @@ public static class ServiceExtensions
             options.Password.RequiredLength = 10;
             options.User.RequireUniqueEmail = true;
         })
+
             .AddEntityFrameworkStores<RepositoryContext>()
             .AddDefaultTokenProviders();
     }
