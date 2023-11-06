@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.Savings;
-using Common.Exceptions.Savings;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.Savings;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -29,10 +31,11 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<SavingsDto> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto)
+        public async Task<Result<SavingsDto>> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto)
         {
             // Check user exists
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(createSavingsDto.UserId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var savingsModel = _mapper.Map<Savings>(createSavingsDto);
             savingsModel.UserId = user.Id;
@@ -45,42 +48,51 @@ namespace Services
             return savingsDto;
         }
 
-        public SavingsDto SelectById(Guid savingsId)
+        public Result<SavingsDto> SelectById(Guid savingsId)
         {
-            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
-            savings.SavingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savings.SavingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+            if (savings is null) return new SavingsNotFoundError(savingsId);
+
+            savings.SavingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savings.Id);
 
             var savingsDto = _mapper.Map<SavingsDto>(savings);
 
             return savingsDto;
         }
 
-        public async Task<IEnumerable<SavingsDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        public async Task<Result<List<SavingsDto>>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var savings = _repositoryManager.Savings.SelectByUserId(user.Id, trackChanges);
 
-            var savingsDtos = _mapper.Map<IEnumerable<SavingsDto>>(savings) ?? Enumerable.Empty<SavingsDto>();
+            var savingsDtos = _mapper.Map<List<SavingsDto>>(savings) ?? new List<SavingsDto>();
 
             return savingsDtos;
         }
 
-        public async Task DeleteById(Guid userId, Guid savingsId)
+        public async Task<Result> DeleteById(Guid userId, Guid savingsId)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+            if (savings is null) return new SavingsNotFoundError(savingsId);
 
             _repositoryManager.Savings.DeleteSavings(savings);
             _repositoryManager.Save();
+
+            return Result.Ok();
         }
 
-        public async Task<SavingsDto> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto)
+        public async Task<Result<SavingsDto>> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var savings = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+            if (savings is null) return new SavingsNotFoundError(savingsId);
 
             // update properties if supplied
             savings.Name = updateSavingsDto.Name is null ? savings.Name : updateSavingsDto.Name;

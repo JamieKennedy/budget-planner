@@ -6,7 +6,7 @@ namespace Repository.Contracts
     {
         Savings CreateSavings(Savings savings);
         Savings? SelectById(Guid savingsId, bool trackChanges = false);
-        IEnumerable<Savings>? SelectByUserId(Guid userId, bool trackChanges = false);
+        List<Savings> SelectByUserId(Guid userId, bool trackChanges = false);
         void DeleteSavings(Savings savings);
 
         Savings UpdateSavings(Savings savings);

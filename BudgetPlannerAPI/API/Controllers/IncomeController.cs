@@ -1,4 +1,6 @@
-﻿using Common.DataTransferObjects.Income;
+﻿using API.Extensions;
+
+using Common.DataTransferObjects.Income;
 
 using LoggerService.Interfaces;
 
@@ -19,41 +21,41 @@ namespace API.Controllers
         [HttpPost(Name = nameof(PostAccount))]
         public async Task<IActionResult> PostAccount([FromBody] CreateIncomeDto createIncomeDto)
         {
-            var income = await serviceManager.IncomeService.CreateIncome(AuthIdentity.Id, createIncomeDto);
+            var incomeResult = (await serviceManager.IncomeService.CreateIncome(AuthIdentity.Id, createIncomeDto)).WithCreated(nameof(GetIncome));
 
-            return CreatedAtRoute(nameof(GetIncome), new { incomeId = income.Id }, income);
+            return HandleResult(incomeResult);
         }
 
         [HttpGet(Name = nameof(GetIncomeForUser))]
         public async Task<IActionResult> GetIncomeForUser()
         {
-            var income = await serviceManager.IncomeService.SelectByUserId(AuthIdentity.Id);
+            var incomeResult = await serviceManager.IncomeService.SelectByUserId(AuthIdentity.Id);
 
-            return Ok(income);
+            return HandleResult(incomeResult);
         }
 
         [HttpGet("{incomeId}", Name = nameof(GetIncome))]
         public async Task<IActionResult> GetIncome(Guid incomeId)
         {
-            var income = await serviceManager.IncomeService.SelectById(AuthIdentity.Id, incomeId);
+            var incomeResult = await serviceManager.IncomeService.SelectById(AuthIdentity.Id, incomeId);
 
-            return Ok(income);
+            return HandleResult(incomeResult);
         }
 
         [HttpDelete("{incomeId}", Name = nameof(DeleteIncome))]
         public async Task<IActionResult> DeleteIncome(Guid incomeId)
         {
-            await serviceManager.IncomeService.DeleteIncome(AuthIdentity.Id, incomeId);
+            var result = (await serviceManager.IncomeService.DeleteIncome(AuthIdentity.Id, incomeId)).WithAccepted();
 
-            return Accepted();
+            return HandleResult(result);
         }
 
         [HttpPatch("{incomeId}", Name = nameof(UpdateIncome))]
         public async Task<IActionResult> UpdateIncome(Guid incomeId, UpdateIncomeDto updateIncomeDto)
         {
-            var updatedIncome = await serviceManager.IncomeService.UpdateIncome(AuthIdentity.Id, incomeId, updateIncomeDto);
+            var updatedIncomeResult = await serviceManager.IncomeService.UpdateIncome(AuthIdentity.Id, incomeId, updateIncomeDto);
 
-            return Ok(updatedIncome);
+            return HandleResult(updatedIncomeResult);
         }
     }
 }

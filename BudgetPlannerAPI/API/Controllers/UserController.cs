@@ -1,7 +1,9 @@
 ﻿using Common.DataTransferObjects.Authentication;
 using Common.DataTransferObjects.User;
 using Common.Exceptions.Base;
-using Common.Exceptions.Configuration;
+using Common.Results.Error.Configuration;
+
+using FluentResults;
 
 using LoggerService.Interfaces;
 
@@ -30,17 +32,17 @@ namespace API.Controllers
         {
             var result = await serviceManager.UserService.CreateUser(createUserDto);
 
-            if (result.Succeeded)
+            if (result.IsSuccess)
             {
                 var user = await serviceManager.UserService.SelectByEmail(createUserDto.Email);
 
+                var tokenResult = await serviceManager.AuthenticationService.CreateToken(user.Value.Email);
 
-
-                var token = await serviceManager.AuthenticationService.CreateToken(user.Email);
+                if (tokenResult.IsFailed) return HandleResult(tokenResult);
 
                 var authCookie = new AuthenticationCookieDto()
                 {
-                    RefreshToken = token.RefreshToken,
+                    RefreshToken = tokenResult.Value.RefreshToken,
                     KeepLoggedIn = createUserDto.KeepLoggedIn
                 };
 
@@ -48,7 +50,7 @@ namespace API.Controllers
 
                 if (string.IsNullOrEmpty(refreshExpiry))
                 {
-                    throw new ConfigurationItemNotFoundException("JwtSettings:Secret");
+                    return HandleResult(Result.Fail(new ConfigurationItemNotFoundError("JwtSettings:Secret")));
                 }
 
                 Response.Cookies.Append("AuthCookie", JsonConvert.SerializeObject(authCookie), new CookieOptions()
@@ -59,7 +61,7 @@ namespace API.Controllers
                     Secure = true
                 });
 
-                return CreatedAtAction(nameof(GetUserById), routeValues: new { UserId = user.Id }, token.AccessToken);
+                return CreatedAtAction(nameof(GetUserById), routeValues: new { UserId = user.Value.Id }, tokenResult.Value.AccessToken);
             }
 
             return BadRequest(result.Errors);
@@ -69,9 +71,9 @@ namespace API.Controllers
         [HttpGet(Name = nameof(GetCurrentUser))]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var user = await serviceManager.UserService.SelectById(AuthIdentity.Id);
+            var result = await serviceManager.UserService.SelectById(AuthIdentity.Id);
 
-            return Ok(user);
+            return HandleResult(result);
         }
 
         [Authorize]
@@ -80,34 +82,36 @@ namespace API.Controllers
         {
             if (userId != AuthIdentity.Id) throw new UnauthorisedException("Cannot retreive other users");
 
-            var user = await serviceManager.UserService.SelectById(AuthIdentity.Id);
+            var result = await serviceManager.UserService.SelectById(AuthIdentity.Id);
 
-            return Ok(user);
+            return HandleResult(result);
         }
 
         [Authorize]
         [HttpGet("email/{emailAddress}", Name = nameof(GetUserByEmail))]
         public async Task<IActionResult> GetUserByEmail(string emailAddress)
         {
-            var user = await serviceManager.UserService.SelectByEmail(emailAddress);
+            var result = await serviceManager.UserService.SelectByEmail(emailAddress);
 
-            return Ok(user);
+            return HandleResult(result);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("all", Name = nameof(GetUsers))]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await serviceManager.UserService.GetAll();
+            var result = await serviceManager.UserService.GetAll();
 
-            return Ok(users);
+            return HandleResult(result);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("{id}/role/{roleName}", Name = nameof(AssignUserToRole))]
         public async Task<IActionResult> AssignUserToRole(Guid id, string roleName)
         {
-            return Ok(await serviceManager.UserService.AssignRole(id, roleName));
+            var result = await serviceManager.UserService.AssignRole(id, roleName);
+
+            return HandleResult(result);
         }
     }
 }

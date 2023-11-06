@@ -15,14 +15,14 @@ namespace Repository
             return Create(token);
         }
 
-        public IEnumerable<Token> SelectActiveByUserId(Guid userId, bool trackChanges = false)
+        public List<Token> SelectActiveByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(token => token.UserId == userId && token.Active, trackChanges);
+            return FindByCondition(token => token.UserId == userId && token.Active, trackChanges).ToList();
         }
 
         public Token? SelectById(Guid tokenId, bool trackChanges = false)
         {
-            return FindByCondition(token => token.TokenId == tokenId, trackChanges).FirstOrDefault();
+            return FindByCondition(token => token.Id == tokenId, trackChanges).FirstOrDefault();
         }
 
         public Token? SelectByRefreshToken(string refreshToken, bool trackChanges = false)
@@ -30,9 +30,9 @@ namespace Repository
             return FindByCondition(token => token.RefreshToken == refreshToken, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<Token> SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<Token> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(token => token.UserId == userId, trackChanges);
+            return FindByCondition(token => token.UserId == userId, trackChanges).ToList();
         }
     }
 }

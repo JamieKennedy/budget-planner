@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Common.Models.Base;
 
 namespace Common.Models
 {
-    public class Income : ModelBase
+    public class Income : ModifiableBase
     {
-        [Key]
-        public Guid Id { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(Account))]

@@ -1,15 +1,15 @@
 ﻿using Common.DataTransferObjects.User;
 
-using Microsoft.AspNetCore.Identity;
+using FluentResults;
 
 namespace Services.Contracts
 {
     public interface IUserService
     {
-        Task<IdentityResult> CreateUser(CreateUserDto createUserDto);
-        Task<UserDto> SelectById(Guid userId);
-        Task<UserDto> SelectByEmail(string emailAddress);
-        Task<List<UserDto>> GetAll();
-        Task<IdentityResult> AssignRole(Guid userId, string roleName);
+        Task<Result> CreateUser(CreateUserDto createUserDto);
+        Task<Result<UserDto>> SelectById(Guid userId);
+        Task<Result<UserDto>> SelectByEmail(string emailAddress);
+        Task<Result<List<UserDto>>> GetAll();
+        Task<Result> AssignRole(Guid userId, string roleName);
     }
 }

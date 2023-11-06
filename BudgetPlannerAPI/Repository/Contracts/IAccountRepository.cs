@@ -8,6 +8,6 @@ namespace Repository.Contracts
         Account UpdateAccount(Account account);
         void DeleteAccount(Account account);
         Account? SelectById(Guid id, bool trackChanges = false);
-        IEnumerable<Account> SelectByUserId(Guid userId, bool trackChanges = false);
+        List<Account> SelectByUserId(Guid userId, bool trackChanges = false);
     }
 }

@@ -19,12 +19,12 @@ namespace Repository
 
         public ExpenseCategory? SelectById(Guid expenseCategoryId, bool trackChanges = false)
         {
-            return FindByCondition(category => category.ExpenseCategoryId.Equals(expenseCategoryId), trackChanges).FirstOrDefault();
+            return FindByCondition(category => category.Id.Equals(expenseCategoryId), trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<ExpenseCategory> SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<ExpenseCategory> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(category => category.UserId.Equals(userId), trackChanges);
+            return FindByCondition(category => category.UserId.Equals(userId), trackChanges).ToList();
         }
 
         public ExpenseCategory UpdateExpenseCategory(ExpenseCategory expenseCategory)

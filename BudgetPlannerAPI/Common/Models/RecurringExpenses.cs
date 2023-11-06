@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Common.Models.Base;
 
 namespace Common.Models
 {
-    public class RecurringExpenses : ModelBase
+    public class RecurringExpenses : ModifiableBase
     {
-        [Key]
-        public Guid RecurringExpenseId { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;

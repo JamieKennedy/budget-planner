@@ -101,6 +101,8 @@ public static class ServiceExtensions
         });
     }
 
+
+
     public static void ConfigureCorsPolicy(this IServiceCollection services, IConfiguration configuration)
     {
         var corsPolicy = configuration.GetSection(ConfigurationConst.Cors.POLICY_SECTION);

@@ -20,12 +20,12 @@ namespace Repository
 
         public SavingsBalance? SelectById(Guid savingsBalanceId, bool trackChanges = false)
         {
-            return FindByCondition(savingsBalance => savingsBalance.SavingsBalanceId == savingsBalanceId, trackChanges).FirstOrDefault();
+            return FindByCondition(savingsBalance => savingsBalance.Id == savingsBalanceId, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<SavingsBalance> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
+        public List<SavingsBalance> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
         {
-            return FindByCondition(savingsBalance => savingsBalance.SavingsId == savingsId, trackChanges);
+            return FindByCondition(savingsBalance => savingsBalance.SavingsId == savingsId, trackChanges).ToList();
         }
     }
 }

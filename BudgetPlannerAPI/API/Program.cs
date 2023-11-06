@@ -6,6 +6,9 @@ using API.Middleware;
 using Common;
 using Common.Constants;
 
+using FluentResults;
+
+using LoggerService;
 using LoggerService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,7 +38,7 @@ builder.Services.AddHttpContextAccessor();
 // Auto Mapper
 builder.Services.AddSingleton(MappingProfile.CreateMapper());
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services.AddControllers().AddNewtonsoftJson().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 }); ;
@@ -46,6 +49,14 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILoggerManager>();
+
+var resultLogger = new ResultLogger(logger);
+
+Result.Setup(cfg =>
+{
+    cfg.Logger = resultLogger;
+});
+
 app.ConfigureExceptionHandler(logger);
 
 // Configure the HTTP request pipeline.

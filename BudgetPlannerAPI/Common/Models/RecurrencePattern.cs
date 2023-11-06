@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Common.Constants.Enums;
+using Common.Models.Base;
 
 namespace Common.Models
 {
-    public class RecurrencePattern
+    public class RecurrencePattern : ModifiableBase
     {
-        [Key]
-        public Guid Id { get; set; }
 
         public virtual required ERecurrenceType RecurrenceType { get; set; }
         public int Seperation { get; set; } = 0;

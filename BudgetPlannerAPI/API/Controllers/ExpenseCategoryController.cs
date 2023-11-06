@@ -1,4 +1,6 @@
-﻿using Common.DataTransferObjects.ExpenseCategory;
+﻿using API.Extensions;
+
+using Common.DataTransferObjects.ExpenseCategory;
 
 using LoggerService.Interfaces;
 
@@ -19,41 +21,43 @@ namespace API.Controllers
         [HttpPost(Name = nameof(CreateExpenseCategory))]
         public async Task<IActionResult> CreateExpenseCategory([FromBody] CreateExpenseCategoryDto createExpenseCategoryDto)
         {
-            var expenseCategory = await serviceManager.ExpenseCategoryService.CreateExpenseCategory(AuthIdentity.Id, createExpenseCategoryDto);
+            var expenseCategoryResult = (await serviceManager.ExpenseCategoryService.CreateExpenseCategory(AuthIdentity.Id, createExpenseCategoryDto)).WithCreated(nameof(GetExpenseCategory));
 
-            return CreatedAtRoute(nameof(GetExpenseCategory), new { expenseCategory.ExpenseCategoryId }, expenseCategory);
+
+
+            return HandleResult(expenseCategoryResult);
         }
 
         [HttpPatch("{expenseCategoryId}", Name = nameof(UpdateExpenseCategory))]
         public async Task<IActionResult> UpdateExpenseCategory(Guid expenseCategroyId, [FromBody] UpdateExpenseCategoryDto updateExpenseCategoryDto)
         {
-            var updatedExpenseCategory = await serviceManager.ExpenseCategoryService.UpdateExpenseCategory(AuthIdentity.Id, expenseCategroyId, updateExpenseCategoryDto);
+            var updatedExpenseCategoryResult = await serviceManager.ExpenseCategoryService.UpdateExpenseCategory(AuthIdentity.Id, expenseCategroyId, updateExpenseCategoryDto);
 
-            return Ok(updatedExpenseCategory);
+            return HandleResult(updatedExpenseCategoryResult);
         }
 
         [HttpDelete(Name = nameof(DeleteExpenseCategory))]
-        public IActionResult DeleteExpenseCategory(Guid expenseCategoryId)
+        public async Task<IActionResult> DeleteExpenseCategory(Guid expenseCategoryId)
         {
-            serviceManager.ExpenseCategoryService.DeleteExpenseCategory(AuthIdentity.Id, expenseCategoryId);
+            var result = await serviceManager.ExpenseCategoryService.DeleteExpenseCategory(AuthIdentity.Id, expenseCategoryId);
 
-            return Ok();
+            return HandleResult(result);
         }
 
         [HttpGet("{expenseCategoryId}", Name = nameof(GetExpenseCategory))]
         public async Task<IActionResult> GetExpenseCategory(Guid expenseCategoryId)
         {
-            var expenseCategory = await serviceManager.ExpenseCategoryService.SelectById(AuthIdentity.Id, expenseCategoryId);
+            var expenseCategoryResult = await serviceManager.ExpenseCategoryService.SelectById(AuthIdentity.Id, expenseCategoryId);
 
-            return Ok(expenseCategory);
+            return HandleResult(expenseCategoryResult);
         }
 
         [HttpGet(Name = nameof(GetExpenseCategoryByUserId))]
         public async Task<IActionResult> GetExpenseCategoryByUserId()
         {
-            var expenseCategories = await serviceManager.ExpenseCategoryService.SelectByUserId(AuthIdentity.Id);
+            var expenseCategoriesResult = await serviceManager.ExpenseCategoryService.SelectByUserId(AuthIdentity.Id);
 
-            return Ok(expenseCategories);
+            return HandleResult(expenseCategoriesResult);
         }
 
     }

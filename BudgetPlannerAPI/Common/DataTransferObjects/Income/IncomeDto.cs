@@ -6,9 +6,8 @@ using Newtonsoft.Json.Converters;
 
 namespace Common.DataTransferObjects.Income
 {
-    public class IncomeDto : DtoBase
+    public class IncomeDto : DtoModifiableBase
     {
-        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public Guid AccountId { get; set; }
         public string Name { get; set; } = string.Empty;

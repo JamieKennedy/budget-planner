@@ -1,13 +1,15 @@
 ﻿using Common.DataTransferObjects.Savings;
 
+using FluentResults;
+
 namespace Services.Contracts
 {
     public interface ISavingsService
     {
-        Task<SavingsDto> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto);
-        SavingsDto SelectById(Guid savingsId);
-        Task<IEnumerable<SavingsDto>> SelectByUserId(Guid userId, bool trackChanges = false);
-        Task DeleteById(Guid userId, Guid savingsId);
-        Task<SavingsDto> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto);
+        Task<Result<SavingsDto>> CreateSavings(Guid userId, CreateSavingsDto createSavingsDto);
+        Result<SavingsDto> SelectById(Guid savingsId);
+        Task<Result<List<SavingsDto>>> SelectByUserId(Guid userId, bool trackChanges = false);
+        Task<Result> DeleteById(Guid userId, Guid savingsId);
+        Task<Result<SavingsDto>> UpdateSavings(Guid userId, Guid savingsId, UpdateSavingsDto updateSavingsDto);
     }
 }

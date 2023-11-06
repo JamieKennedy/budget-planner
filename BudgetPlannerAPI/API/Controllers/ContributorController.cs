@@ -1,4 +1,6 @@
-﻿using Common.DataTransferObjects.Contributor;
+﻿using API.Extensions;
+
+using Common.DataTransferObjects.Contributor;
 
 using LoggerService.Interfaces;
 
@@ -19,42 +21,44 @@ namespace API.Controllers
         [HttpPost(Name = nameof(CreateContributor))]
         public async Task<IActionResult> CreateContributor([FromBody] CreateContributorDto createContributorDto)
         {
-            var contributor = await serviceManager.ContributorService.CreateContributor(AuthIdentity.Id, createContributorDto);
+            var contributorResult = (await serviceManager.ContributorService.CreateContributor(AuthIdentity.Id, createContributorDto)).WithCreated(nameof(GetContributor));
 
-            return CreatedAtRoute(nameof(GetContributor), new { contributor.ContributorId }, contributor);
+
+
+            return HandleResult(contributorResult);
         }
 
         [HttpDelete("{contributorId}", Name = nameof(DeleteContributor))]
-        public IActionResult DeleteContributor(Guid contributorId)
+        public async Task<IActionResult> DeleteContributor(Guid contributorId)
         {
-            serviceManager.ContributorService.DeleteContributor(AuthIdentity.Id, contributorId);
+            var result = await serviceManager.ContributorService.DeleteContributor(AuthIdentity.Id, contributorId);
 
-            return Ok();
+            return HandleResult(result);
         }
 
         [HttpPatch("{contributorId}", Name = nameof(UpdateContributor))]
         public async Task<IActionResult> UpdateContributor(Guid contributorId, [FromBody] UpdateContributorDto updateContributorDto)
         {
-            var updatedContributor = await serviceManager.ContributorService.UpdateContributor(AuthIdentity.Id, contributorId, updateContributorDto);
+            var updatedContributorResult = await serviceManager.ContributorService.UpdateContributor(AuthIdentity.Id, contributorId, updateContributorDto);
 
-            return Ok(updatedContributor);
+            return HandleResult(updatedContributorResult);
         }
 
 
         [HttpGet("{contributorId}", Name = nameof(GetContributor))]
         public async Task<IActionResult> GetContributor(Guid contributorId)
         {
-            var contributor = await serviceManager.ContributorService.SelectById(AuthIdentity.Id, contributorId);
+            var contributorResult = await serviceManager.ContributorService.SelectById(AuthIdentity.Id, contributorId);
 
-            return Ok(contributor);
+            return HandleResult(contributorResult);
         }
 
         [HttpGet(Name = nameof(GetContributorsByUserId))]
         public async Task<IActionResult> GetContributorsByUserId()
         {
-            var contributors = await serviceManager.ContributorService.SelectByUserId(AuthIdentity.Id);
+            var contributorsResult = await serviceManager.ContributorService.SelectByUserId(AuthIdentity.Id);
 
-            return Ok(contributors);
+            return HandleResult(contributorsResult);
         }
     }
 }

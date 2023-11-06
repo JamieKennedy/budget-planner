@@ -8,6 +8,6 @@ namespace Repository.Contracts
         Income UpdateIncome(Income income);
         void DeleteIncome(Income income);
         Income? SelectById(Guid id, bool trackChanges = false);
-        IEnumerable<Income> SelectByUserId(Guid userId, bool trackChanges = false);
+        List<Income> SelectByUserId(Guid userId, bool trackChanges = false);
     }
 }

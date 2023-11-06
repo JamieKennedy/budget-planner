@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.Income;
-using Common.Exceptions.Account;
-using Common.Exceptions.Base;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.Account;
+using Common.Results.Error.Base;
+using Common.Results.Error.Income;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -30,15 +33,17 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<IncomeDto> CreateIncome(Guid userId, CreateIncomeDto createIncomeDto)
+        public async Task<Result<IncomeDto>> CreateIncome(Guid userId, CreateIncomeDto createIncomeDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var account = _repositoryManager.Account.SelectById(createIncomeDto.AccountId) ?? throw new AccountNotFoundException(createIncomeDto.AccountId);
+            var account = _repositoryManager.Account.SelectById(createIncomeDto.AccountId);
+            if (account is null) return new AccountNotFoundError(createIncomeDto.AccountId);
 
             if (account.UserId != user.Id)
             {
-                throw new UnauthorisedException("Cannot create income for account not belonging to the user");
+                return new UnauthorisedError("Cannot create income for account not belonging to the user");
             }
 
             var income = _mapper.Map<Income>(createIncomeDto);
@@ -50,48 +55,57 @@ namespace Services
             return _mapper.Map<IncomeDto>(income);
         }
 
-        public async Task DeleteIncome(Guid userId, Guid incomeId)
+        public async Task<Result> DeleteIncome(Guid userId, Guid incomeId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var income = _repositoryManager.Income.SelectById(incomeId) ?? throw new IncomeNotFoundException(incomeId);
+            var income = _repositoryManager.Income.SelectById(incomeId);
+            if (income is null) return new IncomeNotFoundError(incomeId);
 
-            if (income.UserId != user.Id) throw new UnauthorisedException("Cannot delete income belonging to other users");
+            if (income.UserId != user.Id) return new UnauthorisedError("Cannot delete income belonging to other users");
 
             _repositoryManager.Income.DeleteIncome(income);
             _repositoryManager.Save();
+
+            return Result.Ok();
         }
 
-        public async Task<IncomeDto> SelectById(Guid userId, Guid incomeId, bool trackChanges = false)
+        public async Task<Result<IncomeDto>> SelectById(Guid userId, Guid incomeId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var income = _repositoryManager.Income.SelectById(incomeId) ?? throw new IncomeNotFoundException(incomeId);
+            var income = _repositoryManager.Income.SelectById(incomeId);
+            if (income is null) return new IncomeNotFoundError(incomeId);
 
             if (income.UserId != user.Id)
             {
-                throw new UnauthorisedException("Cannot access income for other users");
+                return new UnauthorisedError("Cannot access income for other users");
             }
 
             return _mapper.Map<IncomeDto>(income);
         }
 
-        public async Task<IEnumerable<IncomeDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        public async Task<Result<List<IncomeDto>>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var incomes = _repositoryManager.Income.SelectByUserId(userId, trackChanges);
 
-            return _mapper.Map<IEnumerable<IncomeDto>>(incomes) ?? Enumerable.Empty<IncomeDto>();
+            return _mapper.Map<List<IncomeDto>>(incomes) ?? new List<IncomeDto>();
         }
 
-        public async Task<IncomeDto> UpdateIncome(Guid userId, Guid incomeId, UpdateIncomeDto updateIncomeDto)
+        public async Task<Result<IncomeDto>> UpdateIncome(Guid userId, Guid incomeId, UpdateIncomeDto updateIncomeDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var income = _repositoryManager.Income.SelectById(incomeId) ?? throw new IncomeNotFoundException(incomeId);
+            var income = _repositoryManager.Income.SelectById(incomeId);
+            if (income is null) return new IncomeNotFoundError(incomeId);
 
-            if (income.UserId != user.Id) throw new UnauthorisedException("Cannot update income belonging to other users");
+            if (income.UserId != user.Id) return new UnauthorisedError("Cannot update income belonging to other users");
 
             income.Name = updateIncomeDto.Name ?? income.Name;
             income.Amount = updateIncomeDto.Amount ?? income.Amount;

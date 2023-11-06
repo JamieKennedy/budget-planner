@@ -57,7 +57,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.Contributor", b =>
                 {
-                    b.Property<Guid>("ContributerId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -76,15 +76,15 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RecurringExpensesRecurringExpenseId")
+                    b.Property<Guid?>("RecurringExpensesId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("ContributerId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RecurringExpensesRecurringExpenseId");
+                    b.HasIndex("RecurringExpensesId");
 
                     b.HasIndex("UserId");
 
@@ -93,7 +93,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.ExpenseCategory", b =>
                 {
-                    b.Property<Guid>("ExpenseCategoryId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -102,6 +102,9 @@ namespace API.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("character varying(6)");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -109,7 +112,7 @@ namespace API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("ExpenseCategoryId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -161,11 +164,17 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<short?>("DayOfMonth")
                         .HasColumnType("smallint");
 
                     b.Property<short?>("DayOfWeek")
                         .HasColumnType("smallint");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("MaxRecurrencs")
                         .HasColumnType("integer");
@@ -189,14 +198,14 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.RecurringExpenses", b =>
                 {
-                    b.Property<Guid>("RecurringExpenseId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("CategoryExpenseCategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Created")
@@ -215,9 +224,9 @@ namespace API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("RecurringExpenseId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CategoryExpenseCategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -226,7 +235,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.Savings", b =>
                 {
-                    b.Property<Guid>("SavingsId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -252,7 +261,7 @@ namespace API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("SavingsId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -261,7 +270,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.SavingsBalance", b =>
                 {
-                    b.Property<Guid>("SavingsBalanceId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -274,7 +283,7 @@ namespace API.Migrations
                     b.Property<Guid>("SavingsId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("SavingsBalanceId");
+                    b.HasKey("Id");
 
                     b.HasIndex("SavingsId");
 
@@ -283,12 +292,15 @@ namespace API.Migrations
 
             modelBuilder.Entity("Common.Models.Token", b =>
                 {
-                    b.Property<Guid>("TokenId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp without time zone");
@@ -300,7 +312,7 @@ namespace API.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("TokenId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -520,7 +532,7 @@ namespace API.Migrations
                 {
                     b.HasOne("Common.Models.RecurringExpenses", null)
                         .WithMany("Contributors")
-                        .HasForeignKey("RecurringExpensesRecurringExpenseId");
+                        .HasForeignKey("RecurringExpensesId");
 
                     b.HasOne("Common.Models.User", "User")
                         .WithMany()
@@ -571,7 +583,7 @@ namespace API.Migrations
                 {
                     b.HasOne("Common.Models.ExpenseCategory", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryExpenseCategoryId");
+                        .HasForeignKey("CategoryId");
 
                     b.HasOne("Common.Models.User", "User")
                         .WithMany()

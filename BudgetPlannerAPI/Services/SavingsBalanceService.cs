@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.SavingsBalance;
-using Common.Exceptions.Savings;
-using Common.Exceptions.SavingsBalance;
 using Common.Models;
+using Common.Results.Error.Savings;
+using Common.Results.Error.SavingsBalance;
+
+using FluentResults;
 
 using Microsoft.Extensions.Configuration;
 
@@ -26,10 +28,11 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public SavingsBalanceDto CreateSavingsBalance(Guid savingsId, CreateSavingsBalanceDto createSavingsBalanceDto)
+        public Result<SavingsBalanceDto> CreateSavingsBalance(Guid savingsId, CreateSavingsBalanceDto createSavingsBalanceDto)
         {
             // check savings exists
-            _ = _repositoryManager.Savings.SelectById(savingsId) ?? throw new SavingsNotFoundException(savingsId);
+            var savings = _repositoryManager.Savings.SelectById(savingsId);
+            if (savings is null) return new SavingsNotFoundError(savingsId);
 
             var savingsBalanceModel = _mapper.Map<SavingsBalance>(createSavingsBalanceDto);
             savingsBalanceModel.SavingsId = savingsId;
@@ -42,29 +45,34 @@ namespace Services
             return savingsBalanceDto;
         }
 
-        public void DeleteSavingsBalance(Guid savingsBalanceId)
+        public Result DeleteSavingsBalance(Guid savingsBalanceId)
         {
-            var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId) ?? throw new SavingsBalanceNotFoundException(savingsBalanceId);
+            var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId);
+            if (savingsBalance is null) return new SavingsBalanceNotFoundError(savingsBalanceId);
+
             _repositoryManager.SavingsBalance.DeleteSavingsBalance(savingsBalance);
             _repositoryManager.Save();
+
+            return Result.Ok();
         }
 
-        public SavingsBalanceDto SelectById(Guid savingsBalanceId, bool trackChanges = false)
+        public Result<SavingsBalanceDto> SelectById(Guid savingsBalanceId, bool trackChanges = false)
         {
-            var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId, trackChanges) ?? throw new SavingsBalanceNotFoundException(savingsBalanceId);
+            var savingsBalance = _repositoryManager.SavingsBalance.SelectById(savingsBalanceId, trackChanges);
+            if (savingsBalance is null) return new SavingsBalanceNotFoundError(savingsBalanceId);
+
             var savingsBalanceDto = _mapper.Map<SavingsBalanceDto>(savingsBalance);
 
             return savingsBalanceDto;
         }
 
-        public IEnumerable<SavingsBalanceDto> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
+        public Result<List<SavingsBalanceDto>> SelectBySavingsId(Guid savingsId, bool trackChanges = false)
         {
-            var savingsBalancesDto = new List<SavingsBalanceDto>();
             var savingsBalances = _repositoryManager.SavingsBalance.SelectBySavingsId(savingsId, trackChanges);
 
-            savingsBalancesDto.AddRange(_mapper.Map<List<SavingsBalanceDto>>(savingsBalances));
+            var dto = _mapper.Map<List<SavingsBalanceDto>>(savingsBalances) ?? new List<SavingsBalanceDto>();
 
-            return savingsBalancesDto;
+            return dto;
         }
     }
 }

@@ -22,12 +22,12 @@ namespace Repository
 
         public Savings? SelectById(Guid savingsId, bool trackChanges = false)
         {
-            return FindByCondition(savings => savings.SavingsId == savingsId, trackChanges).Include(x => x.SavingsBalances).FirstOrDefault();
+            return FindByCondition(savings => savings.Id == savingsId, trackChanges).Include(x => x.SavingsBalances).FirstOrDefault();
         }
 
-        public IEnumerable<Savings>? SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<Savings> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(saving => saving.UserId == userId, trackChanges).Include(x => x.SavingsBalances);
+            return FindByCondition(saving => saving.UserId == userId, trackChanges).Include(x => x.SavingsBalances).ToList();
         }
 
         public Savings UpdateSavings(Savings savings)

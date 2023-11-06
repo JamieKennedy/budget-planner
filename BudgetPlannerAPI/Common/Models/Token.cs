@@ -2,12 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Common.Models.Base;
+
 namespace Common.Models
 {
-    public class Token
+    public class Token : ModelBase
     {
-        [Key]
-        public Guid TokenId { get; set; }
 
         [ForeignKey(nameof(User))]
         public required Guid UserId { get; set; }

@@ -1,13 +1,17 @@
-﻿using Common.DataTransferObjects.ExpenseCategory;
+﻿using System.Collections.ObjectModel;
+
+using Common.DataTransferObjects.ExpenseCategory;
+
+using FluentResults;
 
 namespace Services.Contracts
 {
     public interface IExpenseCategoryService
     {
-        Task<ExpenseCategoryDto> CreateExpenseCategory(Guid userId, CreateExpenseCategoryDto createExpenseCategoryDto);
-        Task<ExpenseCategoryDto> UpdateExpenseCategory(Guid userId, Guid expenseCategoryId, UpdateExpenseCategoryDto updateExpenseCategoryDto);
-        void DeleteExpenseCategory(Guid userId, Guid expenseCategoryId);
-        Task<ExpenseCategoryDto> SelectById(Guid userId, Guid expenseCategoryId, bool trackChanges = false);
-        Task<IEnumerable<ExpenseCategoryDto>> SelectByUserId(Guid userId, bool trackChanges = false);
+        Task<Result<ExpenseCategoryDto>> CreateExpenseCategory(Guid userId, CreateExpenseCategoryDto createExpenseCategoryDto);
+        Task<Result<ExpenseCategoryDto>> UpdateExpenseCategory(Guid userId, Guid expenseCategoryId, UpdateExpenseCategoryDto updateExpenseCategoryDto);
+        Task<Result> DeleteExpenseCategory(Guid userId, Guid expenseCategoryId);
+        Task<Result<ExpenseCategoryDto>> SelectById(Guid userId, Guid expenseCategoryId, bool trackChanges = false);
+        Task<Result<Collection<ExpenseCategoryDto>>> SelectByUserId(Guid userId, bool trackChanges = false);
     }
 }

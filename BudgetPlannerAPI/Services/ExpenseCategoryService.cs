@@ -1,9 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Collections.ObjectModel;
+
+using AutoMapper;
 
 using Common.DataTransferObjects.ExpenseCategory;
-using Common.Exceptions.ExpenseCategory;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.ExpenseCategory;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -29,10 +33,11 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<ExpenseCategoryDto> CreateExpenseCategory(Guid userId, CreateExpenseCategoryDto createExpenseCategoryDto)
+        public async Task<Result<ExpenseCategoryDto>> CreateExpenseCategory(Guid userId, CreateExpenseCategoryDto createExpenseCategoryDto)
         {
             // Check user exists
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return Result.Fail(new UserNotFoundError(userId));
 
             var expenseCategoryModel = _mapper.Map<ExpenseCategory>(createExpenseCategoryDto);
             expenseCategoryModel.UserId = user.Id;
@@ -42,38 +47,48 @@ namespace Services
             return _mapper.Map<ExpenseCategoryDto>(expenseCategory);
         }
 
-        public async void DeleteExpenseCategory(Guid userId, Guid expenseCategoryId)
+        public async Task<Result> DeleteExpenseCategory(Guid userId, Guid expenseCategoryId)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId) ?? throw new ExpenseCategoryNotFoundException(expenseCategoryId);
+            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId);
+            if (expenseCategory is null) return new ExpenseCategoryNotFoundError(expenseCategoryId);
 
             _repositoryManager.ExpenseCategory.DeleteExpenseCategory(expenseCategory);
+            _repositoryManager.Save();
+
+            return Result.Ok();
         }
 
-        public async Task<ExpenseCategoryDto> SelectById(Guid userId, Guid expenseCategoryId, bool trackChanges = false)
+        public async Task<Result<ExpenseCategoryDto>> SelectById(Guid userId, Guid expenseCategoryId, bool trackChanges = false)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId, trackChanges) ?? throw new ExpenseCategoryNotFoundException(expenseCategoryId);
+            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId, trackChanges);
+            if (expenseCategory is null) return new ExpenseCategoryNotFoundError(expenseCategoryId);
 
             return _mapper.Map<ExpenseCategoryDto>(expenseCategory);
         }
 
-        public async Task<IEnumerable<ExpenseCategoryDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        public async Task<Result<Collection<ExpenseCategoryDto>>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var expenseCategories = _repositoryManager.ExpenseCategory.SelectByUserId(user.Id, trackChanges);
 
-            return _mapper.Map<IEnumerable<ExpenseCategoryDto>>(expenseCategories) ?? Enumerable.Empty<ExpenseCategoryDto>();
+            return _mapper.Map<Collection<ExpenseCategoryDto>>(expenseCategories) ?? new Collection<ExpenseCategoryDto>();
         }
 
-        public async Task<ExpenseCategoryDto> UpdateExpenseCategory(Guid userId, Guid expenseCategoryId, UpdateExpenseCategoryDto updateExpenseCategoryDto)
+        public async Task<Result<ExpenseCategoryDto>> UpdateExpenseCategory(Guid userId, Guid expenseCategoryId, UpdateExpenseCategoryDto updateExpenseCategoryDto)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId) ?? throw new ExpenseCategoryNotFoundException(expenseCategoryId);
+            var expenseCategory = _repositoryManager.ExpenseCategory.SelectById(expenseCategoryId);
+            if (expenseCategory is null) return new ExpenseCategoryNotFoundError(expenseCategoryId);
 
             expenseCategory.Name = updateExpenseCategoryDto.Name is null ? expenseCategory.Name : updateExpenseCategoryDto.Name;
             expenseCategory.ColourHex = updateExpenseCategoryDto.ColourHex is null ? expenseCategory.ColourHex : updateExpenseCategoryDto.ColourHex;

@@ -19,12 +19,12 @@ namespace Repository
 
         public Contributor? SelectById(Guid contributorId, bool trackChanges = false)
         {
-            return FindByCondition(contributor => contributor.ContributerId == contributorId, trackChanges).FirstOrDefault();
+            return FindByCondition(contributor => contributor.Id == contributorId, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<Contributor> SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<Contributor> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(contributor => contributor.UserId == userId, trackChanges);
+            return FindByCondition(contributor => contributor.UserId == userId, trackChanges).ToList();
         }
 
         public Contributor UpdateContributor(Contributor contributer)

@@ -22,9 +22,9 @@ namespace Repository
             return FindByCondition(account => account.Id == id, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<Account> SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<Account> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(account => account.UserId == userId, trackChanges);
+            return FindByCondition(account => account.UserId == userId, trackChanges).ToList();
         }
 
         public Account UpdateAccount(Account account)

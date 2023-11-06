@@ -8,6 +8,6 @@ namespace Repository.Contracts
         Contributor UpdateContributor(Contributor contributer);
         void DeleteContributor(Contributor contributer);
         Contributor? SelectById(Guid contributorId, bool trackChanges = false);
-        IEnumerable<Contributor> SelectByUserId(Guid userId, bool trackChanges = false);
+        List<Contributor> SelectByUserId(Guid userId, bool trackChanges = false);
     }
 }

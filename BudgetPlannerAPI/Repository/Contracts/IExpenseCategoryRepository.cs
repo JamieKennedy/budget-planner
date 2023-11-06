@@ -8,6 +8,6 @@ namespace Repository.Contracts
         ExpenseCategory UpdateExpenseCategory(ExpenseCategory expenseCategory);
         void DeleteExpenseCategory(ExpenseCategory expenseCategory);
         ExpenseCategory? SelectById(Guid expenseCategoryId, bool trackChanges = false);
-        IEnumerable<ExpenseCategory> SelectByUserId(Guid userId, bool trackChanges = false);
+        List<ExpenseCategory> SelectByUserId(Guid userId, bool trackChanges = false);
     }
 }

@@ -3,7 +3,6 @@
 public interface IServiceManager
 {
     IUserService UserService { get; }
-    IRoleService RoleService { get; }
     IAuthenticationService AuthenticationService { get; }
     ISavingsService SavingsService { get; }
     ISavingsBalanceService SavingsBalanceService { get; }

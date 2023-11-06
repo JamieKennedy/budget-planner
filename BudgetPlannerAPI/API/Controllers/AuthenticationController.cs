@@ -1,7 +1,9 @@
 ﻿using Common.DataTransferObjects.Authentication;
 using Common.DataTransferObjects.Token;
-using Common.Exceptions.Base;
-using Common.Exceptions.Configuration;
+using Common.Results.Error.Base;
+using Common.Results.Error.Configuration;
+
+using FluentResults;
 
 using LoggerService.Interfaces;
 
@@ -27,13 +29,17 @@ namespace API.Controllers
         [HttpPost(Name = nameof(Authenticate))]
         public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto userAuthenticationDto)
         {
-            if (!await serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto)) throw new UnauthorisedException("Incorrect details");
+            var authResult = await serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto);
 
-            var tokenDto = await serviceManager.AuthenticationService.CreateToken(userAuthenticationDto.Email);
+            if (authResult.IsFailed) return HandleResult(Result.Fail(new UnauthorisedError("Incorrect Details")));
+
+            var tokenResult = await serviceManager.AuthenticationService.CreateToken(userAuthenticationDto.Email);
+
+            if (tokenResult.IsFailed) return HandleResult(tokenResult);
 
             var authCookie = new AuthenticationCookieDto()
             {
-                RefreshToken = tokenDto.RefreshToken,
+                RefreshToken = tokenResult.Value.RefreshToken,
                 KeepLoggedIn = userAuthenticationDto.KeepLoggedIn
             };
 
@@ -41,7 +47,7 @@ namespace API.Controllers
 
             if (string.IsNullOrEmpty(refreshExpiry))
             {
-                throw new ConfigurationItemNotFoundException("JwtSettings:Secret");
+                return HandleResult(Result.Fail(new ConfigurationItemNotFoundError("JwtSettings:Secret")));
             }
 
             Response.Cookies.Append("AuthCookie", JsonConvert.SerializeObject(authCookie), new CookieOptions()
@@ -52,7 +58,7 @@ namespace API.Controllers
                 Secure = true
             });
 
-            return Ok(tokenDto.AccessToken);
+            return Ok(tokenResult.Value.AccessToken);
         }
 
         [HttpPost("Refresh", Name = nameof(Refresh))]
@@ -64,18 +70,20 @@ namespace API.Controllers
 
                 if (authCookie is not null)
                 {
-                    var newToken = await serviceManager.AuthenticationService.RefreshToken(new RefreshTokenDto()
+                    var newTokenResult = await serviceManager.AuthenticationService.RefreshToken(new RefreshTokenDto()
                     {
                         RefreshToken = authCookie.RefreshToken
                     });
 
-                    authCookie.RefreshToken = newToken.RefreshToken;
+                    if (newTokenResult.IsFailed) return HandleResult(newTokenResult);
+
+                    authCookie.RefreshToken = newTokenResult.Value.RefreshToken;
 
                     var refreshExpiry = _configuration.GetSection("JwtSettings")["RefreshTokenExpiryDays"];
 
                     if (string.IsNullOrEmpty(refreshExpiry))
                     {
-                        throw new ConfigurationItemNotFoundException("JwtSettings:Secret");
+                        return HandleResult(Result.Fail(new ConfigurationItemNotFoundError("JwtSettings:Secret")));
                     }
 
                     Response.Cookies.Append("AuthCookie", JsonConvert.SerializeObject(authCookie), new CookieOptions()
@@ -86,10 +94,10 @@ namespace API.Controllers
                         Secure = true
                     });
 
-                    return Ok(newToken.AccessToken);
+                    return Ok(newTokenResult.Value.AccessToken);
                 }
             }
-            throw new UnauthorisedException("Invalid Refresh Token");
+            return HandleResult(Result.Fail(new UnauthorisedError("Invalid Refresh Token")));
         }
 
         [HttpPost("Logout", Name = nameof(Logout))]
@@ -112,9 +120,9 @@ namespace API.Controllers
         [HttpPost("Reset/Token", Name = nameof(GeneratePasswordResetToken))]
         public async Task<IActionResult> GeneratePasswordResetToken([FromBody] ResetPasswordTokenDto resetPasswordTokenDto)
         {
-            var token = await serviceManager.AuthenticationService.GeneratePasswordResetToken(resetPasswordTokenDto.Email);
+            var tokenResult = await serviceManager.AuthenticationService.GeneratePasswordResetToken(resetPasswordTokenDto.Email);
 
-            return Ok(token);
+            return HandleResult(tokenResult);
         }
 
         [HttpPost("Reset", Name = nameof(ResetPassword))]
@@ -122,12 +130,7 @@ namespace API.Controllers
         {
             var result = await serviceManager.AuthenticationService.ResetPassword(resetPasswordDto.Email, resetPasswordDto.ResetToken, resetPasswordDto.NewPassword);
 
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok();
+            return HandleResult(result);
         }
     }
 }

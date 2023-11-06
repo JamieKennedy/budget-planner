@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.Account;
-using Common.Exceptions.Account;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.Account;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -30,9 +32,11 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<AccountDto> CreateAccount(Guid userId, CreateAccountDto createAccountDto)
+        public async Task<Result<AccountDto>> CreateAccount(Guid userId, CreateAccountDto createAccountDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) return new UserNotFoundError(userId);
 
             var account = _mapper.Map<Account>(createAccountDto);
             account.UserId = user.Id;
@@ -40,43 +44,65 @@ namespace Services
             account = _repositoryManager.Account.CreateAccount(account);
             _repositoryManager.Save();
 
-            return _mapper.Map<AccountDto>(account);
+            var accountDto = _mapper.Map<AccountDto>(account);
+
+            return accountDto;
         }
 
-        public async Task DeleteAccount(Guid userId, Guid accountId)
+        public async Task<Result> DeleteAccount(Guid userId, Guid accountId)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            var account = _repositoryManager.Account.SelectById(accountId) ?? throw new AccountNotFoundException(accountId);
+            if (user is null) return new UserNotFoundError(userId);
+
+            var account = _repositoryManager.Account.SelectById(accountId);
+
+            if (account is null) return new AccountNotFoundError(accountId);
 
             _repositoryManager.Account.DeleteAccount(account);
             _repositoryManager.Save();
 
+            return Result.Ok();
+
         }
 
-        public async Task<AccountDto> SelectById(Guid userId, Guid accountId, bool trackChanges = false)
+        public async Task<Result<AccountDto>> SelectById(Guid userId, Guid accountId, bool trackChanges = false)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            var account = _repositoryManager.Account.SelectById(accountId) ?? throw new AccountNotFoundException(accountId);
+            if (user is null) return new UserNotFoundError(userId);
 
-            return _mapper.Map<AccountDto>(account);
+            var account = _repositoryManager.Account.SelectById(accountId);
+
+            if (account is null) return new AccountNotFoundError(accountId);
+
+            var accountDto = _mapper.Map<AccountDto>(account);
+
+            return accountDto;
         }
 
-        public async Task<IEnumerable<AccountDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        public async Task<Result<List<AccountDto>>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) return new UserNotFoundError(userId);
 
             var accounts = _repositoryManager.Account.SelectByUserId(userId);
 
-            return _mapper.Map<IEnumerable<AccountDto>>(accounts) ?? Enumerable.Empty<AccountDto>();
+            var accountDtos = _mapper.Map<List<AccountDto>>(accounts) ?? new List<AccountDto>();
+
+            return accountDtos;
         }
 
-        public async Task<AccountDto> UpdateAccount(Guid userId, Guid accountId, UpdateAccountDto updateAccountDto)
+        public async Task<Result<AccountDto>> UpdateAccount(Guid userId, Guid accountId, UpdateAccountDto updateAccountDto)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
 
-            var account = _repositoryManager.Account.SelectById(accountId) ?? throw new AccountNotFoundException(accountId);
+            if (user is null) return new UserNotFoundError(userId);
+
+            var account = _repositoryManager.Account.SelectById(accountId);
+
+            if (account is null) return new AccountNotFoundError(accountId);
 
             account.Name = updateAccountDto.Name ?? account.Name;
             account.ColourHex = updateAccountDto.ColourHex ?? account.ColourHex;
@@ -85,7 +111,10 @@ namespace Services
 
             account = _repositoryManager.Account.UpdateAccount(account);
             _repositoryManager.Save();
-            return _mapper.Map<AccountDto>(account);
+
+            var accountDto = _mapper.Map<AccountDto>(account);
+
+            return accountDto;
         }
     }
 }

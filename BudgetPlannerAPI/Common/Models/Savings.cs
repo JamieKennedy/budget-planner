@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Common.Models.Base;
 
 namespace Common.Models
 {
-    public class Savings : ModelBase
+    public class Savings : ModifiableBase
     {
-        [Key]
-        public Guid SavingsId { get; set; }
         [ForeignKey(nameof(Models.User))]
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;

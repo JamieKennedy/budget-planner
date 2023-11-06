@@ -1,5 +1,7 @@
-﻿using Common.DataTransferObjects.SavingsBalance;
-using Common.Exceptions.SavingBalance;
+﻿using API.Extensions;
+
+using Common.DataTransferObjects.SavingsBalance;
+using Common.Results.Error.SavingsBalance;
 
 using LoggerService.Interfaces;
 
@@ -21,35 +23,43 @@ namespace API.Controllers
         [HttpPost(Name = nameof(CreateSavingsBalance))]
         public IActionResult CreateSavingsBalance(Guid savingsId, [FromBody] CreateSavingsBalanceDto createSavingsBalanceDto)
         {
-            var savingsBalance = serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto);
+            var savingsBalanceResult = (serviceManager.SavingsBalanceService.CreateSavingsBalance(savingsId, createSavingsBalanceDto)).WithCreated(nameof(GetSavingsBalanceById));
 
-            return CreatedAtRoute(nameof(GetSavingsBalanceById), new { savingsId, savingsBalance.SavingsBalanceId }, savingsBalance);
+            return HandleResult(savingsBalanceResult);
         }
 
         [HttpGet("{savingsBalanceId}", Name = nameof(GetSavingsBalanceById))]
         public IActionResult GetSavingsBalanceById(Guid savingsId, Guid savingsBalanceId)
         {
-            var savingsBalance = serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
+            var savingsBalanceResult = serviceManager.SavingsBalanceService.SelectById(savingsBalanceId);
 
-            if (savingsBalance.SavingsId != savingsId) throw new InvalidSavingsIdForSavingsBalance(savingsBalanceId, savingsId);
+            if (savingsBalanceResult.IsSuccess)
+            {
+                if (savingsBalanceResult.Value.SavingsId != savingsId)
+                {
+                    savingsBalanceResult = savingsBalanceResult.WithError(new InvalidSavingsIdForSavingsBalanceError(savingsBalanceId, savingsId));
+                }
+            }
 
-            return Ok(savingsBalance);
+
+
+            return HandleResult(savingsBalanceResult);
         }
 
         [HttpGet(Name = nameof(GetSavingsBalanceBySavingsId))]
         public IActionResult GetSavingsBalanceBySavingsId(Guid savingsId)
         {
-            var savingsBalances = serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
+            var result = serviceManager.SavingsBalanceService.SelectBySavingsId(savingsId);
 
-            return Ok(savingsBalances);
+            return HandleResult(result);
         }
 
         [HttpDelete("{savingsBalanceId}")]
         public IActionResult DeleteSavingsBalance(Guid savingsBalanceId)
         {
-            serviceManager.SavingsBalanceService.DeleteSavingsBalance(savingsBalanceId);
+            var result = serviceManager.SavingsBalanceService.DeleteSavingsBalance(savingsBalanceId);
 
-            return Ok();
+            return HandleResult(result);
         }
     }
 }

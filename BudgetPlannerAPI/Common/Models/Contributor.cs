@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Common.Models.Base;
+
 namespace Common.Models
 {
-    public class Contributor : ModelBase
+    public class Contributor : ModifiableBase
     {
-        [Key]
-        public Guid ContributerId { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;

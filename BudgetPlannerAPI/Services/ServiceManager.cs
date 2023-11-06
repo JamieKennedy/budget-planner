@@ -18,7 +18,6 @@ public class ServiceManager : IServiceManager
     // Services
     private readonly Lazy<IUserService> _userService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
-    private readonly Lazy<IRoleService> _roleService;
     private readonly Lazy<ISavingsService> _savingsService;
     private readonly Lazy<ISavingsBalanceService> _savingsBalanceService;
     private readonly Lazy<IExpenseCategoryService> _expenseCategoryService;
@@ -27,11 +26,10 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IIncomeService> _incomeService;
 
 
-    public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    public ServiceManager(IConfiguration configuration, ILoggerManager loggerManager, IMapper mapper, IRepositoryManager repositoryManager, UserManager<User> userManager)
     {
         _userService = new Lazy<IUserService>(() => new UserService(configuration, mapper, userManager));
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(loggerManager, mapper, userManager, configuration, repositoryManager));
-        _roleService = new Lazy<IRoleService>(() => new RoleService(roleManager));
         _savingsService = new Lazy<ISavingsService>(() => new SavingsService(configuration, mapper, repositoryManager, userManager));
         _savingsBalanceService = new Lazy<ISavingsBalanceService>(() => new SavingsBalanceService(configuration, mapper, repositoryManager));
         _expenseCategoryService = new Lazy<IExpenseCategoryService>(() => new ExpenseCategoryService(configuration, mapper, repositoryManager, userManager));
@@ -55,6 +53,4 @@ public class ServiceManager : IServiceManager
     public IAccountService AccountService => _accountService.Value;
 
     public IIncomeService IncomeService => _incomeService.Value;
-
-    public IRoleService RoleService => _roleService.Value;
 }

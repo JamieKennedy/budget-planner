@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Common.Models.Base;
+
 namespace Common.Models
 {
-    public class ExpenseCategory
+    public class ExpenseCategory : ModelBase
     {
-        [Key]
-        public Guid ExpenseCategoryId { get; set; }
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;

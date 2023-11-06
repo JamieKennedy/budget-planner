@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.User;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -25,16 +27,16 @@ namespace Services
 
         }
 
-        public async Task<IdentityResult> AssignRole(Guid userId, string roleName)
+        public async Task<Result> AssignRole(Guid userId, string roleName)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
-
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
             var result = await _userManager.AddToRoleAsync(user, roleName);
 
-            return result;
+            return Result.OkIf(result.Succeeded, "An error orccured assigning the role");
         }
 
-        public async Task<IdentityResult> CreateUser(CreateUserDto createUserDto)
+        public async Task<Result> CreateUser(CreateUserDto createUserDto)
         {
             var userModel = _mapper.Map<User>(createUserDto);
 
@@ -51,10 +53,10 @@ namespace Services
 
 
 
-            return result;
+            return Result.OkIf(result.Succeeded, "An error orccured creating the user");
         }
 
-        public async Task<List<UserDto>> GetAll()
+        public async Task<Result<List<UserDto>>> GetAll()
         {
             var users = _userManager.Users.ToList();
             foreach (var user in users)
@@ -68,17 +70,20 @@ namespace Services
             return userDtos;
         }
 
-        public async Task<UserDto> SelectByEmail(string emailAddress)
+        public async Task<Result<UserDto>> SelectByEmail(string emailAddress)
         {
-            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+            var user = await _userManager.FindByEmailAsync(emailAddress);
+            if (user is null) return new UserNotFoundError(emailAddress);
+
 
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }
 
-        public async Task<UserDto> SelectById(Guid userId)
+        public async Task<Result<UserDto>> SelectById(Guid userId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;

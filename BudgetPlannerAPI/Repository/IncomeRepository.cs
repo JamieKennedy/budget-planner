@@ -22,9 +22,9 @@ namespace Repository
             return FindByCondition(income => income.Id == id, trackChanges).FirstOrDefault();
         }
 
-        public IEnumerable<Income> SelectByUserId(Guid userId, bool trackChanges = false)
+        public List<Income> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            return FindByCondition(income => income.UserId == userId, trackChanges);
+            return FindByCondition(income => income.UserId == userId, trackChanges).ToList();
         }
 
         public Income UpdateIncome(Income income)

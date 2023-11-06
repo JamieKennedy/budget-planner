@@ -7,9 +7,12 @@ using AutoMapper;
 
 using Common.DataTransferObjects.Authentication;
 using Common.DataTransferObjects.Token;
-using Common.Exceptions.Configuration;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.Configuration;
+using Common.Results.Error.Token;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using LoggerService.Interfaces;
 
@@ -40,9 +43,11 @@ namespace Services
             _repositoryManager = repositoryManager;
         }
 
-        public async Task<bool> AuthenticateUser(UserAuthenticationDto userAuthenticationDto)
+        public async Task<Result> AuthenticateUser(UserAuthenticationDto userAuthenticationDto)
         {
-            var user = await _userManager.FindByEmailAsync(userAuthenticationDto.Email) ?? throw new UserNotFoundException(userAuthenticationDto.Email);
+            var user = await _userManager.FindByEmailAsync(userAuthenticationDto.Email);
+
+            if (user is null) return Result.Fail(new UserNotFoundError(userAuthenticationDto.Email));
 
             bool authResult = await _userManager.CheckPasswordAsync(user, userAuthenticationDto.Password);
 
@@ -50,44 +55,51 @@ namespace Services
             {
                 _loggerManager.LogWarning($"Authentication failed for email: {userAuthenticationDto.Email}");
                 await _userManager.AccessFailedAsync(user);
-            }
-            else
-            {
-                user.LastLogin = DateTime.Now;
-                await _userManager.UpdateAsync(user);
+                return Result.Fail("Authentication failed");
             }
 
 
-            return authResult;
+            user.LastLogin = DateTime.Now;
+            await _userManager.UpdateAsync(user);
+
+            return Result.Ok();
         }
 
-        public async Task<TokenDto> CreateToken(string emailAddress)
+        public async Task<Result<TokenDto>> CreateToken(string emailAddress)
         {
-            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+            var user = await _userManager.FindByEmailAsync(emailAddress);
+            if (user is null) return new UserNotFoundError(emailAddress);
 
             return await CreateToken(user);
         }
 
-        public async Task<TokenDto> CreateToken(User user)
+        public async Task<Result<TokenDto>> CreateToken(User user)
         {
             var signingCredentials = GetSigningCredentials();
-            var claims = await GetClaims(user);
-            var token = GetToken(signingCredentials, claims);
+            if (signingCredentials.IsFailed) return Result.Fail(signingCredentials.Errors);
 
-            var refreshToken = CreateRefreshToken(user);
+
+            var claims = await GetClaims(user);
+            var token = GetToken(signingCredentials.Value, claims);
+
+            var refreshTokenResult = CreateRefreshToken(user);
+            if (refreshTokenResult.IsFailed) return Result.Fail(refreshTokenResult.Errors);
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return new TokenDto()
+            return Result.Ok(new TokenDto()
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+                RefreshToken = refreshTokenResult.Value
+            });
+
+
         }
 
-        public async Task<TokenDto> RefreshToken(RefreshTokenDto refreshTokenDto, bool trackChanges = false)
+        public async Task<Result<TokenDto>> RefreshToken(RefreshTokenDto refreshTokenDto, bool trackChanges = false)
         {
-            var token = _repositoryManager.Tokens.SelectByRefreshToken(refreshTokenDto.RefreshToken, trackChanges) ?? throw new RefreshTokenInvalidException("Invalid refresh token");
+            var token = _repositoryManager.Tokens.SelectByRefreshToken(refreshTokenDto.RefreshToken, trackChanges);
+            if (token is null) return new RefreshTokenInvalidError("Invalid token");
 
             if (!token.Active)
             {
@@ -99,10 +111,11 @@ namespace Services
                 _repositoryManager.Save();
 
                 // Return unauthorized response
-                throw new RefreshTokenInvalidException("Inactive token");
+                return Result.Fail(new RefreshTokenInvalidError("Inactive token"));
             }
 
-            var user = await _userManager.FindByIdAsync(token.UserId.ToString()) ?? throw new UserNotFoundException(token.UserId);
+            var user = await _userManager.FindByIdAsync(token.UserId.ToString());
+            if (user is null) return new UserNotFoundError(token.UserId);
 
             // Create new token
             return await CreateToken(user);
@@ -124,19 +137,19 @@ namespace Services
 
         }
 
-        private SigningCredentials GetSigningCredentials()
+        private Result<SigningCredentials> GetSigningCredentials()
         {
             var jwtSecret = _configuration["JwtSettings:Secret"];
 
             if (string.IsNullOrEmpty(jwtSecret))
             {
-                throw new ConfigurationItemNotFoundException("JwtSettings:Secret");
+                return Result.Fail(new ConfigurationItemNotFoundError("JwtSettings:Secret"));
             }
 
             var key = Encoding.UTF8.GetBytes(jwtSecret);
             var secret = new SymmetricSecurityKey(key);
 
-            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            return Result.Ok(new SigningCredentials(secret, SecurityAlgorithms.HmacSha256));
         }
 
         private async Task<List<Claim>> GetClaims(User user)
@@ -165,7 +178,7 @@ namespace Services
             return claims;
         }
 
-        private string CreateRefreshToken(User user)
+        private Result<string> CreateRefreshToken(User user)
         {
             var activeTokens = _repositoryManager.Tokens.SelectActiveByUserId(user.Id, true).ToList();
 
@@ -193,7 +206,7 @@ namespace Services
 
             if (string.IsNullOrEmpty(expiryDaysString))
             {
-                throw new ConfigurationItemNotFoundException("JwtSettings:RefreshTokenExpiryDays");
+                return Result.Fail(new ConfigurationItemNotFoundError("JwtSettings:RefreshTokenExpiryDays"));
             }
 
             var expiryDays = int.Parse(expiryDaysString);
@@ -210,7 +223,7 @@ namespace Services
             _repositoryManager.Tokens.CreateToken(tokenToInsert);
             _repositoryManager.Save();
 
-            return newToken;
+            return Result.Ok(newToken);
         }
 
         private static string GenerateRefreshToken()
@@ -222,18 +235,25 @@ namespace Services
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task<string> GeneratePasswordResetToken(string emailAddress)
+        public async Task<Result<string>> GeneratePasswordResetToken(string emailAddress)
         {
-            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+            var user = await _userManager.FindByEmailAsync(emailAddress);
 
-            return await _userManager.GeneratePasswordResetTokenAsync(user);
+            if (user is null) return Result.Fail(new UserNotFoundError(emailAddress));
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            return Result.Ok(token);
         }
 
-        public async Task<IdentityResult> ResetPassword(string emailAddress, string resetToken, string newPassword)
+        public async Task<Result> ResetPassword(string emailAddress, string resetToken, string newPassword)
         {
-            var user = await _userManager.FindByEmailAsync(emailAddress) ?? throw new UserNotFoundException(emailAddress);
+            var user = await _userManager.FindByEmailAsync(emailAddress);
+            if (user is null) return new UserNotFoundError(emailAddress);
 
-            return await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+            return Result.OkIf(result.Succeeded, "An error occured reseting the password");
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 
 using Common.DataTransferObjects.Contributor;
-using Common.Exceptions.Contributor;
-using Common.Exceptions.User;
 using Common.Models;
+using Common.Results.Error.Contributor;
+using Common.Results.Error.User;
+
+using FluentResults;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -31,9 +33,10 @@ namespace Services
         }
 
 
-        public async Task<ContributorDto> CreateContributor(Guid userId, CreateContributorDto createContributorDto)
+        public async Task<Result<ContributorDto>> CreateContributor(Guid userId, CreateContributorDto createContributorDto)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var contributorModel = _mapper.Map<Contributor>(createContributorDto);
             contributorModel.UserId = user.Id;
@@ -41,42 +44,56 @@ namespace Services
             var contributor = _repositoryManager.Contributor.CreateContributor(contributorModel);
             _repositoryManager.Save();
 
-            return _mapper.Map<ContributorDto>(contributor);
+            var dto = _mapper.Map<ContributorDto>(contributor);
+
+            return dto;
         }
 
-        public async void DeleteContributor(Guid userId, Guid contributorId)
+        public async Task<Result> DeleteContributor(Guid userId, Guid contributorId)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var contributor = _repositoryManager.Contributor.SelectById(contributorId) ?? throw new ContributorNotFoundException(contributorId);
+            var contributor = _repositoryManager.Contributor.SelectById(contributorId);
+            if (contributor is null) return new ContributorNotFoundError(contributorId);
 
             _repositoryManager.Contributor.DeleteContributor(contributor);
             _repositoryManager.Save();
+
+            return Result.Ok();
         }
 
-        public async Task<ContributorDto> SelectById(Guid userId, Guid contributorId, bool trackChanges = false)
+        public async Task<Result<ContributorDto>> SelectById(Guid userId, Guid contributorId, bool trackChanges = false)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var contributor = _repositoryManager.Contributor.SelectById(contributorId, trackChanges) ?? throw new ContributorNotFoundException(contributorId);
+            var contributor = _repositoryManager.Contributor.SelectById(contributorId, trackChanges);
+            if (contributor is null) return new ContributorNotFoundError(contributorId);
 
-            return _mapper.Map<ContributorDto>(contributor);
+            var dto = _mapper.Map<ContributorDto>(contributor);
+            return dto;
         }
 
-        public async Task<IEnumerable<ContributorDto>> SelectByUserId(Guid userId, bool trackChanges = false)
+        public async Task<Result<List<ContributorDto>>> SelectByUserId(Guid userId, bool trackChanges = false)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
             var contributors = _repositoryManager.Contributor.SelectByUserId(user.Id);
 
-            return _mapper.Map<IEnumerable<ContributorDto>>(contributors) ?? Enumerable.Empty<ContributorDto>();
+            var dto = _mapper.Map<List<ContributorDto>>(contributors) ?? new List<ContributorDto>();
+
+            return dto;
         }
 
-        public async Task<ContributorDto> UpdateContributor(Guid userId, Guid contributorId, UpdateContributorDto updateContributorDto)
+        public async Task<Result<ContributorDto>> UpdateContributor(Guid userId, Guid contributorId, UpdateContributorDto updateContributorDto)
         {
-            var _ = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new UserNotFoundException(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user is null) return new UserNotFoundError(userId);
 
-            var contributor = _repositoryManager.Contributor.SelectById(contributorId) ?? throw new ContributorNotFoundException(contributorId);
+            var contributor = _repositoryManager.Contributor.SelectById(contributorId);
+            if (contributor is null) return new ContributorNotFoundError(contributorId);
 
             contributor.Name = updateContributorDto.Name is null ? contributor.Name : updateContributorDto.Name;
             contributor.ColourHex = updateContributorDto.ColourHex is null ? contributor.ColourHex : updateContributorDto.ColourHex;
@@ -84,7 +101,9 @@ namespace Services
             var updatedContributor = _repositoryManager.Contributor.UpdateContributor(contributor);
             _repositoryManager.Save();
 
-            return _mapper.Map<ContributorDto>(updatedContributor);
+            var dto = _mapper.Map<ContributorDto>(updatedContributor);
+
+            return dto;
 
 
         }

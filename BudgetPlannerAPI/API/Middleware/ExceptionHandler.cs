@@ -1,12 +1,12 @@
-﻿using Common.DataTransferObjects.Error;
-using Common.Exceptions;
+﻿using System.Text.Json;
+
+using Common.Results.Error.Base;
 
 using LoggerService.Interfaces;
 
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
 
 namespace API.Middleware;
 
@@ -27,29 +27,20 @@ public static class ExceptionHandler
                     // get the error from the exception
                     var exception = contextFeature.Error;
 
-                    var statusCode = GetStatusCodeFromException(exception);
-                    var message = exception.Message;
+                    var error = (BaseError) new BaseError(exception.Message).CausedBy(exception);
 
-                    var errorDto = new ErrorDto(statusCode, message);
+
 
                     // log the exception
                     logger.LogError(exception);
 
-                    context.Response.StatusCode = statusCode;
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(errorDto));
+                    var problemDetails = error.ToProblemDetails(context.Request.Path, "An Error has occurred");
+
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails, typeof(ProblemDetails)));
                 }
             });
         });
-    }
-
-    private static int GetStatusCodeFromException(Exception exception)
-    {
-        return exception switch
-        {
-            IException ie => ie.StatusCode,
-            DbUpdateException => StatusCodes.Status400BadRequest,
-            _ => StatusCodes.Status500InternalServerError
-        };
     }
 }
