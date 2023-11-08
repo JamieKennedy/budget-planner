@@ -1,0 +1,22 @@
+name: CodeAnalysis
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    # Run NuGet restore for each project/solution to analyze
+    - name: Run NuGet restore
+      run: dotnet restore "./BudgetPlannerApi/BudgetPlannerAPI.sln"
+    
+    # Run code analysis for all projects/solutions, such that code analysis violations break the build.
+    - name: Run .NET Code Analysis
+      uses: dotnet/code-analysis@v1
+      id: code-analysis
+      with:
+        build-breaking: true
