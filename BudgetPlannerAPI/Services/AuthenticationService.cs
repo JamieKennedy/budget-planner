@@ -53,7 +53,7 @@ namespace Services
 
             if (!authResult)
             {
-                _loggerManager.LogWarning($"Authentication failed for email: {userAuthenticationDto.Email}");
+                _loggerManager.LogInfo("Authentication failed for email: {email}", userAuthenticationDto.Email);
                 await _userManager.AccessFailedAsync(user);
                 return Result.Fail("Authentication failed");
             }

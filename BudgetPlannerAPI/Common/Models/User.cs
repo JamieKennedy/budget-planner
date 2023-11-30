@@ -10,6 +10,8 @@ namespace Common.Models
         public List<Income> Incomes { get; set; } = new List<Income>();
         [NotMapped]
         public IList<string> Roles { get; set; } = new List<string>();
+        public DateTime Created { get; set; }
+        public DateTime LastModified { get; set; }
 
 
     }

@@ -39,17 +39,19 @@ namespace Services
         public async Task<Result> CreateUser(CreateUserDto createUserDto)
         {
             var userModel = _mapper.Map<User>(createUserDto);
+            userModel.Created = DateTime.Now;
+            userModel.LastModified = DateTime.Now;
 
             var result = await _userManager.CreateAsync(userModel, createUserDto.Password);
 
-            if (_userManager.Users.Count() == 1)
-            {
-                await _userManager.AddToRoleAsync(userModel, "Admin");
-            }
-            else
-            {
-                await _userManager.AddToRoleAsync(userModel, "User");
-            }
+            //if (_userManager.Users.Count() == 1)
+            //{
+            //    await _userManager.AddToRoleAsync(userModel, "Admin");
+            //}
+            //else
+            //{
+            //    await _userManager.AddToRoleAsync(userModel, "User");
+            //}
 
 
 

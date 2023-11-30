@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Common.Constants.Enums;
-using Common.Models.Base;
+using Common.DataTransferObjects.Base;
 
-namespace Common.Models
+namespace Common.DataTransferObjects.RecurrencePattern
 {
-    public class RecurrencePattern : ModifiableBase
+    public class RecurrencePatternDto : DtoModifiableBase
     {
-
-        public virtual required ERecurrenceType RecurrenceType { get; set; }
+        public required ERecurrenceType RecurrenceType { get; set; }
         public int Seperation { get; set; } = 0;
         public int? MaxRecurrencs { get; set; }
         [Range(0, 6)]
@@ -20,6 +19,5 @@ namespace Common.Models
         [Range(0, 11)]
         public short? MonthOfYear { get; set; }
         public ECustomOccurrsOn? CustomOccurrsOn { get; set; }
-
     }
 }

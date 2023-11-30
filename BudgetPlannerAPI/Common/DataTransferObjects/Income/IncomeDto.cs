@@ -1,8 +1,5 @@
-﻿using Common.Constants.Enums;
-using Common.DataTransferObjects.Base;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Common.DataTransferObjects.Base;
+using Common.DataTransferObjects.RecurrencePattern;
 
 namespace Common.DataTransferObjects.Income
 {
@@ -12,10 +9,6 @@ namespace Common.DataTransferObjects.Income
         public Guid AccountId { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        [JsonConverter(typeof(StringEnumConverter))]
-        public EOccurrence Occurrence { get; set; }
-
-        public EOccurrsOn OccurrsOn { get; set; }
-        public int? CustomOccurrsOn { get; set; }
+        public RecurrencePatternDto? RecurrencePattern { get; set; }
     }
 }

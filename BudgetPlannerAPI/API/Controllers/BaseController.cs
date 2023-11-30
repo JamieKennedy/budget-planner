@@ -34,7 +34,9 @@ namespace API.Controllers
                 return _contextAccessor?.HttpContext?.GetAuthIdentity() ?? new AuthIdentity();
             }
         }
-        public IActionResult HandleResult(FluentResults.Result result)
+
+
+        protected IActionResult HandleResult(FluentResults.Result result)
         {
             if (result.IsSuccess)
             {
@@ -58,12 +60,12 @@ namespace API.Controllers
             // Should only be 1 error
             var error = result.Errors.First();
 
-            LogError(error, result);
+            LogError(error, result, Request.Path);
 
             return MapError(error, Request?.Path ?? string.Empty);
         }
 
-        public IActionResult HandleResult<T>(FluentResults.Result<T> result)
+        protected IActionResult HandleResult<T>(FluentResults.Result<T> result)
         {
             if (result.IsSuccess)
             {
@@ -93,13 +95,13 @@ namespace API.Controllers
             // Should only be 1 error
             var error = result.Errors.First();
 
-            LogError(error, result.ToResult());
+            LogError(error, result.ToResult(), Request.Path);
 
             return MapError(error, Request.Path);
 
         }
 
-        public IActionResult MapError(IError error, string path = "")
+        protected IActionResult MapError(IError error, string path = "")
         {
             // switch on the error type and return appropriate response, defaults to 500 response
             return error switch
@@ -112,18 +114,29 @@ namespace API.Controllers
             };
         }
 
-        private static void LogError(IError error, FluentResults.Result result)
+        private void LogError(IError error, FluentResults.Result result, string? instance = null)
         {
-            if (error is BaseError be)
+            if (result.IsFailed)
             {
-                // Log with error Id as context if error inherits from BaseError
-                result.LogIfFailed(be.ErrorId.ToString());
+                if (error is BaseError be)
+                {
+                    if (instance is not null)
+                    {
+                        loggerManager.LogError("[{errorId}] {instance}  {message} ", be.ErrorId, instance, be.Message);
+                    }
+                    else
+                    {
+                        loggerManager.LogError("[{errorId}] {message} ", be.ErrorId, be.Message);
+                    }
+                }
+                else
+                {
+                    // Otherwise just log with no context
+                    result.LogIfFailed();
+                }
             }
-            else
-            {
-                // Otherwise just log with no context
-                result.LogIfFailed();
-            }
+
+
         }
     }
 }

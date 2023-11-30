@@ -29,6 +29,7 @@ namespace API.Controllers
         [HttpPost(Name = nameof(Authenticate))]
         public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto userAuthenticationDto)
         {
+
             var authResult = await serviceManager.AuthenticationService.AuthenticateUser(userAuthenticationDto);
 
             if (authResult.IsFailed) return HandleResult(Result.Fail(new UnauthorisedError("Incorrect Details")));

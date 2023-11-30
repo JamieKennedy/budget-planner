@@ -5,11 +5,11 @@ using Newtonsoft.Json.Converters;
 namespace Common.Constants.Enums
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum ERecurrenceType
+    public enum ECustomOccurrsOn
     {
-        Daily,
-        Weekly,
-        Monthly,
-        Yearly
+        FirstOf,
+        LastOf,
+        FirstWorkingDay,
+        LastWorkingDay
     }
 }

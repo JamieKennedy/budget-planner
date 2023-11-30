@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-using Common.Constants.Enums;
 using Common.DataTransferObjects.Base;
+using Common.DataTransferObjects.RecurrencePattern;
 
 namespace Common.DataTransferObjects.Income
 {
@@ -12,8 +12,6 @@ namespace Common.DataTransferObjects.Income
         [MinLength(1)]
         public string Name { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public EOccurrence Occurrence { get; set; }
-        public EOccurrsOn OccurrsOn { get; set; }
-        public int? CustomOccurrsOn { get; set; }
+        public CreateRecurrencePatternDto? RecurrencePattern { get; set; }
     }
 }

@@ -1,8 +1,9 @@
-﻿namespace Common.DataTransferObjects.User
+﻿using Common.Models.Base;
+
+namespace Common.DataTransferObjects.User
 {
-    public class UserDto
+    public class UserDto : ModifiableBase
     {
-        public Guid Id { get; init; }
         public string UserName { get; init; } = string.Empty;
         public string Email { get; init; } = string.Empty;
         public bool EmailConfirmed { get; init; }
